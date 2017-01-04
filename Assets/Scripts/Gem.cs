@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public enum GemType
 {
@@ -37,24 +38,44 @@ public class Gem : MonoBehaviour
     public GemType GemType = GemType.White;
     public GemColor GemColor = GemColor.Brown;
 
+    public GameObject Sparkles;
+
     public GemGrid Grid;
 
     public int GridX;
-    public int GridY;
+    public int GridY;    
 
     public Transform Hover;
     public Transform Frame;
 
+    private float glowing = 0.0f;
+
     public bool InTransition = false;
+
+    private GameObject sparkles = null;
+
+    public bool IsGlowing {  get { return this.glowing > 0.0f; } }
 
 	// Use this for initialization
 	void Start () 
-    {	
+    {
+        this.sparkles = Instantiate(GameManager.Instance.Sparkles);
+        this.sparkles.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
+        this.sparkles.transform.parent = this.transform;
+        this.sparkles.SetActive(false);
 	}
 	
 	// Update is called once per frame
 	void Update () 
-    {        
+    {
+        if (glowing > 0.0f)
+        {
+            glowing -= Time.deltaTime;
+            if (glowing <= 0.0f)
+            {
+                this.sparkles.SetActive(false);
+            }
+        }
 	}
 
     public void SetSelected(bool selected)
@@ -105,8 +126,10 @@ public class Gem : MonoBehaviour
 
     void OnMouseDown() 
     {
-        if (this.Grid.AreGemsInTransition())
+        if (!this.Grid.CanMakeMove())
         {
+            this.glowing = GameManager.Instance.GlowDuration;
+            this.sparkles.SetActive(true); 
             return;
         }
 
@@ -133,11 +156,12 @@ public class Gem : MonoBehaviour
 
     public IEnumerator Vanish()
     {
+        
         while (true)
-        {
+        {            
             if (this.gameObject != null)
             {
-                Vector3 t = this.transform.localScale;                
+                Vector3 t = this.transform.localScale;
                 this.transform.localScale = new Vector3(t.x - 0.1f, t.y - 0.1f, 1);
                 this.transform.Rotate(0.0f, 0.0f, 36.0f);
 
@@ -152,5 +176,6 @@ public class Gem : MonoBehaviour
         }
 
         yield return null;
+        
     }
 }

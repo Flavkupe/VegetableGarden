@@ -86,7 +86,7 @@ public class Item : MonoBehaviour
     {
         if (this.Purchased)
         {
-            if (this.CurrentCooldown <= 0.0f)
+            if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
             {
                 this.TriggerEffect();
                 this.CurrentCooldown = this.Cooldown;

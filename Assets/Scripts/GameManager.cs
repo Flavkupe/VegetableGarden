@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class GameManager : MonoBehaviour
     public AudioClip KachinkSound;
     public LevelGoalSign GoalBillboard;
     public SpriteRenderer ScreenTint;
+    public GameObject Sparkles;
+
+    public float GlowDuration = 100.0f;
 
     public GemGrid Grid;
 
@@ -193,18 +197,31 @@ public class GameManager : MonoBehaviour
 
     public int GetScoreValue(List<Gem> matches)
     {
+        int totalVal = 0;
         int matchCount = matches.Count;
         if (matchCount <= 3)
         {
-            return 100;
+            totalVal = 100;
+        }
+        else
+        {
+            totalVal = (matchCount - 3) * 200;
         }
 
-        return (matchCount - 3) * 200;
+        foreach (Gem gem in matches)
+        {
+            if (gem.IsGlowing)
+            {
+                totalVal += 25;
+            }
+        }
+
+        return totalVal;
     }
 
     public int GetCashValue(List<Gem> matches)
     {
-        return matches.Count;
+        return matches.Count + matches.Count(a => a.IsGlowing);
     }
 
     public void PlaySound(SoundEffects soundEffect)

@@ -41,6 +41,7 @@ public class GemGrid : MonoBehaviour
 
     private List<Gem> activeGems = new List<Gem>();
     private float SLIDE_SPEED = 3.5F;
+    private bool gridMatchingIsActive = false;
 
     void Awake()
     {
@@ -202,11 +203,14 @@ public class GemGrid : MonoBehaviour
     {
         if (this.CanSwapWith(gem1, gem2))
         {
+            this.gridMatchingIsActive = true;
+
             List<Gem> matches = this.GetMatchesOnSwap(gem1, gem2);
             this.SwapGems(gem1, gem2);
             gem1.SetSelected(false);
             gem2.SetSelected(false);
             this.Selected = null;
+
             this.StartCoroutine(this.ProcessMatches(matches));
 
             return true;
@@ -217,13 +221,14 @@ public class GemGrid : MonoBehaviour
 
     private IEnumerator ProcessMatches(List<Gem> matches, bool getRewards = true, MatchOverrideRules rules = null)
     {
+        gridMatchingIsActive = true;
         if (rules == null)
         {
             rules = MatchOverrideRules.None;
         }
         
         do
-        {
+        {            
             HashSet<Gem> additionalMatches = new HashSet<Gem>();
             rules.IgnoreList = additionalMatches;
 
@@ -269,11 +274,10 @@ public class GemGrid : MonoBehaviour
             {
                 // Add additional resulting maches to grand total
                 matches.AddRange(additionalMatches);                
-            }
-
+            }            
         } while (matches.Count > 0);
-     
-        yield return null;
+
+        gridMatchingIsActive = false;
     }
 
     /// <summary>
@@ -304,17 +308,24 @@ public class GemGrid : MonoBehaviour
 
     private void ProcessMatchRewards(List<Gem> matches)
     {
-        // Calculate score, raise score bubble
-        int scoreValue = GameManager.Instance.GetScoreValue(matches);
-        int cashValue = GameManager.Instance.GetCashValue(matches);
-        float averageMatchX = matches.Average(a => a.transform.localPosition.x);
-        float averageMatchY = matches.Average(a => a.transform.localPosition.y);
-        float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
-        float offsetX = averageMatchX + randomOffset;
-        GameManager.Instance.UpdateScore(scoreValue);
-        GameManager.Instance.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.gameObject);
-        GameManager.Instance.UpdateCash(cashValue);
-        GameManager.Instance.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.gameObject, Color.yellow);
+        try
+        {
+            // Calculate score, raise score bubble
+            int scoreValue = GameManager.Instance.GetScoreValue(matches);
+            int cashValue = GameManager.Instance.GetCashValue(matches);
+            float averageMatchX = matches.Average(a => a.transform.localPosition.x);
+            float averageMatchY = matches.Average(a => a.transform.localPosition.y);
+            float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
+            float offsetX = averageMatchX + randomOffset;
+            GameManager.Instance.UpdateScore(scoreValue);
+            GameManager.Instance.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.gameObject);
+            GameManager.Instance.UpdateCash(cashValue);
+            GameManager.Instance.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.gameObject, Color.yellow);
+        }
+        catch (Exception ex)
+        {
+            if (ex == null) { }
+        }
     }
 
     private void DropRows()
@@ -536,6 +547,8 @@ public class GemGrid : MonoBehaviour
             yield return null;
         }
 
+        gridMatchingIsActive = true;
+
         List<Gem> toRemove = this.activeGems.Where(a => a.GemType == gemType).ToList();
 
         this.StartCoroutine(this.ProcessMatches(toRemove, false));
@@ -547,6 +560,8 @@ public class GemGrid : MonoBehaviour
         {
             yield return null;
         }
+
+        gridMatchingIsActive = true;
 
         List<Gem> toRemove = this.activeGems.Where(a => a.GemColor == gemColor).ToList();
 
@@ -560,11 +575,20 @@ public class GemGrid : MonoBehaviour
             yield return null;
         }
 
+        gridMatchingIsActive = true;
+
         List<List<Gem>> matchSets = this.GetAllMatches(new MatchOverrideRules() { ByColor = gemColor });
 
-        foreach (List<Gem> matchSet in matchSets)
+        if (matchSets.Count > 0)
         {
-            this.StartCoroutine(this.ProcessMatches(matchSet, true));
+            foreach (List<Gem> matchSet in matchSets)
+            {
+                this.StartCoroutine(this.ProcessMatches(matchSet, true));
+            }
+        }
+        else
+        {
+            gridMatchingIsActive = false;
         }
     }    
 
@@ -578,10 +602,15 @@ public class GemGrid : MonoBehaviour
         }
     }
 
+    public bool CanMakeMove()
+    {
+        return !gridMatchingIsActive && !AreGemsInTransition();
+    }
+
     public bool AreGemsInTransition()
     {
         return this.activeGems.Any(a => a.InTransition);
-    }    
+    }
 }
 
 
