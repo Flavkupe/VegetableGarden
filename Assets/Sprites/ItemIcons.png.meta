@@ -1,0 +1,1538 @@
+fileFormatVersion: 2
+guid: d704ed2ddbdabb84bbbac9cf2ed6515f
+timeCreated: 1449365881
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: ItemIcons_0
+    21300002: ItemIcons_1
+    21300004: ItemIcons_2
+    21300006: ItemIcons_3
+    21300008: ItemIcons_4
+    21300010: ItemIcons_5
+    21300012: ItemIcons_6
+    21300014: ItemIcons_7
+    21300016: ItemIcons_8
+    21300018: ItemIcons_9
+    21300020: ItemIcons_10
+    21300022: ItemIcons_11
+    21300024: ItemIcons_12
+    21300026: ItemIcons_13
+    21300028: ItemIcons_14
+    21300030: ItemIcons_15
+    21300032: ItemIcons_16
+    21300034: ItemIcons_17
+    21300036: ItemIcons_18
+    21300038: ItemIcons_19
+    21300040: ItemIcons_20
+    21300042: ItemIcons_21
+    21300044: ItemIcons_22
+    21300046: ItemIcons_23
+    21300048: ItemIcons_24
+    21300050: ItemIcons_25
+    21300052: ItemIcons_26
+    21300054: ItemIcons_27
+    21300056: ItemIcons_28
+    21300058: ItemIcons_29
+    21300060: ItemIcons_30
+    21300062: ItemIcons_31
+    21300064: ItemIcons_32
+    21300066: ItemIcons_33
+    21300068: ItemIcons_34
+    21300070: ItemIcons_35
+    21300072: ItemIcons_36
+    21300074: ItemIcons_37
+    21300076: ItemIcons_38
+    21300078: ItemIcons_39
+    21300080: ItemIcons_40
+    21300082: ItemIcons_41
+    21300084: ItemIcons_42
+    21300086: ItemIcons_43
+    21300088: ItemIcons_44
+    21300090: ItemIcons_45
+    21300092: ItemIcons_46
+    21300094: ItemIcons_47
+    21300096: ItemIcons_48
+    21300098: ItemIcons_49
+    21300100: ItemIcons_50
+    21300102: ItemIcons_51
+    21300104: ItemIcons_52
+    21300106: ItemIcons_53
+    21300108: ItemIcons_54
+    21300110: ItemIcons_55
+    21300112: ItemIcons_56
+    21300114: ItemIcons_57
+    21300116: ItemIcons_58
+    21300118: ItemIcons_59
+    21300120: ItemIcons_60
+    21300122: ItemIcons_61
+    21300124: ItemIcons_62
+    21300126: ItemIcons_63
+    21300128: ItemIcons_64
+    21300130: ItemIcons_65
+    21300132: ItemIcons_66
+    21300134: ItemIcons_67
+    21300136: ItemIcons_68
+    21300138: ItemIcons_69
+    21300140: ItemIcons_70
+    21300142: ItemIcons_71
+    21300144: ItemIcons_72
+    21300146: ItemIcons_73
+    21300148: ItemIcons_74
+    21300150: ItemIcons_75
+    21300152: ItemIcons_76
+    21300154: ItemIcons_77
+    21300156: ItemIcons_78
+    21300158: ItemIcons_79
+    21300160: ItemIcons_80
+    21300162: ItemIcons_81
+    21300164: ItemIcons_82
+    21300166: ItemIcons_83
+    21300168: ItemIcons_84
+    21300170: ItemIcons_85
+    21300172: ItemIcons_86
+    21300174: ItemIcons_87
+    21300176: ItemIcons_88
+    21300178: ItemIcons_89
+    21300180: ItemIcons_90
+    21300182: ItemIcons_91
+    21300184: ItemIcons_92
+    21300186: ItemIcons_93
+    21300188: ItemIcons_94
+    21300190: ItemIcons_95
+    21300192: ItemIcons_96
+    21300194: ItemIcons_97
+    21300196: ItemIcons_98
+    21300198: ItemIcons_99
+    21300200: ItemIcons_100
+    21300202: ItemIcons_101
+    21300204: ItemIcons_102
+    21300206: ItemIcons_103
+    21300208: ItemIcons_104
+    21300210: ItemIcons_105
+    21300212: ItemIcons_106
+    21300214: ItemIcons_107
+    21300216: ItemIcons_108
+    21300218: ItemIcons_109
+    21300220: ItemIcons_110
+    21300222: ItemIcons_111
+    21300224: ItemIcons_112
+    21300226: ItemIcons_113
+    21300228: ItemIcons_114
+    21300230: ItemIcons_115
+    21300232: ItemIcons_116
+    21300234: ItemIcons_117
+    21300236: ItemIcons_118
+    21300238: ItemIcons_119
+    21300240: ItemIcons_120
+    21300242: ItemIcons_121
+    21300244: ItemIcons_122
+    21300246: ItemIcons_123
+    21300248: ItemIcons_124
+    21300250: ItemIcons_125
+    21300252: ItemIcons_126
+    21300254: ItemIcons_127
+    21300256: ItemIcons_128
+    21300258: ItemIcons_129
+    21300260: ItemIcons_130
+    21300262: ItemIcons_131
+    21300264: ItemIcons_132
+    21300266: ItemIcons_133
+    21300268: ItemIcons_134
+    21300270: ItemIcons_135
+    21300272: ItemIcons_136
+    21300274: ItemIcons_137
+    21300276: ItemIcons_138
+    21300278: ItemIcons_139
+    21300280: ItemIcons_140
+    21300282: ItemIcons_141
+    21300284: ItemIcons_142
+    21300286: ItemIcons_143
+    21300288: ItemIcons_144
+    21300290: ItemIcons_145
+    21300292: ItemIcons_146
+    21300294: ItemIcons_147
+    21300296: ItemIcons_148
+    21300298: ItemIcons_149
+    21300300: ItemIcons_150
+    21300302: ItemIcons_151
+    21300304: ItemIcons_152
+    21300306: ItemIcons_153
+    21300308: ItemIcons_154
+    21300310: ItemIcons_155
+    21300312: ItemIcons_156
+    21300314: ItemIcons_157
+    21300316: ItemIcons_158
+    21300318: ItemIcons_159
+    21300320: ItemIcons_160
+    21300322: ItemIcons_161
+    21300324: ItemIcons_162
+    21300326: ItemIcons_163
+    21300328: ItemIcons_164
+    21300330: ItemIcons_165
+    21300332: ItemIcons_166
+    21300334: ItemIcons_167
+    21300336: ItemIcons_168
+    21300338: ItemIcons_169
+    21300340: ItemIcons_170
+    21300342: ItemIcons_171
+    21300344: ItemIcons_172
+    21300346: ItemIcons_173
+    21300348: ItemIcons_174
+    21300350: ItemIcons_175
+    21300352: ItemIcons_176
+    21300354: ItemIcons_177
+    21300356: ItemIcons_178
+    21300358: ItemIcons_179
+    21300360: ItemIcons_180
+    21300362: ItemIcons_181
+    21300364: ItemIcons_182
+    21300366: ItemIcons_183
+    21300368: ItemIcons_184
+    21300370: ItemIcons_185
+    21300372: ItemIcons_186
+    21300374: ItemIcons_187
+    21300376: ItemIcons_188
+    21300378: ItemIcons_189
+    21300380: ItemIcons_190
+    21300382: ItemIcons_191
+    21300384: ItemIcons_192
+    21300386: ItemIcons_193
+    21300388: ItemIcons_194
+    21300390: ItemIcons_195
+    21300392: ItemIcons_196
+    21300394: ItemIcons_197
+    21300396: ItemIcons_198
+    21300398: ItemIcons_199
+    21300400: ItemIcons_200
+    21300402: ItemIcons_201
+    21300404: ItemIcons_202
+    21300406: ItemIcons_203
+    21300408: ItemIcons_204
+    21300410: ItemIcons_205
+    21300412: ItemIcons_206
+    21300414: ItemIcons_207
+    21300416: ItemIcons_208
+    21300418: ItemIcons_209
+    21300420: ItemIcons_210
+    21300422: ItemIcons_211
+    21300424: ItemIcons_212
+    21300426: ItemIcons_213
+    21300428: ItemIcons_214
+    21300430: ItemIcons_215
+    21300432: ItemIcons_216
+    21300434: ItemIcons_217
+    21300436: ItemIcons_218
+    21300438: ItemIcons_219
+    21300440: ItemIcons_220
+    21300442: ItemIcons_221
+    21300444: ItemIcons_222
+    21300446: ItemIcons_223
+    21300448: ItemIcons_224
+    21300450: ItemIcons_225
+    21300452: ItemIcons_226
+    21300454: ItemIcons_227
+    21300456: ItemIcons_228
+    21300458: ItemIcons_229
+    21300460: ItemIcons_230
+    21300462: ItemIcons_231
+    21300464: ItemIcons_232
+    21300466: ItemIcons_233
+    21300468: ItemIcons_234
+    21300470: ItemIcons_235
+    21300472: ItemIcons_236
+    21300474: ItemIcons_237
+    21300476: ItemIcons_238
+    21300478: ItemIcons_239
+    21300480: ItemIcons_240
+    21300482: ItemIcons_241
+    21300484: ItemIcons_242
+    21300486: ItemIcons_243
+    21300488: ItemIcons_244
+    21300490: ItemIcons_245
+    21300492: ItemIcons_246
+    21300494: ItemIcons_247
+    21300496: ItemIcons_248
+    21300498: ItemIcons_249
+    21300500: ItemIcons_250
+    21300502: ItemIcons_251
+    21300504: ItemIcons_252
+    21300506: ItemIcons_253
+    21300508: ItemIcons_254
+    21300510: ItemIcons_255
+    21300512: ItemIcons_256
+    21300514: ItemIcons_257
+    21300516: ItemIcons_258
+    21300518: ItemIcons_259
+    21300520: ItemIcons_260
+    21300522: ItemIcons_261
+    21300524: ItemIcons_262
+    21300526: ItemIcons_263
+    21300528: ItemIcons_264
+    21300530: ItemIcons_265
+    21300532: ItemIcons_266
+    21300534: ItemIcons_267
+    21300536: ItemIcons_268
+    21300538: ItemIcons_269
+    21300540: ItemIcons_270
+    21300542: ItemIcons_271
+    21300544: ItemIcons_272
+    21300546: ItemIcons_273
+    21300548: ItemIcons_274
+    21300550: ItemIcons_275
+    21300552: ItemIcons_276
+    21300554: ItemIcons_277
+    21300556: ItemIcons_278
+    21300558: ItemIcons_279
+    21300560: ItemIcons_280
+    21300562: ItemIcons_281
+    21300564: ItemIcons_282
+    21300566: ItemIcons_283
+    21300568: ItemIcons_284
+    21300570: ItemIcons_285
+    21300572: ItemIcons_286
+    21300574: ItemIcons_287
+    21300576: ItemIcons_288
+    21300578: ItemIcons_289
+    21300580: ItemIcons_290
+    21300582: ItemIcons_291
+    21300584: ItemIcons_292
+    21300586: ItemIcons_293
+    21300588: ItemIcons_294
+    21300590: ItemIcons_295
+    21300592: ItemIcons_296
+    21300594: ItemIcons_297
+    21300596: ItemIcons_298
+    21300598: ItemIcons_299
+    21300600: ItemIcons_300
+    21300602: ItemIcons_301
+    21300604: ItemIcons_302
+    21300606: ItemIcons_303
+    21300608: ItemIcons_304
+    21300610: ItemIcons_305
+    21300612: ItemIcons_306
+    21300614: ItemIcons_307
+    21300616: ItemIcons_308
+    21300618: ItemIcons_309
+    21300620: ItemIcons_310
+    21300622: ItemIcons_311
+    21300624: ItemIcons_312
+    21300626: ItemIcons_313
+    21300628: ItemIcons_314
+    21300630: ItemIcons_315
+    21300632: ItemIcons_316
+    21300634: ItemIcons_317
+    21300636: ItemIcons_318
+    21300638: ItemIcons_319
+    21300640: ItemIcons_320
+    21300642: ItemIcons_321
+    21300644: ItemIcons_322
+    21300646: ItemIcons_323
+    21300648: ItemIcons_324
+    21300650: ItemIcons_325
+    21300652: ItemIcons_326
+    21300654: ItemIcons_327
+    21300656: ItemIcons_328
+    21300658: ItemIcons_329
+    21300660: ItemIcons_330
+    21300662: ItemIcons_331
+    21300664: ItemIcons_332
+    21300666: ItemIcons_333
+    21300668: ItemIcons_334
+    21300670: ItemIcons_335
+    21300672: ItemIcons_336
+    21300674: ItemIcons_337
+    21300676: ItemIcons_338
+    21300678: ItemIcons_339
+    21300680: ItemIcons_340
+    21300682: ItemIcons_341
+    21300684: ItemIcons_342
+    21300686: ItemIcons_343
+    21300688: ItemIcons_344
+    21300690: ItemIcons_345
+    21300692: ItemIcons_346
+    21300694: ItemIcons_347
+    21300696: ItemIcons_348
+    21300698: ItemIcons_349
+    21300700: ItemIcons_350
+    21300702: ItemIcons_351
+    21300704: ItemIcons_352
+    21300706: ItemIcons_353
+    21300708: ItemIcons_354
+    21300710: ItemIcons_355
+    21300712: ItemIcons_356
+    21300714: ItemIcons_357
+    21300716: ItemIcons_358
+    21300718: ItemIcons_359
+    21300720: ItemIcons_360
+    21300722: ItemIcons_361
+    21300724: ItemIcons_362
+    21300726: ItemIcons_363
+    21300728: ItemIcons_364
+    21300730: ItemIcons_365
+    21300732: ItemIcons_366
+    21300734: ItemIcons_367
+    21300736: ItemIcons_368
+    21300738: ItemIcons_369
+    21300740: ItemIcons_370
+    21300742: ItemIcons_371
+    21300744: ItemIcons_372
+    21300746: ItemIcons_373
+    21300748: ItemIcons_374
+    21300750: ItemIcons_375
+    21300752: ItemIcons_376
+    21300754: ItemIcons_377
+    21300756: ItemIcons_378
+    21300758: ItemIcons_379
+    21300760: ItemIcons_380
+    21300762: ItemIcons_381
+    21300764: ItemIcons_382
+    21300766: ItemIcons_383
+    21300768: ItemIcons_384
+    21300770: ItemIcons_385
+    21300772: ItemIcons_386
+    21300774: ItemIcons_387
+    21300776: ItemIcons_388
+    21300778: ItemIcons_389
+    21300780: ItemIcons_390
+    21300782: ItemIcons_391
+    21300784: ItemIcons_392
+    21300786: ItemIcons_393
+    21300788: ItemIcons_394
+    21300790: ItemIcons_395
+    21300792: ItemIcons_396
+    21300794: ItemIcons_397
+    21300796: ItemIcons_398
+    21300798: ItemIcons_399
+    21300800: ItemIcons_400
+    21300802: ItemIcons_401
+    21300804: ItemIcons_402
+    21300806: ItemIcons_403
+    21300808: ItemIcons_404
+    21300810: ItemIcons_405
+    21300812: ItemIcons_406
+    21300814: ItemIcons_407
+    21300816: ItemIcons_408
+    21300818: ItemIcons_409
+    21300820: ItemIcons_410
+    21300822: ItemIcons_411
+    21300824: ItemIcons_412
+    21300826: ItemIcons_413
+    21300828: ItemIcons_414
+    21300830: ItemIcons_415
+    21300832: ItemIcons_416
+    21300834: ItemIcons_417
+    21300836: ItemIcons_418
+    21300838: ItemIcons_419
+    21300840: ItemIcons_420
+    21300842: ItemIcons_421
+    21300844: ItemIcons_422
+    21300846: ItemIcons_423
+    21300848: ItemIcons_424
+    21300850: ItemIcons_425
+    21300852: ItemIcons_426
+    21300854: ItemIcons_427
+    21300856: ItemIcons_428
+    21300858: ItemIcons_429
+    21300860: ItemIcons_430
+    21300862: ItemIcons_431
+    21300864: ItemIcons_432
+    21300866: ItemIcons_433
+    21300868: ItemIcons_434
+    21300870: ItemIcons_435
+    21300872: ItemIcons_436
+    21300874: ItemIcons_437
+    21300876: ItemIcons_438
+    21300878: ItemIcons_439
+    21300880: ItemIcons_440
+    21300882: ItemIcons_441
+    21300884: ItemIcons_442
+    21300886: ItemIcons_443
+    21300888: ItemIcons_444
+    21300890: ItemIcons_445
+    21300892: ItemIcons_446
+    21300894: ItemIcons_447
+    21300896: ItemIcons_448
+    21300898: ItemIcons_449
+    21300900: ItemIcons_450
+    21300902: ItemIcons_451
+    21300904: ItemIcons_452
+    21300906: ItemIcons_453
+    21300908: ItemIcons_454
+    21300910: ItemIcons_455
+    21300912: ItemIcons_456
+    21300914: ItemIcons_457
+    21300916: ItemIcons_458
+    21300918: ItemIcons_459
+    21300920: ItemIcons_460
+    21300922: ItemIcons_461
+    21300924: ItemIcons_462
+    21300926: ItemIcons_463
+    21300928: ItemIcons_464
+    21300930: ItemIcons_465
+    21300932: ItemIcons_466
+    21300934: ItemIcons_467
+    21300936: ItemIcons_468
+    21300938: ItemIcons_469
+    21300940: ItemIcons_470
+    21300942: ItemIcons_471
+    21300944: ItemIcons_472
+    21300946: ItemIcons_473
+    21300948: ItemIcons_474
+    21300950: ItemIcons_475
+    21300952: ItemIcons_476
+    21300954: ItemIcons_477
+    21300956: ItemIcons_478
+    21300958: ItemIcons_479
+    21300960: ItemIcons_480
+    21300962: ItemIcons_481
+    21300964: ItemIcons_482
+    21300966: ItemIcons_483
+    21300968: ItemIcons_484
+    21300970: ItemIcons_485
+    21300972: ItemIcons_486
+    21300974: ItemIcons_487
+    21300976: ItemIcons_488
+    21300978: ItemIcons_489
+    21300980: ItemIcons_490
+    21300982: ItemIcons_491
+    21300984: ItemIcons_492
+    21300986: ItemIcons_493
+    21300988: ItemIcons_494
+    21300990: ItemIcons_495
+    21300992: ItemIcons_496
+    21300994: ItemIcons_497
+    21300996: ItemIcons_498
+    21300998: ItemIcons_499
+    21301000: ItemIcons_500
+    21301002: ItemIcons_501
+    21301004: ItemIcons_502
+    21301006: ItemIcons_503
+    21301008: ItemIcons_504
+    21301010: ItemIcons_505
+    21301012: ItemIcons_506
+    21301014: ItemIcons_507
+    21301016: ItemIcons_508
+    21301018: ItemIcons_509
+    21301020: ItemIcons_510
+    21301022: ItemIcons_511
+    21301024: ItemIcons_512
+    21301026: ItemIcons_513
+    21301028: ItemIcons_514
+    21301030: ItemIcons_515
+    21301032: ItemIcons_516
+    21301034: ItemIcons_517
+    21301036: ItemIcons_518
+    21301038: ItemIcons_519
+    21301040: ItemIcons_520
+    21301042: ItemIcons_521
+    21301044: ItemIcons_522
+    21301046: ItemIcons_523
+    21301048: ItemIcons_524
+    21301050: ItemIcons_525
+    21301052: ItemIcons_526
+    21301054: ItemIcons_527
+    21301056: ItemIcons_528
+    21301058: ItemIcons_529
+    21301060: ItemIcons_530
+    21301062: ItemIcons_531
+    21301064: ItemIcons_532
+    21301066: ItemIcons_533
+    21301068: ItemIcons_534
+    21301070: ItemIcons_535
+    21301072: ItemIcons_536
+    21301074: ItemIcons_537
+    21301076: ItemIcons_538
+    21301078: ItemIcons_539
+    21301080: ItemIcons_540
+    21301082: ItemIcons_541
+    21301084: ItemIcons_542
+    21301086: ItemIcons_543
+    21301088: ItemIcons_544
+    21301090: ItemIcons_545
+    21301092: ItemIcons_546
+    21301094: ItemIcons_547
+    21301096: ItemIcons_548
+    21301098: ItemIcons_549
+    21301100: ItemIcons_550
+    21301102: ItemIcons_551
+    21301104: ItemIcons_552
+    21301106: ItemIcons_553
+    21301108: ItemIcons_554
+    21301110: ItemIcons_555
+    21301112: ItemIcons_556
+    21301114: ItemIcons_557
+    21301116: ItemIcons_558
+    21301118: ItemIcons_559
+    21301120: ItemIcons_560
+    21301122: ItemIcons_561
+    21301124: ItemIcons_562
+    21301126: ItemIcons_563
+    21301128: ItemIcons_564
+    21301130: ItemIcons_565
+    21301132: ItemIcons_566
+    21301134: ItemIcons_567
+    21301136: ItemIcons_568
+    21301138: ItemIcons_569
+    21301140: ItemIcons_570
+    21301142: ItemIcons_571
+    21301144: ItemIcons_572
+    21301146: ItemIcons_573
+    21301148: ItemIcons_574
+    21301150: ItemIcons_575
+    21301152: ItemIcons_576
+    21301154: ItemIcons_577
+    21301156: ItemIcons_578
+    21301158: ItemIcons_579
+    21301160: ItemIcons_580
+    21301162: ItemIcons_581
+    21301164: ItemIcons_582
+    21301166: ItemIcons_583
+    21301168: ItemIcons_584
+    21301170: ItemIcons_585
+    21301172: ItemIcons_586
+    21301174: ItemIcons_587
+    21301176: ItemIcons_588
+    21301178: ItemIcons_589
+    21301180: ItemIcons_590
+    21301182: ItemIcons_591
+    21301184: ItemIcons_592
+    21301186: ItemIcons_593
+    21301188: ItemIcons_594
+    21301190: ItemIcons_595
+    21301192: ItemIcons_596
+    21301194: ItemIcons_597
+    21301196: ItemIcons_598
+    21301198: ItemIcons_599
+    21301200: ItemIcons_600
+    21301202: ItemIcons_601
+    21301204: ItemIcons_602
+    21301206: ItemIcons_603
+    21301208: ItemIcons_604
+    21301210: ItemIcons_605
+    21301212: ItemIcons_606
+    21301214: ItemIcons_607
+    21301216: ItemIcons_608
+    21301218: ItemIcons_609
+    21301220: ItemIcons_610
+    21301222: ItemIcons_611
+    21301224: ItemIcons_612
+    21301226: ItemIcons_613
+    21301228: ItemIcons_614
+    21301230: ItemIcons_615
+    21301232: ItemIcons_616
+    21301234: ItemIcons_617
+    21301236: ItemIcons_618
+    21301238: ItemIcons_619
+    21301240: ItemIcons_620
+    21301242: ItemIcons_621
+    21301244: ItemIcons_622
+    21301246: ItemIcons_623
+    21301248: ItemIcons_624
+    21301250: ItemIcons_625
+    21301252: ItemIcons_626
+    21301254: ItemIcons_627
+    21301256: ItemIcons_628
+    21301258: ItemIcons_629
+    21301260: ItemIcons_630
+    21301262: ItemIcons_631
+    21301264: ItemIcons_632
+    21301266: ItemIcons_633
+    21301268: ItemIcons_634
+    21301270: ItemIcons_635
+    21301272: ItemIcons_636
+    21301274: ItemIcons_637
+    21301276: ItemIcons_638
+    21301278: ItemIcons_639
+    21301280: ItemIcons_640
+    21301282: ItemIcons_641
+    21301284: ItemIcons_642
+    21301286: ItemIcons_643
+    21301288: ItemIcons_644
+    21301290: ItemIcons_645
+    21301292: ItemIcons_646
+    21301294: ItemIcons_647
+    21301296: ItemIcons_648
+    21301298: ItemIcons_649
+    21301300: ItemIcons_650
+    21301302: ItemIcons_651
+    21301304: ItemIcons_652
+    21301306: ItemIcons_653
+    21301308: ItemIcons_654
+    21301310: ItemIcons_655
+    21301312: ItemIcons_656
+    21301314: ItemIcons_657
+    21301316: ItemIcons_658
+    21301318: ItemIcons_659
+    21301320: ItemIcons_660
+    21301322: ItemIcons_661
+    21301324: ItemIcons_662
+    21301326: ItemIcons_663
+    21301328: ItemIcons_664
+    21301330: ItemIcons_665
+    21301332: ItemIcons_666
+    21301334: ItemIcons_667
+    21301336: ItemIcons_668
+    21301338: ItemIcons_669
+    21301340: ItemIcons_670
+    21301342: ItemIcons_671
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: ItemIcons_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_8
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 548
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_10
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_11
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_12
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_13
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_14
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_15
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_16
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_17
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 484
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_19
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_20
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_21
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_22
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_23
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_24
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_25
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_26
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 420
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_28
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_29
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_30
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_31
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_32
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_33
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_34
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_35
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 356
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_37
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_38
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_39
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_40
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_41
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_42
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_43
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_44
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 292
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_46
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_47
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_48
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_49
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_50
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_51
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_52
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_53
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 228
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_55
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_56
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_57
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_58
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_59
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_60
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_61
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_62
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 164
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_63
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_64
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_65
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_66
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_67
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_68
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_69
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_70
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_71
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 100
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_73
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_74
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_75
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_76
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_77
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_78
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_79
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ItemIcons_80
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 36
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
