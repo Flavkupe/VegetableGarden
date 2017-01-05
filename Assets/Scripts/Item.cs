@@ -50,7 +50,7 @@ public class Item : MonoBehaviour
         }       
         else 
         {
-            if (this.Cost > GameManager.Instance.Cash)
+            if (this.Cost > PlayerManager.Instance.Cash)
             {
                 this.sprite.color = Color.red;
             }
@@ -91,18 +91,6 @@ public class Item : MonoBehaviour
                 this.TriggerEffect();
                 this.CurrentCooldown = this.Cooldown;
                 this.sprite.color = Color.black;
-            }
-        }
-        else
-        {
-            if (GameManager.Instance.Cash >= this.Cost)
-            {
-                GameManager.Instance.PurchaseItem(this);
-                this.Purchased = true;
-            }
-            else
-            {
-                GameManager.Instance.PlaySound(SoundEffects.Error);
             }
         }
     }

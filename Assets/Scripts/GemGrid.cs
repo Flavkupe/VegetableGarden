@@ -253,7 +253,7 @@ public class GemGrid : MonoBehaviour
                 this.RemoveGem(match);
             }
 
-            GameManager.Instance.PlaySound(SoundEffects.Pop);
+            SoundManager.Instance.PlaySound(SoundEffects.Pop);
 
             this.DropRows();
 
@@ -308,24 +308,17 @@ public class GemGrid : MonoBehaviour
 
     private void ProcessMatchRewards(List<Gem> matches)
     {
-        try
-        {
-            // Calculate score, raise score bubble
-            int scoreValue = GameManager.Instance.GetScoreValue(matches);
-            int cashValue = GameManager.Instance.GetCashValue(matches);
-            float averageMatchX = matches.Average(a => a.transform.localPosition.x);
-            float averageMatchY = matches.Average(a => a.transform.localPosition.y);
-            float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
-            float offsetX = averageMatchX + randomOffset;
-            GameManager.Instance.UpdateScore(scoreValue);
-            GameManager.Instance.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.gameObject);
-            GameManager.Instance.UpdateCash(cashValue);
-            GameManager.Instance.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.gameObject, Color.yellow);
-        }
-        catch (Exception ex)
-        {
-            if (ex == null) { }
-        }
+        // Calculate score, raise score bubble
+        int scoreValue = GameManager.Instance.GetScoreValue(matches);
+        int cashValue = GameManager.Instance.GetCashValue(matches);
+        float averageMatchX = matches.Average(a => a.transform.localPosition.x);
+        float averageMatchY = matches.Average(a => a.transform.localPosition.y);
+        float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
+        float offsetX = averageMatchX + randomOffset;
+        GameManager.Instance.UpdateScore(scoreValue);
+        GameManager.Instance.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.gameObject);
+        GameManager.Instance.UpdateCash(cashValue);
+        GameManager.Instance.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.gameObject, Color.yellow);
     }
 
     private void DropRows()

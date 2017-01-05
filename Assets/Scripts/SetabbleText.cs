@@ -13,9 +13,9 @@ public class SetabbleText : MonoBehaviour
         shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<Text>();
     }
 
-	void Start () 
+	void Awake() 
     {
-        this.InitializeTextObjects();
+        this.InitializeTextObjects();                
 	}
 	
 	void Update () 
@@ -25,6 +25,11 @@ public class SetabbleText : MonoBehaviour
 
     public void SetText(string score)
     {
+        if (textObject == null)
+        {
+            InitializeTextObjects();
+        }
+
         if (textObject != null)
         {
             textObject.text = score;

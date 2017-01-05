@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class StartMenuManager : MonoBehaviour 
 {
@@ -22,7 +23,8 @@ public class StartMenuManager : MonoBehaviour
 	}
 
     public void StartGame()
-    {
-        Application.LoadLevel("Main");
+    {        
+        //Scene scene = SceneManager.GetSceneByName("Main");        
+        SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }
 }

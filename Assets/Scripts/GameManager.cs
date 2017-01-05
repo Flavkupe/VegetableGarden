@@ -3,26 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     private int score = 0;
-    private int cash = 0;
-    private int currentLevel = 0;
-    
-    private SetabbleText ScoreUI = null;
-    private SetabbleText CashUI = null;
-    private SetabbleText TimerUI = null;
-    private Tooltip TooltipUI = null;    
-    private Camera MainCamera = null;
-    private AudioSource SoundSource = null;
 
-    private ItemPane InventoryPane = null;
-    private ItemPane ShopPane = null;
+    public SetabbleText ScoreUI = null;
+    public SetabbleText CashUI = null;
+    public SetabbleText TimerUI = null;
+    public Tooltip TooltipUI = null;    
+    public Camera MainCamera = null;
 
-    public AudioClip PopSound;
-    public AudioClip BuzzerSound;
-    public AudioClip KachinkSound;
+    public ItemPane InventoryPane = null;
+
     public LevelGoalSign GoalBillboard;
     public SpriteRenderer ScreenTint;
     public GameObject Sparkles;
@@ -35,9 +29,7 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<string, GameObject> resourceMap = new Dictionary<string, GameObject>();
 
-    private TimeSpan gameTimer = new TimeSpan();
-    
-    private List<Item> warehouseInventory = new List<Item>();    
+    private TimeSpan gameTimer = new TimeSpan();   
 
     private static GameManager instance = null;
     private  bool isPaused = false;    
@@ -45,11 +37,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance
     {
         get { return instance; }
-    }
-
-    public int Cash
-    {
-        get { return cash; }
     }
 
     public Tooltip Tooltip
@@ -66,14 +53,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-        ScoreUI = GameObject.FindGameObjectWithTag("ScoreUI").GetComponent<SetabbleText>();
-        CashUI = GameObject.FindGameObjectWithTag("CashUI").GetComponent<SetabbleText>();
-        TimerUI = GameObject.FindGameObjectWithTag("TimeUI").GetComponent<SetabbleText>();
-        TooltipUI = GameObject.FindGameObjectWithTag("TooltipUI").GetComponent<Tooltip>();
-        InventoryPane = GameObject.FindGameObjectWithTag("InventoryPane").GetComponent<ItemPane>();
-        ShopPane = GameObject.FindGameObjectWithTag("ShopPane").GetComponent<ItemPane>();
         MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        SoundSource = MainCamera.GetComponent<AudioSource>();
         this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;
     }
 
@@ -85,19 +65,19 @@ public class GameManager : MonoBehaviour
     private void InitializeRound()
     {        
         this.ScreenTint.gameObject.SetActive(true);   
-        if (currentLevel == this.LevelGoals.Length) 
+        if (PlayerManager.Instance.CurrentLevel == this.LevelGoals.Length) 
         {
             this.GotoMenu();
             return;
         }
 
-        LevelGoal goal = this.LevelGoals[currentLevel];
+        LevelGoal goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
         this.Grid.PopulateGrid(goal.MaxGems);
         this.SetGameTimeLimit(goal.Time);
         this.SetScore(goal.ScoreGoal);        
         this.GoalBillboard.SetGoal(new LevelGoal(goal.ScoreGoal, goal.Time));
         TooltipUI.SetVisible(false);
-        this.LoadItemsFromResources();              
+        //this.LoadItemsFromResources();              
         this.StartCoroutine(this.GoalBillboard.Animate());
     }
 
@@ -106,19 +86,14 @@ public class GameManager : MonoBehaviour
         this.ScreenTint.gameObject.SetActive(false);   
     }
 
-    private void LoadItemsFromResources()
-    {
-        GameObject[] objects = Resources.LoadAll<GameObject>("Prefabs/Items");
-        foreach (GameObject obj in objects)
-        {
-            GameObject instance = Instantiate(obj);
-            this.ShopPane.AddItem(instance.GetComponent<Item>());
-        }
-    }
-
     void GotoMenu() 
     {
-        Application.LoadLevel("StartMenu");
+        SceneManager.LoadScene("StartMenu");            
+    }
+
+    void DoShop()
+    {        
+        SceneManager.LoadScene("Shop", LoadSceneMode.Single);               
     }
 
     // Update is called once per frame
@@ -132,11 +107,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (this.score <= 0)
+        if (this.score <= 0 && this.Grid.CanMakeMove())
         {
             // TODO: show message
-            this.currentLevel++;            
-            this.InitializeRound();
+            PlayerManager.Instance.CurrentLevel++;            
+            this.DoShop();
             return;
         }
 
@@ -191,8 +166,8 @@ public class GameManager : MonoBehaviour
 
     public void UpdateCash(int increment)
     {
-        cash += increment;
-        this.CashUI.SetText(cash.ToString());
+        PlayerManager.Instance.Cash += increment;
+        this.CashUI.SetText(PlayerManager.Instance.Cash.ToString());
     }
 
     public int GetScoreValue(List<Gem> matches)
@@ -224,24 +199,6 @@ public class GameManager : MonoBehaviour
         return matches.Count + matches.Count(a => a.IsGlowing);
     }
 
-    public void PlaySound(SoundEffects soundEffect)
-    {
-        switch (soundEffect)
-        {
-            case SoundEffects.Pop:
-                SoundSource.PlayOneShot(this.PopSound);
-                break;
-            case SoundEffects.Error:
-                SoundSource.PlayOneShot(this.BuzzerSound);
-                break;
-            case SoundEffects.Kachink:
-                SoundSource.PlayOneShot(this.KachinkSound);
-                break;
-            default:
-                break;
-        }
-    }
-
     public FloatyText GenerateFloatyTextAt(string text, float x, float y, GameObject parent = null, Color? color = null)
     {
         GameObject obj = this.GetFromResources("Prefabs/FloatyScore");
@@ -256,23 +213,6 @@ public class GameManager : MonoBehaviour
         newInstance.transform.localPosition = new Vector3(x, y, -5);
         return floatyText;
     }
-
-
-
-    public void PurchaseItem(Item item)
-    {
-        this.PlaySound(SoundEffects.Kachink);
-        this.cash -= item.Cost;
-        this.ShopPane.RemoveItem(item);
-        this.InventoryPane.AddItem(item);
-    }
-}
-
-public enum SoundEffects
-{
-    Pop,
-    Error,
-    Kachink
 }
 
 [Serializable]

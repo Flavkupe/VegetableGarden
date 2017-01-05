@@ -14,7 +14,8 @@ public class Tooltip : MonoBehaviour
         this.desc = this.transform.FindChild("Desc").GetComponent<Text>();
         this.cooldown = this.transform.FindChild("Cooldown").GetComponent<Text>();
         this.cost = this.transform.FindChild("CostShadow").GetComponent<SetabbleText>();
-	}
+        SetVisible(false);
+    }
 	
 	// Update is called once per frame
 	void Update () 

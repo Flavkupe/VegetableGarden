@@ -156,7 +156,6 @@ public class Gem : MonoBehaviour
 
     public IEnumerator Vanish()
     {
-        
         while (true)
         {            
             if (this.gameObject != null)
