@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d704ed2ddbdabb84bbbac9cf2ed6515f
-timeCreated: 1449365881
+timeCreated: 1483589018
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -676,12 +676,12 @@ TextureImporter:
     21301338: ItemIcons_669
     21301340: ItemIcons_670
     21301342: ItemIcons_671
-  serializedVersion: 2
+  serializedVersion: 4
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
+    sRGBTexture: 1
     linearTexture: 0
-    correctGamma: 0
     fadeOut: 0
     borderMipMap: 0
     mipMapFadeDistanceStart: 1
@@ -689,14 +689,12 @@ TextureImporter:
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
-    heightScale: .25
+    heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
-  generateCubemap: 0
+  generateCubemap: 6
   cubemapConvolution: 0
-  cubemapConvolutionSteps: 8
-  cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -1
   maxTextureSize: 2048
@@ -707,22 +705,52 @@ TextureImporter:
     wrapMode: 1
   nPOTScale: 0
   lightmap: 0
-  rGBM: 0
   compressionQuality: 50
-  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-  spritePivot: {x: .5, y: .5}
+  spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
+  alphaUsage: 1
   alphaIsTransparency: 1
+  spriteTessellationDetail: -1
   textureType: 8
-  buildTargetSettings: []
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Android
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
   spriteSheet:
+    serializedVersion: 2
     sprites:
-    - name: ItemIcons_0
+    - serializedVersion: 2
+      name: ItemIcons_0
       rect:
         serializedVersion: 2
         x: 0
@@ -730,9 +758,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_1
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_1
       rect:
         serializedVersion: 2
         x: 64
@@ -740,9 +771,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_2
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_2
       rect:
         serializedVersion: 2
         x: 128
@@ -752,7 +786,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_3
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_3
       rect:
         serializedVersion: 2
         x: 192
@@ -762,7 +799,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_4
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_4
       rect:
         serializedVersion: 2
         x: 256
@@ -772,7 +812,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_5
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_5
       rect:
         serializedVersion: 2
         x: 320
@@ -782,7 +825,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_6
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_6
       rect:
         serializedVersion: 2
         x: 384
@@ -792,7 +838,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_7
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_7
       rect:
         serializedVersion: 2
         x: 448
@@ -802,7 +851,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_8
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_8
       rect:
         serializedVersion: 2
         x: 512
@@ -812,7 +864,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_9
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_9
       rect:
         serializedVersion: 2
         x: 0
@@ -820,9 +875,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_10
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_10
       rect:
         serializedVersion: 2
         x: 64
@@ -832,7 +890,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_11
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_11
       rect:
         serializedVersion: 2
         x: 128
@@ -840,9 +901,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_12
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_12
       rect:
         serializedVersion: 2
         x: 192
@@ -852,7 +916,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_13
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_13
       rect:
         serializedVersion: 2
         x: 256
@@ -862,7 +929,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_14
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_14
       rect:
         serializedVersion: 2
         x: 320
@@ -872,7 +942,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_15
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_15
       rect:
         serializedVersion: 2
         x: 384
@@ -882,7 +955,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_16
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_16
       rect:
         serializedVersion: 2
         x: 448
@@ -890,9 +966,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_17
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_17
       rect:
         serializedVersion: 2
         x: 512
@@ -902,7 +981,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_18
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_18
       rect:
         serializedVersion: 2
         x: 0
@@ -912,7 +994,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_19
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_19
       rect:
         serializedVersion: 2
         x: 64
@@ -920,9 +1005,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_20
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_20
       rect:
         serializedVersion: 2
         x: 128
@@ -930,9 +1018,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_21
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_21
       rect:
         serializedVersion: 2
         x: 192
@@ -942,7 +1033,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_22
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_22
       rect:
         serializedVersion: 2
         x: 256
@@ -952,7 +1046,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_23
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_23
       rect:
         serializedVersion: 2
         x: 320
@@ -962,7 +1059,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_24
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_24
       rect:
         serializedVersion: 2
         x: 384
@@ -972,7 +1072,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_25
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_25
       rect:
         serializedVersion: 2
         x: 448
@@ -982,7 +1085,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_26
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_26
       rect:
         serializedVersion: 2
         x: 512
@@ -992,7 +1098,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_27
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_27
       rect:
         serializedVersion: 2
         x: 0
@@ -1002,7 +1111,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_28
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_28
       rect:
         serializedVersion: 2
         x: 64
@@ -1012,7 +1124,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_29
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_29
       rect:
         serializedVersion: 2
         x: 128
@@ -1022,7 +1137,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_30
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_30
       rect:
         serializedVersion: 2
         x: 192
@@ -1032,7 +1150,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_31
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_31
       rect:
         serializedVersion: 2
         x: 256
@@ -1042,7 +1163,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_32
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_32
       rect:
         serializedVersion: 2
         x: 320
@@ -1052,7 +1176,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_33
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_33
       rect:
         serializedVersion: 2
         x: 384
@@ -1062,7 +1189,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_34
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_34
       rect:
         serializedVersion: 2
         x: 448
@@ -1072,7 +1202,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_35
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_35
       rect:
         serializedVersion: 2
         x: 512
@@ -1082,7 +1215,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_36
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_36
       rect:
         serializedVersion: 2
         x: 0
@@ -1092,7 +1228,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_37
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_37
       rect:
         serializedVersion: 2
         x: 64
@@ -1102,7 +1241,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_38
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_38
       rect:
         serializedVersion: 2
         x: 128
@@ -1112,7 +1254,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_39
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_39
       rect:
         serializedVersion: 2
         x: 192
@@ -1122,7 +1267,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_40
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_40
       rect:
         serializedVersion: 2
         x: 256
@@ -1132,7 +1280,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_41
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_41
       rect:
         serializedVersion: 2
         x: 320
@@ -1140,9 +1291,12 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_42
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_42
       rect:
         serializedVersion: 2
         x: 384
@@ -1152,7 +1306,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_43
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_43
       rect:
         serializedVersion: 2
         x: 448
@@ -1162,7 +1319,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_44
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_44
       rect:
         serializedVersion: 2
         x: 512
@@ -1172,7 +1332,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_45
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_45
       rect:
         serializedVersion: 2
         x: 0
@@ -1182,7 +1345,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_46
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_46
       rect:
         serializedVersion: 2
         x: 64
@@ -1192,7 +1358,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_47
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_47
       rect:
         serializedVersion: 2
         x: 128
@@ -1202,7 +1371,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_48
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_48
       rect:
         serializedVersion: 2
         x: 192
@@ -1212,7 +1384,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_49
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_49
       rect:
         serializedVersion: 2
         x: 256
@@ -1222,7 +1397,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_50
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_50
       rect:
         serializedVersion: 2
         x: 320
@@ -1232,7 +1410,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_51
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_51
       rect:
         serializedVersion: 2
         x: 384
@@ -1242,7 +1423,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_52
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_52
       rect:
         serializedVersion: 2
         x: 448
@@ -1252,7 +1436,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_53
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_53
       rect:
         serializedVersion: 2
         x: 512
@@ -1262,7 +1449,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_54
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_54
       rect:
         serializedVersion: 2
         x: 0
@@ -1272,7 +1462,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_55
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_55
       rect:
         serializedVersion: 2
         x: 64
@@ -1282,7 +1475,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_56
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_56
       rect:
         serializedVersion: 2
         x: 128
@@ -1292,7 +1488,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_57
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_57
       rect:
         serializedVersion: 2
         x: 192
@@ -1302,7 +1501,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_58
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_58
       rect:
         serializedVersion: 2
         x: 256
@@ -1312,7 +1514,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_59
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_59
       rect:
         serializedVersion: 2
         x: 320
@@ -1322,7 +1527,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_60
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_60
       rect:
         serializedVersion: 2
         x: 384
@@ -1332,7 +1540,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_61
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_61
       rect:
         serializedVersion: 2
         x: 448
@@ -1342,7 +1553,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_62
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_62
       rect:
         serializedVersion: 2
         x: 512
@@ -1352,7 +1566,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_63
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_63
       rect:
         serializedVersion: 2
         x: 0
@@ -1362,7 +1579,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_64
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_64
       rect:
         serializedVersion: 2
         x: 64
@@ -1372,7 +1592,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_65
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_65
       rect:
         serializedVersion: 2
         x: 128
@@ -1382,7 +1605,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_66
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_66
       rect:
         serializedVersion: 2
         x: 192
@@ -1392,7 +1618,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_67
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_67
       rect:
         serializedVersion: 2
         x: 256
@@ -1402,7 +1631,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_68
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_68
       rect:
         serializedVersion: 2
         x: 320
@@ -1412,7 +1644,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_69
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_69
       rect:
         serializedVersion: 2
         x: 384
@@ -1422,7 +1657,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_70
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_70
       rect:
         serializedVersion: 2
         x: 448
@@ -1432,7 +1670,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_71
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_71
       rect:
         serializedVersion: 2
         x: 512
@@ -1442,7 +1683,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_72
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_72
       rect:
         serializedVersion: 2
         x: 0
@@ -1452,7 +1696,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_73
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_73
       rect:
         serializedVersion: 2
         x: 64
@@ -1462,7 +1709,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_74
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_74
       rect:
         serializedVersion: 2
         x: 128
@@ -1472,7 +1722,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_75
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_75
       rect:
         serializedVersion: 2
         x: 192
@@ -1482,7 +1735,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_76
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_76
       rect:
         serializedVersion: 2
         x: 256
@@ -1492,7 +1748,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_77
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_77
       rect:
         serializedVersion: 2
         x: 320
@@ -1502,7 +1761,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_78
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_78
       rect:
         serializedVersion: 2
         x: 384
@@ -1512,7 +1774,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_79
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_79
       rect:
         serializedVersion: 2
         x: 448
@@ -1522,7 +1787,10 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: ItemIcons_80
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ItemIcons_80
       rect:
         serializedVersion: 2
         x: 512
@@ -1532,6 +1800,9 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    outline: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

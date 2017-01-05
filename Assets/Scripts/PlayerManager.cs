@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ public class PlayerManager : MonoBehaviour {
     public int Cash;
 
     public int CurrentLevel;
+
+    public List<Item> Inventory { get { return this.inventory; } }
 
     // Use this for initialization
     void Awake() {
@@ -31,15 +34,58 @@ public class PlayerManager : MonoBehaviour {
         get { return instance; }
     }
 
-    public void AddItem(Item item)
-    {
-        this.inventory.Add(item);
+    public void PurchaseItem(Item item)
+    {        
+        this.Cash -= item.Cost;
+        if (item.IsInstantUse)
+        {
+            this.ApplyInstantItem(item);
+        }
+        else
+        {
+            this.AddItem(item);
+        }
     }
 
-    public void PurchaseItem(Item item)
+    public int GoldGainBonus = 0;
+    public float FastDropMultiplierBonus = 1.0f;
+    public float IrrigationDurationBonus = 0.0f;
+    public float SlowTimeMultiplierBonus = 1.0f;
+    public int IrrigationPointsBonus = 0;
+
+    public int PurpleGemBonus = 0;
+
+    private void ApplyInstantItem(Item item)
     {
-        //GameManager.Instance.PlaySound(SoundEffects.Kachink);
-        this.Cash -= item.Cost;
-        this.AddItem(item);
+        Item_PermanentEffect useItem = item as Item_PermanentEffect;
+        if (useItem != null)
+        {
+            switch (useItem.Effect)
+            {
+                case EffectType.ExtraGold:
+                    this.GoldGainBonus++;
+                    break;
+                case EffectType.FastDrop:
+                    this.FastDropMultiplierBonus++;
+                    break;
+                case EffectType.IrrigationDuration:
+                    this.IrrigationDurationBonus += 20.0f;
+                    break;
+                case EffectType.IrrigationPoints:
+                    this.IrrigationPointsBonus++;
+                    break;
+                case EffectType.SlowTime:
+                    this.SlowTimeMultiplierBonus *= 0.8f;
+                    break;
+                case EffectType.PurpleGemColorBonus:
+                    this.PurpleGemBonus++;
+                    break;
+            }
+        }
+    }
+
+    private void AddItem(Item item)
+    {
+        this.inventory.Add(item);
     }
 }

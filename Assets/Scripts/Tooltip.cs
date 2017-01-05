@@ -30,7 +30,11 @@ public class Tooltip : MonoBehaviour
     public void SetStats(string cost, string desc, string cooldown)
     {
         this.cost.SetText("$" + cost);
-        this.cooldown.text = "Cooldown: " +  cooldown;
+        if (cooldown != "0")
+        {
+            this.cooldown.text = "Cooldown: " + cooldown;
+        }
+
         this.desc.text = desc;
     }
 }

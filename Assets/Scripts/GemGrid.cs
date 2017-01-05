@@ -148,13 +148,18 @@ public class GemGrid : MonoBehaviour
         }
     }
 
+    public float GetTotalSlideSpeed()
+    {
+        return this.SLIDE_SPEED * PlayerManager.Instance.FastDropMultiplierBonus;
+    }
+
     public IEnumerator SlideGemTo(Gem gem, Vector3 destination)
     {                
         while (gem != null && gem.transform != null && 
               !gem.transform.localPosition.IsNear(destination)) 
         {
             gem.InTransition = true;
-            gem.transform.localPosition = Vector3.MoveTowards(gem.transform.localPosition, destination, Time.deltaTime * SLIDE_SPEED);
+            gem.transform.localPosition = Vector3.MoveTowards(gem.transform.localPosition, destination, Time.deltaTime * this.GetTotalSlideSpeed());
             yield return null;
         }
 
@@ -239,7 +244,7 @@ public class GemGrid : MonoBehaviour
 
             if (getRewards)
             {
-                ProcessMatchRewards(matches);
+                GameManager.Instance.ProcessMatchRewards(matches);
             }
             else
             {
@@ -304,22 +309,7 @@ public class GemGrid : MonoBehaviour
         }
 
         return matches;
-    }
-
-    private void ProcessMatchRewards(List<Gem> matches)
-    {
-        // Calculate score, raise score bubble
-        int scoreValue = GameManager.Instance.GetScoreValue(matches);
-        int cashValue = GameManager.Instance.GetCashValue(matches);
-        float averageMatchX = matches.Average(a => a.transform.localPosition.x);
-        float averageMatchY = matches.Average(a => a.transform.localPosition.y);
-        float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
-        float offsetX = averageMatchX + randomOffset;
-        GameManager.Instance.UpdateScore(scoreValue);
-        GameManager.Instance.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.gameObject);
-        GameManager.Instance.UpdateCash(cashValue);
-        GameManager.Instance.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.gameObject, Color.yellow);
-    }
+    }    
 
     private void DropRows()
     {
@@ -555,10 +545,26 @@ public class GemGrid : MonoBehaviour
         }
 
         gridMatchingIsActive = true;
+        List<Gem> toRemove = null;
+        if (gemColor == GemColor.Half)
+        {
+            toRemove = new List<Gem>(this.activeGems);
+            for (int i = 0; i < this.activeGems.Count / 2; ++i)
+            {
+                // Randomly remove half of the gems
+                Gem gem = toRemove.GetRandom();
+                toRemove.Remove(gem);
+            }
+        }
+        else
+        {
+            toRemove = this.activeGems.Where(a => a.GemColor == gemColor).ToList();
+        }
 
-        List<Gem> toRemove = this.activeGems.Where(a => a.GemColor == gemColor).ToList();
-
-        this.StartCoroutine(this.ProcessMatches(toRemove, false));
+        if (toRemove != null)
+        {
+            this.StartCoroutine(this.ProcessMatches(toRemove, false));
+        }
     }
 
     public IEnumerator MatchByColor(GemColor gemColor)

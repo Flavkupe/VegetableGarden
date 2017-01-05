@@ -15,8 +15,10 @@ public class FloatyText : MonoBehaviour
     {
         textObject = this.GetComponent<TextMesh>();
         shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
-        GameObject.Destroy(this.gameObject, 1.0f);        
-	}
+        GameObject.Destroy(this.gameObject, 1.0f);
+        textObject.GetComponent<Renderer>().sortingLayerName = "TopText";
+        shadowTextObject.GetComponent<Renderer>().sortingLayerName = "TopTextShadow";
+    }
 		
 	void Update () 
     {

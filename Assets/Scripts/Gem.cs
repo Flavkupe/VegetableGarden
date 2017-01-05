@@ -30,7 +30,9 @@ public enum GemColor
     Orange, // Punkin and Carrot
     Brown, // Onion, Potato
     Red, // Beet, Tomato
-    Purple // Eggplant
+    Purple, // Eggplant
+
+    Half // Any gems (half of board)
 }
 
 public class Gem : MonoBehaviour 
@@ -128,7 +130,7 @@ public class Gem : MonoBehaviour
     {
         if (!this.Grid.CanMakeMove())
         {
-            this.glowing = GameManager.Instance.GlowDuration;
+            this.glowing = GameManager.Instance.GetTotalGlowDuration();            
             this.sparkles.SetActive(true); 
             return;
         }

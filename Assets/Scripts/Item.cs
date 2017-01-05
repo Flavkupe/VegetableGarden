@@ -8,17 +8,20 @@ public class Item : MonoBehaviour
     public float Cooldown = 0.0f;
     public string Description = string.Empty;
     
-    protected float CurrentCooldown = 0.0f;
-
-    public bool Purchased = false;
+    protected float CurrentCooldown = 0.0f;    
 
     public GemGrid Grid = null;
 
     private SpriteRenderer sprite = null;
 
-    private TextOverSprite cooldownText = null;    
+    private TextOverSprite cooldownText = null;
 
-    void Awake()
+    public virtual bool IsInstantUse
+    {
+        get { return false; }
+    }
+
+void Awake()
     {        
     }
 
@@ -33,37 +36,18 @@ public class Item : MonoBehaviour
     }
 
     void Update()
-    {
-        if (this.Purchased)
+    {        
+        if (this.CurrentCooldown > 0.0f)
         {
-            if (this.CurrentCooldown > 0.0f)
+            this.CurrentCooldown -= Time.deltaTime;
+            this.cooldownText.SetText(((int)this.CurrentCooldown).ToString());
+            if (this.CurrentCooldown <= 0.0f)
             {
-                this.CurrentCooldown -= Time.deltaTime;
-                this.cooldownText.SetText(((int)this.CurrentCooldown).ToString());
-                if (this.CurrentCooldown <= 0.0f)
-                {
-                    this.cooldownText.SetText(string.Empty);
-                    this.CurrentCooldown = 0.0f;
-                    this.sprite.color = Color.white;
-                }
-            }
-        }       
-        else 
-        {
-            if (this.Cost > PlayerManager.Instance.Cash)
-            {
-                this.sprite.color = Color.red;
-            }
-            else
-            {
+                this.cooldownText.SetText(string.Empty);
+                this.CurrentCooldown = 0.0f;
                 this.sprite.color = Color.white;
             }
-        }
-    }
-
-    private void ProcessCooldown()
-    {
-        
+        }        
     }
 
     public virtual bool TriggerEffect()
@@ -83,15 +67,12 @@ public class Item : MonoBehaviour
     }
 
     protected virtual void ProcessMouseDown()
-    {
-        if (this.Purchased)
+    {        
+        if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
         {
-            if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
-            {
-                this.TriggerEffect();
-                this.CurrentCooldown = this.Cooldown;
-                this.sprite.color = Color.black;
-            }
-        }
+            this.TriggerEffect();
+            this.CurrentCooldown = this.Cooldown;
+            this.sprite.color = Color.black;
+        }        
     }
 }
