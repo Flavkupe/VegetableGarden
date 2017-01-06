@@ -96,12 +96,38 @@ public class GameManager : MonoBehaviour
 
     void GoalBillboard_DoneAnimating(object sender, EventArgs e)
     {
-        this.ScreenTint.gameObject.SetActive(false);   
+        this.ScreenTint.gameObject.SetActive(false);
     }
 
     void GotoMenu() 
     {
         SceneManager.LoadScene("StartMenu");            
+    }
+
+    public IEnumerator Lose()
+    {
+        this.ScreenTint.gameObject.SetActive(true);
+        this.GoalBillboard.SetLoss(5);
+        this.StartCoroutine(this.GoalBillboard.Animate());
+        while (this.IsPaused)
+        {
+            yield return null;
+        }
+
+        this.GotoMenu();
+    }
+
+    public IEnumerator BeatLevel()
+    {
+        this.ScreenTint.gameObject.SetActive(true);
+        this.GoalBillboard.SetSuccess();
+        this.StartCoroutine(this.GoalBillboard.Animate());        
+        while (this.IsPaused)
+        {
+            yield return null;
+        }
+
+        this.DoShop();
     }
 
     void DoShop()
@@ -112,22 +138,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.gameTimer.TotalSeconds <= 0.0f)
-        {
-            // Game over!
-            // TODO: show message
-            this.GotoMenu();
-            return;
-        }
-
-        if (this.score <= 0 && this.Grid.CanMakeMove())
-        {           
-            // TODO: show message
-            PlayerManager.Instance.CurrentLevel++;            
-            this.DoShop();
-            return;
-        }
-
         if (Input.GetMouseButtonDown(0))
         {
             if (this.GoalBillboard.Animating)
@@ -139,6 +149,20 @@ public class GameManager : MonoBehaviour
 
         if (this.IsPaused)
         {
+            return;
+        }
+
+        if (this.gameTimer.TotalSeconds <= 0.0f)
+        {
+            // Game over!
+            this.StartCoroutine(this.Lose());
+            return;
+        }
+
+        if (this.score <= 0 && this.Grid.CanMakeMove())
+        {         
+            PlayerManager.Instance.CurrentLevel++;
+            this.StartCoroutine(this.BeatLevel());
             return;
         }
 

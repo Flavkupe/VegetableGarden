@@ -37,7 +37,7 @@ public class ItemPane : MonoBehaviour {
     public void RefreshLayout()
     {
         float xOffset = -1.65f;
-        float padding = 0.1f;
+        float padding = 0.3f;
         foreach (Item item in this.inventory)
         {
             item.transform.localPosition = new Vector3(xOffset, 0.0f, 0.0f);

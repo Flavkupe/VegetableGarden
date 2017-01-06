@@ -88,4 +88,10 @@ public class LevelGoalSign : MonoBehaviour
         this.GoalText.SetText("Get " + goal.ScoreGoal + " points!");
         this.TimeText.SetText("Time: " + goal.Time + " seconds!");
     }
+
+    public void SetSuccess()
+    {
+        this.GoalText.SetText("Success!");
+        this.TimeText.SetText(string.Empty);
+    }
 }
