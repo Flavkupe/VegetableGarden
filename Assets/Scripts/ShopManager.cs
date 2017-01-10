@@ -21,6 +21,12 @@ public class ShopManager : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
+        if (PlayerManager.Instance == null)
+        {
+            SceneManager.LoadScene("StartMenu");
+            return;
+        }
+
         instance = this;
         LoadItemsFromResources();
         if (this.MoneyText != null)
@@ -42,11 +48,16 @@ public class ShopManager : MonoBehaviour {
     private void LoadItemsFromResources()
     {
         List<GameObject> objects = Resources.LoadAll<GameObject>("Prefabs/Items").ToList();
+        objects = objects.Where(a => !PlayerManager.Instance.Inventory.Any(b => b.name == a.name)).ToList();
         foreach (ShopItem shopItem in this.ShopItems)
         {
             GameObject instance = objects.GetRandom();
             objects.Remove(instance);
             shopItem.InitializeItem(instance.GetComponent<Item>());
+            if (objects.Count == 0)
+            {
+                break;
+            }
         }
     }
 

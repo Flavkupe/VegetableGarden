@@ -8,8 +8,8 @@ public class ItemPane : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () 
-    {	
-	}
+    {       
+    }
 	
 	// Update is called once per frame
 	void Update () 
@@ -36,8 +36,8 @@ public class ItemPane : MonoBehaviour {
 
     public void RefreshLayout()
     {
-        float xOffset = -1.65f;
-        float padding = 0.3f;
+        float xOffset = 0.0f;
+        float padding = 0.4f;
         foreach (Item item in this.inventory)
         {
             item.transform.localPosition = new Vector3(xOffset, 0.0f, 0.0f);

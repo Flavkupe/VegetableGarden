@@ -306,9 +306,9 @@ public class GemGrid : MonoBehaviour
                     rules.IgnoreList.AddRange(matchGroup);
                 }
             }
-        }
+        }        
 
-        return matches;
+        return matches.Distinct().ToList();
     }    
 
     private void DropRows()

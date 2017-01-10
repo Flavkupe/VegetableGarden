@@ -59,6 +59,12 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        if (PlayerManager.Instance == null)
+        {
+            SceneManager.LoadScene("StartMenu");
+            return;
+        }
+
         instance = this;
         MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;

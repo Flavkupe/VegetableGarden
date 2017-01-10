@@ -94,4 +94,10 @@ public class LevelGoalSign : MonoBehaviour
         this.GoalText.SetText("Success!");
         this.TimeText.SetText(string.Empty);
     }
+
+    public void SetLoss(int score)
+    {
+        this.GoalText.SetText("Oh no! Not this time.");
+        this.TimeText.SetText("Total score: " + score);
+    }
 }
