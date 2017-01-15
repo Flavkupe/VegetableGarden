@@ -299,16 +299,31 @@ public class GemGrid : MonoBehaviour
             for (int y = 0; y < GridDimensionsY; ++y)
             {
                 Gem current = this.gemGrid[x, y];
-                List<Gem> matchGroup = this.GetMatches(current, x, y, rules);
-                if (matchGroup.Count > 0)
+                if (!rules.IgnoreList.Contains(current))
                 {
-                    matches.Add(matchGroup);
-                    rules.IgnoreList.AddRange(matchGroup);
+                    List<Gem> matchGroup = this.GetMatches(current, x, y, rules);
+                    if (matchGroup.Count > 0)
+                    {              
+                        this.LogCoordConcat("Adding matches", matchGroup);
+
+                        if (matchGroup.Any(a => rules.IgnoreList.Contains(a)))
+                        {
+
+                        }
+
+                        matches.Add(matchGroup);
+                        rules.IgnoreList.AddRange(matchGroup);
+                    }
                 }
             }
         }        
 
-        return matches.Distinct().ToList();
+        return matches.ToList();
+    }
+    
+    private void LogCoordConcat(string label, List<Gem> gems)
+    {
+        Debug.Log(label + ": " + string.Join("; ", gems.Select(a => a.GridX + "," + a.GridY).ToArray()));
     }    
 
     private void DropRows()
@@ -409,7 +424,7 @@ public class GemGrid : MonoBehaviour
                 return false;
             }
 
-            return additionalRules.IgnoreList.Contains(gem);
+            return additionalRules.IgnoreList.Contains(currentGem);
         };
 
         Func<Gem, bool> IsSuccessfullMatch = (Gem currentGem) =>
@@ -582,6 +597,7 @@ public class GemGrid : MonoBehaviour
         {
             foreach (List<Gem> matchSet in matchSets)
             {
+                this.LogCoordConcat("Processing matches", matchSet);
                 this.StartCoroutine(this.ProcessMatches(matchSet, true));
             }
         }
