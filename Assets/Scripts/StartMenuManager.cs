@@ -11,10 +11,15 @@ public class StartMenuManager : MonoBehaviour
         get { return instance; } 
     }
 
-	// Use this for initialization
-	void Start () 
+    void Awake()
     {
         instance = this;
+    }
+
+	// Use this for initialization
+	void Start () 
+    {        
+        SoundManager.Instance.PlayMusic(MusicChoice.Menu);
 	}
 	
 	// Update is called once per frame

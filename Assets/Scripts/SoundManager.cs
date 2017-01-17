@@ -5,10 +5,15 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour {
 
     private AudioSource SoundSource = null;
+    public AudioSource MusicSource = null;
 
     public AudioClip PopSound;
     public AudioClip BuzzerSound;
     public AudioClip KachinkSound;
+
+    public AudioClip MenuMusic;
+    public AudioClip LevelMusic;
+    public AudioClip ShopMusic;
 
     private static SoundManager instance = null;
 
@@ -33,6 +38,11 @@ public class SoundManager : MonoBehaviour {
 
     public void PlaySound(SoundEffects soundEffect)
     {
+        if (this.SoundSource == null)
+        {
+            return;
+        }
+
         switch (soundEffect)
         {
             case SoundEffects.Pop:
@@ -48,6 +58,29 @@ public class SoundManager : MonoBehaviour {
                 break;
         }
     }
+
+    public void PlayMusic(MusicChoice choice)
+    {
+        if (this.MusicSource == null)
+        {
+            return;
+        }
+
+        switch (choice)
+        {
+            case MusicChoice.Level:
+                MusicSource.clip = LevelMusic;                
+                break;
+            case MusicChoice.Menu:
+                MusicSource.clip = MenuMusic;                
+                break;
+            case MusicChoice.Shop:
+                MusicSource.clip = ShopMusic;
+                break;
+        }
+
+        MusicSource.Play();
+    }
 }
 
 public enum SoundEffects
@@ -55,4 +88,11 @@ public enum SoundEffects
     Pop,
     Error,
     Kachink
+}
+
+public enum MusicChoice
+{
+    Menu,
+    Level,
+    Shop,
 }

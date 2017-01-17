@@ -34,5 +34,21 @@ public static class ExtensionFunctions
                 hashSet.Add(item);
             }
         }
-    }    
+    }
+}
+
+public static class GameUtils
+{
+    public static FloatyText GenerateFloatyTextAt(string text, float x, float y, FloatyText template, GameObject parent = null, Color? color = null)
+    {
+        FloatyText newFloatyText = GameObject.Instantiate(template);
+        if (parent != null)
+        {
+            newFloatyText.transform.parent = parent.transform;
+        }
+
+        newFloatyText.SetText(text, color);
+        newFloatyText.transform.localPosition = new Vector3(x, y, 100);
+        return newFloatyText;
+    }
 }

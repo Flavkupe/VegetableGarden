@@ -6,13 +6,12 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour {
 
     private List<Item> inventory = new List<Item>();
+    
+    public int Cash = 0;
 
-    private int cash = 0;
-    private int currentLevel = 0;
+    public float SellValueRatio = 0.25f;
 
-    public int Cash;
-
-    public int CurrentLevel;
+    public int CurrentLevel = 0;
 
     public List<Item> Inventory { get { return this.inventory; } }
 
@@ -32,6 +31,12 @@ public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance
     {
         get { return instance; }
+    }
+
+    public void SellItem(Item item)
+    {
+        this.Cash += (int)((float)item.Cost * SellValueRatio);        
+        this.inventory.Remove(item);        
     }
 
     public void PurchaseItem(Item item)

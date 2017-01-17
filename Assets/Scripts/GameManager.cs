@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public SpriteRenderer ScreenTint;
     public GameObject Sparkles;
 
+    public GameObject ItemBacks;
+
     public float GlowDuration = 20.0f;
 
     public GemGrid Grid;
@@ -66,12 +68,15 @@ public class GameManager : MonoBehaviour
         }
 
         instance = this;
-        MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;
     }
 
     void Start()
     {
+        instance = this;
+        MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;
+
+        SoundManager.Instance.PlayMusic(MusicChoice.Level);
         this.InitializeRound();
     }
 
@@ -87,7 +92,7 @@ public class GameManager : MonoBehaviour
         foreach (Item item in PlayerManager.Instance.Inventory)
         {
             Item clone = Instantiate(item);
-            this.InventoryPane.AddItem(clone);
+            this.InventoryPane.AddItem(clone.gameObject);
         }
 
         LevelGoal goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
@@ -268,18 +273,6 @@ public class GameManager : MonoBehaviour
         return totalVal;
     }
 
-    public FloatyText GenerateFloatyTextAt(string text, float x, float y, GameObject parent = null, Color? color = null)
-    {
-        FloatyText newFloatyText = GameObject.Instantiate(this.FloatyText);
-        if (parent != null)
-        {
-            newFloatyText.transform.parent = parent.transform;
-        }
-        
-        newFloatyText.SetText(text, color);
-        newFloatyText.transform.localPosition = new Vector3(x, y, 100);
-        return newFloatyText;
-    }
 
     public void ProcessMatchRewards(List<Gem> matches)
     {
@@ -291,9 +284,9 @@ public class GameManager : MonoBehaviour
         float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
         float offsetX = averageMatchX + randomOffset;
         this.UpdateScore(scoreValue);
-        this.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.Grid.gameObject);
+        GameUtils.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.FloatyText, this.Grid.gameObject);
         this.UpdateCash(cashValue);
-        this.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.Grid.gameObject, Color.yellow);
+        GameUtils.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.FloatyText, this.Grid.gameObject, Color.yellow);
     }
 }
 

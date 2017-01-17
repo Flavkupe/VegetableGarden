@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Item : MonoBehaviour 
+public class Item : MonoBehaviour, IClickableItem
 {
     public int Cost = 0;
     public string Name = string.Empty;
@@ -21,8 +21,8 @@ public class Item : MonoBehaviour
         get { return false; }
     }
 
-void Awake()
-    {        
+    void Awake()
+    { 
     }
 
     void Start()
@@ -32,7 +32,12 @@ void Awake()
 
         GameObject cooldownTextObj = Instantiate(GameManager.Instance.GetFromResources("Prefabs/TextOverSprite"));
         cooldownTextObj.transform.SetParent(this.transform, false);
-        this.cooldownText = cooldownTextObj.GetComponent<TextOverSprite>();                
+        this.cooldownText = cooldownTextObj.GetComponent<TextOverSprite>();
+
+        // Generate the item backs
+        GameObject itemBack = Instantiate(GameManager.Instance.ItemBacks);
+        itemBack.transform.parent = this.transform;
+        itemBack.transform.localPosition = new Vector3(0.0f, 0.0f);
     }
 
     void Update()
@@ -66,7 +71,7 @@ void Awake()
         GameManager.Instance.Tooltip.SetVisible(false);
     }
 
-    protected virtual void ProcessMouseDown()
+    public virtual void ProcessMouseDown()
     {        
         if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
         {
