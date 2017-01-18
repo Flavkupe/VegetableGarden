@@ -58,6 +58,9 @@ public class Gem : MonoBehaviour
 
     public bool IsGlowing {  get { return this.glowing > 0.0f; } }
 
+
+    private bool mouseReleased = false;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -70,6 +73,8 @@ public class Gem : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        mouseReleased = Input.GetMouseButtonUp(0);
+
         if (glowing > 0.0f)
         {
             glowing -= Time.deltaTime;
@@ -124,10 +129,15 @@ public class Gem : MonoBehaviour
         }
 
         return true;
-    }
+    }    
 
     void OnMouseDown() 
     {
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         if (!this.Grid.CanMakeMove())
         {
             this.glowing = GameManager.Instance.GetTotalGlowDuration();            
@@ -146,13 +156,36 @@ public class Gem : MonoBehaviour
         }
     }
 
+    void OnMouseOver()
+    {
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
+        if (mouseReleased)
+        {
+            this.Grid.TrySwapWith(this.Grid.Selected, this);            
+        }
+    }
+
     void OnMouseEnter()
     {
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         this.Hover.gameObject.SetActive(true);
     }
 
     void OnMouseExit()
     {
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         this.Hover.gameObject.SetActive(false);
     }
 

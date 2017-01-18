@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     public GemGrid Grid;
 
+    public GameObject Menu;
+
     public LevelGoal[] LevelGoals;
 
     private Dictionary<string, GameObject> resourceMap = new Dictionary<string, GameObject>();
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerManager.Instance == null)
         {
-            SceneManager.LoadScene("StartMenu");
+            this.GotoMenu();
             return;
         }
 
@@ -110,7 +112,7 @@ public class GameManager : MonoBehaviour
         this.ScreenTint.gameObject.SetActive(false);
     }
 
-    void GotoMenu() 
+    public void GotoMenu() 
     {
         SceneManager.LoadScene("StartMenu");            
     }
@@ -273,6 +275,15 @@ public class GameManager : MonoBehaviour
         return totalVal;
     }
 
+
+    public void OpenMenu (bool open)
+    {
+        if (this.Menu != null)
+        {
+            this.isPaused = open;
+            this.Menu.SetActive(open);
+        }
+    }
 
     public void ProcessMatchRewards(List<Gem> matches)
     {

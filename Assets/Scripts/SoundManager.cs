@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour {
 
@@ -15,6 +17,9 @@ public class SoundManager : MonoBehaviour {
     public AudioClip LevelMusic;
     public AudioClip ShopMusic;
 
+    public Slider MusicSlider;
+    public Slider SfxSlider;
+
     private static SoundManager instance = null;
 
     public static SoundManager Instance
@@ -26,15 +31,63 @@ public class SoundManager : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Awake () {        
+    void Awake ()
+    {
         instance = this;
         SoundSource = Camera.main.GetComponent<AudioSource>();
+    }
+
+    void Start()
+    {
+        if (this.MusicSlider != null)
+        {
+            this.MusicSlider.value = PlayerManager.Instance.MusicVol;
+        }
+
+        if (this.SfxSlider != null)
+        {
+            this.SfxSlider.value = PlayerManager.Instance.SfxVol;
+        }
+
+        if (this.SoundSource != null)
+        {
+            this.SoundSource.volume = PlayerManager.Instance.SfxVol;
+        }
+
+        if (this.MusicSource != null)
+        {
+            this.MusicSource.volume = PlayerManager.Instance.MusicVol;
+        }
     }
 
     // Update is called once per frame
     void Update () {
 		
 	}
+
+    public void SetMusicVolFromSlider()
+    {
+        if (this.MusicSlider != null)
+        {
+            PlayerManager.Instance.MusicVol = this.MusicSlider.value;
+            if (this.MusicSource != null)
+            {
+                this.MusicSource.volume = PlayerManager.Instance.MusicVol;
+            }
+        }
+    }
+
+    public void SetSfxVolFromSlider()
+    {        
+        if (this.SfxSlider != null)
+        {
+            PlayerManager.Instance.SfxVol = this.SfxSlider.value;
+            if (this.SoundSource != null)
+            {
+                this.SoundSource.volume = PlayerManager.Instance.SfxVol;
+            }
+        }
+    }
 
     public void PlaySound(SoundEffects soundEffect)
     {
