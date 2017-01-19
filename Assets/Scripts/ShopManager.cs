@@ -115,12 +115,14 @@ public class ShopManager : MonoBehaviour {
             return;
         }
 
+        bool transacted = false;
         if (item.Owned)
         {
             // SELL
             SoundManager.Instance.PlaySound(SoundEffects.Kachink);
             PlayerManager.Instance.SellItem(item.BackingItem);
-            item.gameObject.SetActive(false);            
+            item.gameObject.SetActive(false);
+            transacted = true;
         }
         else
         {
@@ -129,17 +131,22 @@ public class ShopManager : MonoBehaviour {
             {
                 SoundManager.Instance.PlaySound(SoundEffects.Kachink);
                 PlayerManager.Instance.PurchaseItem(item.BackingItem);
-                item.gameObject.SetActive(false);                
+                item.gameObject.SetActive(false);
+                transacted = true;
             }
             else
             {
                 SoundManager.Instance.PlaySound(SoundEffects.Error);
+                transacted = false;
             }
         }
 
-        string transactionStr = (item.Owned ? "+" : "-") + "$" + item.GetTransactionPrice();
-        FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y, 
-            this.FloatyText, null, Color.yellow);        
+        if (transacted)
+        {
+            string transactionStr = (item.Owned ? "+" : "-") + "$" + item.GetTransactionPrice();
+            FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y,
+                this.FloatyText, null, Color.yellow);
+        }
 
         this.RefreshMoneySign();
     }

@@ -12,9 +12,11 @@ public class ItemPane : MonoBehaviour
     public float ItemSizeXDefault = 0.64f;
     public float ItemSizeYDefault = 0.64f;
 
+    public float ItemScaleFactor = 1.0f;
+
     // Use this for initialization
     void Start () 
-    {       
+    {        
     }
 	
 	// Update is called once per frame
@@ -24,6 +26,18 @@ public class ItemPane : MonoBehaviour
 
     public void AddItem(GameObject item)
     {
+        BoxCollider2D box = item.GetComponent<BoxCollider2D>();
+        if (box != null)
+        {
+            box.size = new Vector2(ItemSizeXDefault, ItemSizeYDefault);
+        }
+
+        item.transform.localScale *= this.ItemScaleFactor;
+        for(int i = 0; i < item.transform.childCount; ++i)
+        {
+            item.transform.GetChild(i).localScale *= this.ItemScaleFactor;
+        }
+
         item.transform.SetParent(this.transform);        
         this.inventory.Add(item);        
         this.RefreshLayout();

@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject Menu;
 
+    public int MaxLevelScoreIncrease = 1000;
+
     private float cashForPointsDuration = 0;
     public void EnableCashForPoints(float duration)
     {
@@ -93,11 +95,16 @@ public class GameManager : MonoBehaviour
 
     private void InitializeRound()
     {        
-        this.ScreenTint.gameObject.SetActive(true);   
+        this.ScreenTint.gameObject.SetActive(true);
+        LevelGoal goal = null;  
         if (PlayerManager.Instance.CurrentLevel == this.LevelGoals.Length) 
         {
-            this.GotoMenu();
-            return;
+            goal = this.LevelGoals.Last();
+            goal.ScoreGoal += this.MaxLevelScoreIncrease;
+        }
+        else
+        {
+            goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
         }
 
         foreach (Item item in PlayerManager.Instance.Inventory)
@@ -106,7 +113,7 @@ public class GameManager : MonoBehaviour
             this.InventoryPane.AddItem(clone.gameObject);
         }
 
-        LevelGoal goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
+        
         this.Grid.PopulateGrid(goal.MaxGems);
         this.SetGameTimeLimit(goal.Time);
         this.SetScore(goal.ScoreGoal);        
@@ -129,7 +136,7 @@ public class GameManager : MonoBehaviour
     public IEnumerator Lose()
     {
         this.ScreenTint.gameObject.SetActive(true);
-        this.GoalBillboard.SetLoss(5);
+        this.GoalBillboard.SetLoss(PlayerManager.Instance.TotalScore);
         this.StartCoroutine(this.GoalBillboard.Animate());
         while (this.IsPaused)
         {
@@ -231,6 +238,7 @@ public class GameManager : MonoBehaviour
     public void UpdateScore(int decrement)
     {
         this.score -= decrement;
+        PlayerManager.Instance.TotalScore += decrement;
         this.score = Math.Max(0, this.score);
         this.ScoreUI.SetText(score.ToString());
     }

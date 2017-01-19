@@ -117,11 +117,14 @@ public class GemGrid : MonoBehaviour
         }
     }
 
+    private static int globalId = 0;
+
     private Gem GetRandomGemInstance()
     {
         Gem gem = this.currentGemSelection.GetRandom();
         Gem instance = Instantiate(gem);
         instance.Grid = this;
+        instance.GemId = globalId++;
         return instance;
     }
 
@@ -334,7 +337,7 @@ public class GemGrid : MonoBehaviour
     
     private void LogCoordConcat(string label, List<Gem> gems)
     {
-        Debug.Log(label + ": " + string.Join("; ", gems.Select(a => a.GridX + "," + a.GridY).ToArray()));
+        Debug.Log(label + ": " + string.Join("; ", gems.Select(a => a.GridX + "," + a.GridY + "(" + a.GemId + ")").ToArray()));
     }    
 
     private void DropRows()
@@ -621,10 +624,10 @@ public class GemGrid : MonoBehaviour
     private void RemoveGem(Gem match)
     {
         if (match != null)
-        {
+        {            
             this.gemGrid[match.GridX, match.GridY] = null;
-            this.StartCoroutine(match.Vanish());
             this.activeGems.Remove(match);
+            this.StartCoroutine(match.Vanish());            
         }
     }
 

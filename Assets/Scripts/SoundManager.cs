@@ -12,10 +12,11 @@ public class SoundManager : MonoBehaviour {
     public AudioClip PopSound;
     public AudioClip BuzzerSound;
     public AudioClip KachinkSound;
+    public AudioClip UseSound;
 
     public AudioClip MenuMusic;
     public AudioClip LevelMusic;
-    public AudioClip ShopMusic;
+    public AudioClip ShopMusic;    
 
     public Slider MusicSlider;
     public Slider SfxSlider;
@@ -107,6 +108,9 @@ public class SoundManager : MonoBehaviour {
             case SoundEffects.Kachink:
                 SoundSource.PlayOneShot(this.KachinkSound);
                 break;
+            case SoundEffects.Use:
+                SoundSource.PlayOneShot(this.UseSound);
+                break;              
             default:
                 break;
         }
@@ -140,7 +144,8 @@ public enum SoundEffects
 {
     Pop,
     Error,
-    Kachink
+    Kachink,
+    Use,
 }
 
 public enum MusicChoice

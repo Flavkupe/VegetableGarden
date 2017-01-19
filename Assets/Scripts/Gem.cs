@@ -44,6 +44,8 @@ public class Gem : MonoBehaviour
 
     public GemGrid Grid;
 
+    public int GemId;
+
     public int GridX;
     public int GridY;    
 

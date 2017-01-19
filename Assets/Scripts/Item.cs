@@ -16,6 +16,8 @@ public class Item : MonoBehaviour, IClickableItem
 
     private TextOverSprite cooldownText = null;
 
+    private GameObject itemBack = null;
+
     public virtual bool IsInstantUse
     {
         get { return false; }
@@ -26,7 +28,7 @@ public class Item : MonoBehaviour, IClickableItem
     }
 
     void Start()
-    {
+    {       
         this.Grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GemGrid>();
         this.sprite = this.GetComponent<SpriteRenderer>();
 
@@ -35,9 +37,9 @@ public class Item : MonoBehaviour, IClickableItem
         this.cooldownText = cooldownTextObj.GetComponent<TextOverSprite>();
 
         // Generate the item backs
-        GameObject itemBack = Instantiate(GameManager.Instance.ItemBacks);
-        itemBack.transform.parent = this.transform;
-        itemBack.transform.localPosition = new Vector3(0.0f, 0.0f);
+        this.itemBack = Instantiate(GameManager.Instance.ItemBacks);
+        this.itemBack.transform.parent = this.transform;
+        this.itemBack.transform.localPosition = new Vector3(0.0f, 0.0f);
     }
 
     void Update()
@@ -75,9 +77,14 @@ public class Item : MonoBehaviour, IClickableItem
     {        
         if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
         {
+            SoundManager.Instance.PlaySound(SoundEffects.Use);
             this.TriggerEffect();
             this.CurrentCooldown = this.Cooldown;
             this.sprite.color = Color.black;
-        }        
+        }   
+        else
+        {
+            SoundManager.Instance.PlaySound(SoundEffects.Error);
+        }     
     }
 }

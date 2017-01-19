@@ -16,6 +16,8 @@ public class PlayerManager : MonoBehaviour {
     public float MusicVol = 1.0f;
     public float SfxVol = 1.0f;
 
+    public int TotalScore = 0;
+
     public List<Item> Inventory { get { return this.inventory; } }
 
     // Use this for initialization
