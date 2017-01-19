@@ -216,7 +216,17 @@ public class GemGrid : MonoBehaviour
             gem2.SetSelected(false);
             this.Selected = null;
 
-            this.StartCoroutine(this.ProcessMatches(matches));
+            // If this option was toggled, untoggle it
+            GameManager.Instance.NextSwapFree = false;
+
+            if (matches != null && matches.Count > 0)
+            {
+                this.StartCoroutine(this.ProcessMatches(matches));
+            }
+            else
+            {
+                this.gridMatchingIsActive = false;
+            }
 
             return true;
         }
@@ -225,13 +235,14 @@ public class GemGrid : MonoBehaviour
     }
 
     private IEnumerator ProcessMatches(List<Gem> matches, bool getRewards = true, MatchOverrideRules rules = null)
-    {
+    {        
         gridMatchingIsActive = true;
+        
         if (rules == null)
         {
             rules = MatchOverrideRules.None;
-        }
-        
+        }               
+
         do
         {            
             HashSet<Gem> additionalMatches = new HashSet<Gem>();
@@ -406,8 +417,8 @@ public class GemGrid : MonoBehaviour
 
     public bool CreatesMatchesOnSwap(Gem gem1, Gem gem2)
     {
-        return this.GetMatchesOnSwap(gem1, gem2).Count > 0;
-    }        
+        return GameManager.Instance.NextSwapFree || this.GetMatchesOnSwap(gem1, gem2).Count > 0;
+    }
 
     public List<Gem> GetMatches(Gem gem, int targetX, int targetY, MatchOverrideRules additionalRules = null) 
     {       

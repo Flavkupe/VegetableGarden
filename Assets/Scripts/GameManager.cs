@@ -29,6 +29,15 @@ public class GameManager : MonoBehaviour
 
     public GameObject Menu;
 
+    private float cashForPointsDuration = 0;
+    public void EnableCashForPoints(float duration)
+    {
+        this.cashForPointsDuration = duration;
+    }
+
+    [HideInInspector]
+    public bool NextSwapFree = false;
+
     public LevelGoal[] LevelGoals;
 
     private Dictionary<string, GameObject> resourceMap = new Dictionary<string, GameObject>();
@@ -179,10 +188,15 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (cashForPointsDuration > 0.0f)
+        {
+            cashForPointsDuration -= Time.deltaTime;
+        }
+
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;
         this.gameTimer = this.gameTimer.Subtract(TimeSpan.FromSeconds(secondsToPass));
         this.UpdateTimerText();
-    }    
+    }
 
     private void UpdateTimerText()
     {
@@ -261,11 +275,21 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (cashForPointsDuration > 0.0f)
+        {
+            totalVal *= 2;
+        }
+
         return totalVal;
     }
 
     public int GetCashValue(List<Gem> matches)
     {
+        if (cashForPointsDuration > 0.0f)
+        {
+            return 0;
+        }
+
         int totalVal = matches.Count;
         totalVal += matches.Count * PlayerManager.Instance.GoldGainBonus; // gold gain item bonus
         int glowCount = matches.Count(a => a.IsGlowing);
@@ -297,7 +321,11 @@ public class GameManager : MonoBehaviour
         this.UpdateScore(scoreValue);
         GameUtils.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.FloatyText, this.Grid.gameObject);
         this.UpdateCash(cashValue);
-        GameUtils.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.FloatyText, this.Grid.gameObject, Color.yellow);
+
+        if (cashValue > 0)
+        {
+            GameUtils.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.FloatyText, this.Grid.gameObject, Color.yellow);
+        }
     }
 }
 

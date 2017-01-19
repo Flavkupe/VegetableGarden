@@ -13,6 +13,7 @@ public class ShopManager : MonoBehaviour {
     public SetabbleText MoneyText;
 
     public ItemPane SellPane;
+    public GameObject SellSign;
 
     public ShopItem ShopItemTemplate;
 
@@ -89,6 +90,13 @@ public class ShopManager : MonoBehaviour {
     {
         if (this.SellPane != null)
         {
+            if (PlayerManager.Instance.Inventory.Count == 0)
+            {
+                this.SellSign.SetActive(false);
+                this.SellPane.gameObject.SetActive(false);
+                return;
+            }
+
             foreach (Item item in PlayerManager.Instance.Inventory)
             {
                 ShopItem shopItem = Instantiate(this.ShopItemTemplate);
