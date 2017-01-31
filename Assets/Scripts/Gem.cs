@@ -52,20 +52,22 @@ public class Gem : MonoBehaviour
     public Transform Hover;
     public Transform Frame;
 
-    private float glowing = 0.0f;
-
     public bool InTransition = false;
 
     private GameObject sparkles = null;
 
-    public bool IsGlowing {  get { return this.glowing > 0.0f; } }
+    private CooldownTimer GlowTimer;
 
+    public bool IsGlowing {  get { return !this.GlowTimer.IsExpired; } }
 
     private bool mouseReleased = false;
+
+    private Vector3? destination = null;
 
 	// Use this for initialization
 	void Start () 
     {
+        this.GlowTimer = new CooldownTimer(GameManager.Instance.GetTotalGlowDuration(), false);
         this.sparkles = Instantiate(GameManager.Instance.Sparkles);
         this.sparkles.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
         this.sparkles.transform.parent = this.transform;
@@ -77,15 +79,36 @@ public class Gem : MonoBehaviour
     {
         mouseReleased = Input.GetMouseButtonUp(0);
 
-        if (glowing > 0.0f)
+        if (this.GlowTimer.Tick(Time.deltaTime).IsExpired)
         {
-            glowing -= Time.deltaTime;
-            if (glowing <= 0.0f)
+            // If glow expires
+            this.sparkles.SetActive(false);
+        }        
+
+        if (this.InTransition)
+        {
+            Debug.Assert(destination != null, "destination cannot be null if in transition");
+            if (!this.transform.localPosition.IsNear(destination.Value))
             {
-                this.sparkles.SetActive(false);
+                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, destination.Value, 
+                    Time.deltaTime * GameManager.Instance.Grid.GetTotalSlideSpeed());                
+            }
+            else
+            {            
+                // snap into place once near enough
+                this.transform.localPosition = destination.Value;
+                this.InTransition = false;
+                destination = null;
             }
         }
-	}
+    }
+
+    public void SlideGemTo(Vector3 destination)
+    {
+        this.destination = destination;
+        this.InTransition = true;
+        
+    }
 
     public void SetSelected(bool selected)
     {
@@ -140,11 +163,16 @@ public class Gem : MonoBehaviour
             return;
         }
 
-        if (!this.Grid.CanMakeMove())
+        if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
         {
-            this.glowing = GameManager.Instance.GetTotalGlowDuration();            
-            this.sparkles.SetActive(true); 
-            return;
+            // Irrigate on either condition, but do not continue if move is disallowed
+            this.GlowTimer.Reset();            
+            this.sparkles.SetActive(true);
+
+            if (!this.Grid.CanMakeMove())
+            {
+                return;
+            }
         }
 
         if (!this.Grid.TrySwapWith(this.Grid.Selected, this))

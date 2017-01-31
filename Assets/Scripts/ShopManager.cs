@@ -106,7 +106,7 @@ public class ShopManager : MonoBehaviour {
                 this.SellPane.AddItem(shopItem.gameObject);
             }
         }
-    }
+    }    
 
     public void BuyOrSellItem(ShopItem item)
     {
@@ -127,7 +127,8 @@ public class ShopManager : MonoBehaviour {
         else
         {
             // BUY
-            if (PlayerManager.Instance.Cash >= item.BackingItem.Cost)
+            int cost = PlayerManager.Instance.GetTrueItemCost(item.BackingItem);
+            if (PlayerManager.Instance.Cash >= cost)
             {
                 SoundManager.Instance.PlaySound(SoundEffects.Kachink);
                 PlayerManager.Instance.PurchaseItem(item.BackingItem);

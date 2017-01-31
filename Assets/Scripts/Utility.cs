@@ -51,4 +51,22 @@ public static class GameUtils
         newFloatyText.transform.localPosition = new Vector3(x, y, 100);
         return newFloatyText;
     }
+
+    public static void LogToDebug(string message)
+    {
+        if (PlayerManager.Instance != null && PlayerManager.Instance.LoggingEnabled)
+        {
+            Debug.Log(message);
+        }
+    }
+
+    public static string GetGemLogStats(Gem gem)
+    {
+        return string.Format("[{0},{1} ({2})]", gem.GridX, gem.GridY, gem.GemId);
+    }
+
+    public static void LogCoordConcat(string label, List<Gem> gems)
+    {
+        Debug.Log(label + ": " + string.Join("; ", gems.Select(gem => GetGemLogStats(gem)).ToArray()));
+    }
 }

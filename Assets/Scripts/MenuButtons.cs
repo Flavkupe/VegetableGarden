@@ -16,9 +16,14 @@ public class MenuButtons : MonoBehaviour {
 
     void OnMouseDown()
     {
+        if (StartMenuManager.Instance.MenuOpened)
+        {
+            return;
+        }
+
         if (this.Choice == MenuButtonChoices.Start)
         {
-            StartMenuManager.Instance.StartGame();
+            StartMenuManager.Instance.ShowModeMenu();
         }
         else if (this.Choice == MenuButtonChoices.Quit)
         {

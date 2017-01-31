@@ -12,6 +12,7 @@ public enum GridGemType
 
 public class GemGrid : MonoBehaviour 
 {
+    private CooldownTimer timeAfterMatch;
 
     public class MatchOverrideRules
     {
@@ -52,18 +53,20 @@ public class GemGrid : MonoBehaviour
     }
 
 	// Use this for initialization
-	void Start () 
-    {                
-	}
+	void Start() 
+    {
+        this.timeAfterMatch = new CooldownTimer(GameManager.Instance.GetTotalGlowActivationWindow(), true);
+    }
 
     public void PopulateGrid(int? gemLimit = null)
     {
         if (this.activeGems.Count > 0) 
         {
+            GameUtils.LogToDebug(string.Format("Removing {0} gems", this.activeGems.Count));
             foreach (Gem gem in this.activeGems)
             {
                 if (gem != null)
-                {
+                {                    
                     this.StartCoroutine(gem.Vanish());
                 }
             }
@@ -143,7 +146,7 @@ public class GemGrid : MonoBehaviour
         Vector3 destination = new Vector3(x + 0.5f, -y - 0.5f, 0);
         if (slide)
         {
-            this.StartCoroutine(this.SlideGemTo(gem, destination));
+            gem.SlideGemTo(destination);
         }
         else
         {
@@ -155,32 +158,16 @@ public class GemGrid : MonoBehaviour
     {
         return this.SLIDE_SPEED * PlayerManager.Instance.FastDropMultiplierBonus;
     }
-
-    public IEnumerator SlideGemTo(Gem gem, Vector3 destination)
-    {                
-        while (gem != null && gem.transform != null && 
-              !gem.transform.localPosition.IsNear(destination)) 
-        {
-            gem.InTransition = true;
-            gem.transform.localPosition = Vector3.MoveTowards(gem.transform.localPosition, destination, Time.deltaTime * this.GetTotalSlideSpeed());
-            yield return null;
-        }
-
-        // Repeat null check because item could be destroyed after first yield
-        if (gem != null)
-        {
-            // snap into place once near enough
-            gem.transform.localPosition = destination;
-            gem.InTransition = false;
-        }
-
-        yield return null;        
-    }
 	
 	// Update is called once per frame
 	void Update () {
-	
+        this.timeAfterMatch.Tick(Time.deltaTime);
 	}
+
+    public void SetGlowActicationWindow(float window)
+    {
+        this.timeAfterMatch.SetBaseline(window);
+    }
 
     public bool CanSwapWith(Gem gem1, Gem gem2)
     {
@@ -213,7 +200,7 @@ public class GemGrid : MonoBehaviour
         {
             this.gridMatchingIsActive = true;
 
-            List<Gem> matches = this.GetMatchesOnSwap(gem1, gem2);
+            List<List<Gem>> matches = this.GetMatchesOnSwap(gem1, gem2);
             this.SwapGems(gem1, gem2);
             gem1.SetSelected(false);
             gem2.SetSelected(false);
@@ -225,6 +212,7 @@ public class GemGrid : MonoBehaviour
             if (matches != null && matches.Count > 0)
             {
                 this.StartCoroutine(this.ProcessMatches(matches));
+                this.timeAfterMatch.Reset();                                    
             }
             else
             {
@@ -238,27 +226,47 @@ public class GemGrid : MonoBehaviour
     }
 
     private IEnumerator ProcessMatches(List<Gem> matches, bool getRewards = true, MatchOverrideRules rules = null)
+    {
+        return ProcessMatches(new List<List<Gem>> { matches }, getRewards, rules);
+    }
+
+    private IEnumerator ProcessMatches(List<List<Gem>> matchGroups, bool getRewards = true, MatchOverrideRules rules = null)
     {        
         gridMatchingIsActive = true;
         
         if (rules == null)
         {
             rules = MatchOverrideRules.None;
-        }               
+        }
+
+        List<List<Gem>> tempMatchGroups = new List<List<Gem>>();
+        List<Gem> allMatches = new List<Gem>();
+        foreach (List<Gem> group in matchGroups)
+        {
+            // Create temp lists
+            allMatches.AddRange(group);
+            tempMatchGroups.Add(group);
+        }
 
         do
-        {            
+        {                
             HashSet<Gem> additionalMatches = new HashSet<Gem>();
             rules.IgnoreList = additionalMatches;
 
-            while (matches.Any(gem => gem.InTransition))
+            while (allMatches.Any(gem => gem.InTransition))
             {
                 yield return null;
             }
 
             if (getRewards)
             {
-                GameManager.Instance.ProcessMatchRewards(matches);
+                foreach (List<Gem> group in tempMatchGroups)
+                {
+                    if (group.Count > 0)
+                    {
+                        GameManager.Instance.ProcessMatchRewards(new List<Gem>(group));
+                    }
+                }
             }
             else
             {
@@ -267,7 +275,7 @@ public class GemGrid : MonoBehaviour
                 getRewards = true;
             }
 
-            foreach (Gem match in matches)
+            foreach (Gem match in allMatches)
             {
                 this.RemoveGem(match);
             }
@@ -281,20 +289,23 @@ public class GemGrid : MonoBehaviour
                 yield return null;
             }
 
-            matches = new List<Gem>();
+            allMatches = new List<Gem>();
+            tempMatchGroups = new List<List<Gem>>();
 
             // Get all additional resulting match sets, add each to list
             foreach (List<Gem> matchSet in this.GetAllMatches(rules))
             {
+                tempMatchGroups.Add(matchSet);
                 additionalMatches.AddRange(matchSet);
             }
-            
+
             if (additionalMatches.Count > 0)
             {
                 // Add additional resulting maches to grand total
-                matches.AddRange(additionalMatches);                
-            }            
-        } while (matches.Count > 0);
+                allMatches.AddRange(additionalMatches);
+            }
+        } while (allMatches.Count > 0);
+        
 
         gridMatchingIsActive = false;
     }
@@ -318,13 +329,7 @@ public class GemGrid : MonoBehaviour
                     List<Gem> matchGroup = this.GetMatches(current, x, y, rules);
                     if (matchGroup.Count > 0)
                     {              
-                        this.LogCoordConcat("Adding matches", matchGroup);
-
-                        if (matchGroup.Any(a => rules.IgnoreList.Contains(a)))
-                        {
-
-                        }
-
+                        GameUtils.LogCoordConcat("Adding matches", matchGroup);
                         matches.Add(matchGroup);
                         rules.IgnoreList.AddRange(matchGroup);
                     }
@@ -332,13 +337,8 @@ public class GemGrid : MonoBehaviour
             }
         }        
 
-        return matches.ToList();
-    }
-    
-    private void LogCoordConcat(string label, List<Gem> gems)
-    {
-        Debug.Log(label + ": " + string.Join("; ", gems.Select(a => a.GridX + "," + a.GridY + "(" + a.GemId + ")").ToArray()));
-    }    
+        return matches;
+    }           
 
     private void DropRows()
     {
@@ -364,6 +364,7 @@ public class GemGrid : MonoBehaviour
 
                 if (numEmpty > 0)
                 {
+                    GameUtils.LogToDebug(string.Format("Dropping {0} down to [{1},{2}]", GameUtils.GetGemLogStats(this.gemGrid[x, y]), x, y + numEmpty));
                     this.MoveGemTo(this.gemGrid[x, y], x, y + numEmpty, true);
                     this.gemGrid[x, y] = null;
                 }
@@ -392,16 +393,16 @@ public class GemGrid : MonoBehaviour
                 this.MoveGemTo(newGem, x, newY, false, true); // plop at top
                 this.MoveGemTo(newGem, x, newY + numEmpty, true); // specify destination
                 this.activeGems.Add(newGem);
+                GameUtils.LogToDebug(string.Format("Creating gem {0}", GameUtils.GetGemLogStats(newGem)));
             }
         }               
     }
 
-    private List<Gem> GetMatchesOnSwap(Gem gem1, Gem gem2)
+    private List<List<Gem>> GetMatchesOnSwap(Gem gem1, Gem gem2)
     {
         List<Gem> matches1 = this.GetMatches(gem1, gem2.GridX, gem2.GridY);
         List<Gem> matches2 = this.GetMatches(gem2, gem1.GridX, gem1.GridY);
-        matches1.AddRange(matches2);
-        return matches1;
+        return new List<List<Gem>> { matches1, matches2 };
     }
 
     public void SwapGems(Gem gem1, Gem gem2)
@@ -420,7 +421,8 @@ public class GemGrid : MonoBehaviour
 
     public bool CreatesMatchesOnSwap(Gem gem1, Gem gem2)
     {
-        return GameManager.Instance.NextSwapFree || this.GetMatchesOnSwap(gem1, gem2).Count > 0;
+        return GameManager.Instance.NextSwapFree || 
+            this.GetMatchesOnSwap(gem1, gem2).Any(a => a.Count > 0);
     }
 
     public List<Gem> GetMatches(Gem gem, int targetX, int targetY, MatchOverrideRules additionalRules = null) 
@@ -554,7 +556,7 @@ public class GemGrid : MonoBehaviour
 
     public IEnumerator RemoveAllGems(GemType gemType)
     {
-        while (AreGemsInTransition())
+        while (!CanMakeMove())
         {
             yield return null;
         }
@@ -568,7 +570,7 @@ public class GemGrid : MonoBehaviour
 
     public IEnumerator RemoveAllGems(GemColor gemColor)
     {
-        while (AreGemsInTransition())
+        while (!CanMakeMove())
         {
             yield return null;
         }
@@ -598,7 +600,7 @@ public class GemGrid : MonoBehaviour
 
     public IEnumerator MatchByColor(GemColor gemColor)
     {
-        while (AreGemsInTransition())
+        while (!CanMakeMove())
         {
             yield return null;
         }
@@ -611,7 +613,7 @@ public class GemGrid : MonoBehaviour
         {
             foreach (List<Gem> matchSet in matchSets)
             {
-                this.LogCoordConcat("Processing matches", matchSet);
+                GameUtils.LogCoordConcat("Processing matches", matchSet);
                 this.StartCoroutine(this.ProcessMatches(matchSet, true));
             }
         }
@@ -624,11 +626,17 @@ public class GemGrid : MonoBehaviour
     private void RemoveGem(Gem match)
     {
         if (match != null)
-        {            
+        {
+            GameUtils.LogToDebug(string.Format("Removing gem: {0}", GameUtils.GetGemLogStats(match)));
             this.gemGrid[match.GridX, match.GridY] = null;
             this.activeGems.Remove(match);
             this.StartCoroutine(match.Vanish());            
         }
+    }
+
+    public bool SoonAfterMatch()
+    {
+        return !this.timeAfterMatch.IsExpired;
     }
 
     public bool CanMakeMove()

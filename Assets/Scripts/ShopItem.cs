@@ -31,7 +31,7 @@ public class ShopItem : MonoBehaviour
         if (!this.Owned)
         {
             // Buy price
-            return this.BackingItem.Cost;
+            return PlayerManager.Instance.GetTrueItemCost(this.BackingItem);
         }
         else
         {
