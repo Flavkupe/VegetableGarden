@@ -86,7 +86,7 @@ public class PlayerManager : MonoBehaviour {
     // Items which are not yet unlocked
     public List<GameObject> GetAllLockedItems()
     {
-        return this.itemsFromResources.Where(a => !this.UnlockedItems.Any(b => b != a.name)).ToList();
+        return this.itemsFromResources.Where(a => !this.UnlockedItems.Any(b => b == a.name)).ToList();
     }
 
     public List<GameObject> GetItemsFromResources()

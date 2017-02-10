@@ -8,17 +8,16 @@ using UnityEngine.UI;
 
 public class StartMenuManager : MonoBehaviour 
 {
-    public GameObject HighScoreMenu;
-
+    private bool loaded = false;
     public GameObject GameModeMenu;
 
-    public GameObject UnlockedItemsMenu;
+    public GameObject Menu;
 
     public UnlockableItem UnlockableItemTemplate;
 
     public ItemPane UnlockedItemDisplay;
 
-    public bool MenuOpened { get { return this.HighScoreMenu.activeSelf; } }
+    public bool MenuOpened { get { return this.Menu.activeSelf; } }
 
     public ScoreList ScoresLeft;
 
@@ -44,9 +43,19 @@ public class StartMenuManager : MonoBehaviour
 	void Start () 
     {        
         SoundManager.Instance.PlayMusic(MusicChoice.Menu);
-        SerializationManager.Instance.Load();
+        SerializationManager.Instance.Load();        
+    }
 
-        PopulateUnlockableItemUI();
+    public void OnClickMenuButton()
+    {
+        if (!this.loaded)
+        {
+            this.LoadScores();
+            this.PopulateUnlockableItemUI();
+            this.loaded = true;
+        }
+
+        this.Menu.SetActive(true);
     }
 
     private void PopulateUnlockableItemUI()
@@ -74,21 +83,17 @@ public class StartMenuManager : MonoBehaviour
     {
 	}
 
-    public void OnHighScoresButtonPressed(bool open)
+    public void LoadScores()
     {
         List<int> scores = PlayerManager.Instance.HighScores;
-
-        this.HighScoreMenu.SetActive(open);
-        if (open)
-        {            
-            int leftRange = Mathf.Min(scores.Count, this.ScoresLeft.Rows);
-            this.ScoresLeft.SetScores(scores.GetRange(0, leftRange));
-            if (scores.Count > this.ScoresLeft.Rows)
-            {
-                int rightRange = Mathf.Min(this.ScoresRight.Rows, scores.Count - this.ScoresLeft.Rows);
-                this.ScoresRight.SetScores(scores.GetRange(this.ScoresLeft.Rows, rightRange));
-            }
-        }
+        
+        int leftRange = Mathf.Min(scores.Count, this.ScoresLeft.Rows);
+        this.ScoresLeft.SetScores(scores.GetRange(0, leftRange));
+        if (scores.Count > this.ScoresLeft.Rows)
+        {
+            int rightRange = Mathf.Min(this.ScoresRight.Rows, scores.Count - this.ScoresLeft.Rows);
+            this.ScoresRight.SetScores(scores.GetRange(this.ScoresLeft.Rows, rightRange));
+        }        
     }
 
     private void StartGame(GameMode mode)

@@ -221,25 +221,34 @@ public class Gem : MonoBehaviour
 
     public IEnumerator Vanish()
     {
-        while (true)
-        {            
-            if (this.gameObject != null)
+        bool vanished = false;       
+        while (!vanished)
+        {
+            try
             {
-                Vector3 t = this.transform.localScale;
-                this.transform.localScale = new Vector3(t.x - 0.1f, t.y - 0.1f, 1);
-                this.transform.Rotate(0.0f, 0.0f, 36.0f);
-
-                if (this.transform.localScale.x <= 0.0f)
+                if (this.gameObject != null)
                 {
-                    Destroy(this.gameObject);
-                    break;
+                    Vector3 t = this.transform.localScale;
+                    this.transform.localScale = new Vector3(t.x - 0.1f, t.y - 0.1f, 1);
+                    this.transform.Rotate(0.0f, 0.0f, 36.0f);
+
+                    if (this.transform.localScale.x <= 0.0f)
+                    {
+                        Destroy(this.gameObject);
+                        vanished = true;
+                    }
                 }
+            }            
+            catch
+            {
+                Destroy(this.gameObject);
+                vanished = true;
             }
 
-            yield return null;
-        }
-
-        yield return null;
-        
+            if (!vanished)
+            {
+                yield return null;
+            }
+        }                       
     }
 }

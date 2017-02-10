@@ -220,7 +220,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }  
-                
+        
         SerializationManager.Instance.Save();
                 
         if (PlayerManager.Instance.GameMode == GameMode.Normal)

@@ -10,6 +10,7 @@ public class UnlockableItem : MonoBehaviour {
 
     private Item BackingItem;
 
+    public Image Background;
     public Text Text;
 
 	// Use this for initialization
@@ -21,9 +22,14 @@ public class UnlockableItem : MonoBehaviour {
 	}
 
     public void SetItem(Item item, bool unlocked)
-    {
+    {        
         this.BackingItem = item;
-        int diff = item.PointsToUnlock - PlayerManager.Instance.UniversalScore;
+        int diff = Mathf.Max(0, item.PointsToUnlock - PlayerManager.Instance.UniversalScore);
         this.Text.text = unlocked ? item.Name : string.Format("{0} points to unlock!", diff);
+        if (unlocked)
+        {
+            Vector2 delta = this.Background.rectTransform.sizeDelta;
+            this.Background.rectTransform.sizeDelta = new Vector2(800, delta.y);
+        }
     }
 }

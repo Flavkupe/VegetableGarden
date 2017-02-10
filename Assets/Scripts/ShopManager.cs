@@ -20,7 +20,9 @@ public class ShopManager : MonoBehaviour {
     public FloatyText FloatyText;
 
     private static ShopManager instance;
-    
+
+    public Loading Loading; 
+
     public static ShopManager Instance
     {
         get { return instance; }
@@ -56,13 +58,12 @@ public class ShopManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        //ShopManager.Instance.Tooltip.SetVisible(false);
     }
 
     public void ContinueGame()
     {
-        SceneManager.LoadScene("Main", LoadSceneMode.Single);
-    }
+        SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
+    }    
 
     private void LoadItemsFromResources()
     {

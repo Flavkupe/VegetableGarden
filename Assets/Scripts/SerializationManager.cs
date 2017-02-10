@@ -53,43 +53,63 @@ public class SerializationManager : MonoBehaviour
         get { return instance; }
     }    
 
-    private string filePath = "SaveData.sf";
+    private string FilePath
+    {
+        get
+        {
+            return Application.persistentDataPath + "/SaveData.sf";
+        }
+    }
 
     public void Save()
-    {        
-        SaveData data = new SaveData();
-        data.Scores = PlayerManager.Instance.HighScores;
-        data.UnlockedItems = PlayerManager.Instance.UnlockedItems;
-        data.UniversalScore = PlayerManager.Instance.UniversalScore;
-
-        using (Stream stream = File.Open(filePath, FileMode.OpenOrCreate))
+    {
+        try
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Binder = new VersionDeserializerBinder();
-            formatter.Serialize(stream, data);
+            SaveData data = new SaveData();
+            data.Scores = PlayerManager.Instance.HighScores;
+            data.UnlockedItems = PlayerManager.Instance.UnlockedItems;
+            data.UniversalScore = PlayerManager.Instance.UniversalScore;
+
+            using (Stream stream = File.Open(FilePath, FileMode.OpenOrCreate))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Binder = new VersionDeserializerBinder();
+                formatter.Serialize(stream, data);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
         }
     }
 
     public void Load()
     {
-        if (!File.Exists(filePath))
+        try
         {
-            return;
-        }
+            if (!File.Exists(FilePath))
+            {
+                return;
+            }
 
-        SaveData data = new SaveData();
-        using (Stream stream = File.Open(filePath, FileMode.Open))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Binder = new VersionDeserializerBinder();
-            data = formatter.Deserialize(stream) as SaveData;
-        }
+            SaveData data = new SaveData();
+            using (Stream stream = File.Open(FilePath, FileMode.Open))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Binder = new VersionDeserializerBinder();
+                data = formatter.Deserialize(stream) as SaveData;
+            }
 
-        if (data != null)
+            if (data != null)
+            {
+                PlayerManager.Instance.HighScores = data.Scores;
+                PlayerManager.Instance.UnlockedItems = data.UnlockedItems;
+                PlayerManager.Instance.UniversalScore = data.UniversalScore;
+            }
+        }        
+        catch (Exception ex)
         {
-            PlayerManager.Instance.HighScores = data.Scores;
-            PlayerManager.Instance.UnlockedItems = data.UnlockedItems;
-            PlayerManager.Instance.UniversalScore = data.UniversalScore;
+            Debug.LogError(ex);
         }
     }
 
