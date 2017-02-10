@@ -66,9 +66,7 @@ public class ShopManager : MonoBehaviour {
 
     private void LoadItemsFromResources()
     {
-        List<GameObject> objects = Resources.LoadAll<GameObject>("Prefabs/Items").ToList();
-        objects = objects.Where(a => !PlayerManager.Instance.Inventory.Any(b => b.name == a.name)).ToList();
-        
+        List<GameObject> objects = PlayerManager.Instance.GetAllAvailableShopItems();
         foreach (ShopItem shopItem in this.ShopItems)
         {
             if (objects.Count == 0)

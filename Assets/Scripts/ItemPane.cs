@@ -43,6 +43,16 @@ public class ItemPane : MonoBehaviour
         this.RefreshLayout();
     }
 
+    public void ClearList()
+    {
+        foreach (GameObject item in this.inventory)
+        {
+            GameObject.Destroy(item);
+        }
+
+        this.inventory.Clear();
+    }
+
     public void RemoveItem(GameObject item)
     {
         if (item.transform.parent == this.transform)

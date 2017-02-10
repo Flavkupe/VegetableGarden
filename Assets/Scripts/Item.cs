@@ -7,7 +7,9 @@ public class Item : MonoBehaviour, IClickableItem
     public string Name = string.Empty;
     public float Cooldown = 0.0f;
     public string Description = string.Empty;
-    
+
+    public int PointsToUnlock = int.MaxValue;
+
     protected float CurrentCooldown = 0.0f;    
 
     public GemGrid Grid = null;

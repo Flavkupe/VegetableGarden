@@ -144,6 +144,7 @@ public class GameManager : MonoBehaviour
             goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
         }
 
+        this.InventoryPane.ClearList();
         if (PlayerManager.Instance.Inventory.Count > 0)
         {
             this.InventoryPane.gameObject.SetActive(true);
@@ -190,7 +191,7 @@ public class GameManager : MonoBehaviour
         }
 
         this.GotoMenu();
-    }
+    }    
 
     public IEnumerator BeatLevel()
     {
@@ -202,6 +203,26 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        // Check if new items unlocked
+        List<Item> items = PlayerManager.Instance.GetAllLockedItems().Select(a => a.GetComponent<Item>()).ToList();
+        foreach (Item item in items)
+        {
+            if (item.PointsToUnlock < PlayerManager.Instance.UniversalScore)
+            {
+                // Show unlock for each unlocked item
+                PlayerManager.Instance.UnlockedItems.Add(item.name);
+                this.ScreenTint.gameObject.SetActive(true);
+                this.GoalBillboard.SetNewItem(item);
+                this.StartCoroutine(this.GoalBillboard.Animate());
+                while (this.IsPaused)
+                {
+                    yield return null;
+                }
+            }
+        }  
+                
+        SerializationManager.Instance.Save();
+                
         if (PlayerManager.Instance.GameMode == GameMode.Normal)
         {
             this.DoShop();
@@ -218,8 +239,17 @@ public class GameManager : MonoBehaviour
     }
 
     private void DoShop()
-    {        
-        SceneManager.LoadScene("Shop", LoadSceneMode.Single);               
+    {
+        // Only load shop if there are shop items
+        List<GameObject> shopItems = PlayerManager.Instance.GetAllAvailableShopItems();
+        if (shopItems.Count > 0)
+        {
+            SceneManager.LoadScene("Shop", LoadSceneMode.Single);
+        }
+        else
+        {
+            this.NextLevel();
+        }
     }
 
     // Update is called once per frame
@@ -295,10 +325,11 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void UpdateScore(int decrement)
+    public void UpdateScore(int scoreGain)
     {
-        this.trueScore -= decrement;        
-        PlayerManager.Instance.TotalScore += decrement;
+        this.trueScore -= scoreGain;        
+        PlayerManager.Instance.TotalScore += scoreGain;
+        PlayerManager.Instance.UniversalScore += scoreGain;
         this.trueScore = Math.Max(0, this.trueScore);        
     }
 

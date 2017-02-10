@@ -10,7 +10,9 @@ using UnityEngine;
 [Serializable]
 public class SaveData : ISerializable
 {
+    public List<string> UnlockedItems = new List<string>();
     public List<int> Scores = new List<int>();
+    public int UniversalScore = 0;
 
     public SaveData()
     {
@@ -18,12 +20,27 @@ public class SaveData : ISerializable
 
     public SaveData (SerializationInfo info, StreamingContext context)
     {
-        Scores = (List<int>)info.GetValue("Scores", typeof(List<int>));
+        try
+        {
+            Scores = (List<int>)info.GetValue("Scores", typeof(List<int>));
+        }catch {}
+
+        try
+        {
+            UnlockedItems = (List<string>)info.GetValue("UnlockedItems", typeof(List<string>));
+        } catch {}
+
+        try
+        {
+            UniversalScore = info.GetInt32("UniversalScore");
+        } catch {}
     }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         info.AddValue("Scores", Scores, typeof(List<int>));
+        info.AddValue("UnlockedItems", UnlockedItems, typeof(List<string>));
+        info.AddValue("UniversalScore", UniversalScore);
     }
 }
 
@@ -42,12 +59,14 @@ public class SerializationManager : MonoBehaviour
     {        
         SaveData data = new SaveData();
         data.Scores = PlayerManager.Instance.HighScores;
+        data.UnlockedItems = PlayerManager.Instance.UnlockedItems;
+        data.UniversalScore = PlayerManager.Instance.UniversalScore;
 
         using (Stream stream = File.Open(filePath, FileMode.OpenOrCreate))
         {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Binder = new VersionDeserializerBinder();
-            formatter.Serialize(stream, data);            
+            formatter.Serialize(stream, data);
         }
     }
 
@@ -69,6 +88,8 @@ public class SerializationManager : MonoBehaviour
         if (data != null)
         {
             PlayerManager.Instance.HighScores = data.Scores;
+            PlayerManager.Instance.UnlockedItems = data.UnlockedItems;
+            PlayerManager.Instance.UniversalScore = data.UniversalScore;
         }
     }
 

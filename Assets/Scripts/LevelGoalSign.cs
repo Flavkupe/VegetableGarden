@@ -7,6 +7,7 @@ public class LevelGoalSign : MonoBehaviour
 
     public TextOverSprite GoalText;
     public TextOverSprite TimeText;
+    public SpriteRenderer Icon;
 
     public float MovementSpeed = 5.0f;    
     public float LingerTime = 1.0f;
@@ -93,11 +94,25 @@ public class LevelGoalSign : MonoBehaviour
     {
         this.GoalText.SetText("Success!");
         this.TimeText.SetText(string.Empty);
+        this.Icon.sprite = null;
     }
 
     public void SetLoss(int score)
     {
         this.GoalText.SetText("Oh no! Not this time.");
         this.TimeText.SetText("Total score: " + score);
+        this.Icon.sprite = null;
+    }
+
+    public void SetNewItem(Item item)
+    {
+        this.GoalText.SetText("Shop item unlocked!");
+        SpriteRenderer itemSpriteRenderer = item.GetComponent<SpriteRenderer>();
+        if (itemSpriteRenderer != null)
+        {
+            this.Icon.sprite = itemSpriteRenderer.sprite;
+        }
+
+        this.TimeText.SetText(item.Name);        
     }
 }

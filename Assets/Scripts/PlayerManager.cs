@@ -23,15 +23,20 @@ public class PlayerManager : MonoBehaviour {
     public float MusicVol = 1.0f;
     public float SfxVol = 1.0f;
 
+    public List<string> UnlockedItems = new List<string>();
     public List<int> HighScores = new List<int>();
+    public int UniversalScore = 0; // total score accross all games
     public int TotalScore = 0;
-
     public List<Item> Inventory { get { return this.inventory; } }
+
+    private List<GameObject> itemsFromResources = null; 
 
     // Use this for initialization
     void Awake() {
         DontDestroyOnLoad(this.transform.gameObject);
         instance = this;
+
+        LoadResources();
     }
 	
 	// Update is called once per frame
@@ -64,6 +69,29 @@ public class PlayerManager : MonoBehaviour {
     {
         float inflationRatio = (1.0f + (this.LevelCostRamp * (float)(this.CurrentLevel - 1)));
         return (int)((float)item.Cost * inflationRatio);
+    }
+
+    private void LoadResources()
+    {
+        this.itemsFromResources = Resources.LoadAll<GameObject>("Prefabs/Items").ToList();
+    }
+
+    // Items which are not in player inventory but are unlocked
+    public List<GameObject> GetAllAvailableShopItems()
+    {
+        return this.itemsFromResources.Where(a => !this.inventory.Any(b => b.name == a.name) &&
+                                                  this.UnlockedItems.Any(c => c == a.name)).ToList();                                     
+    }
+
+    // Items which are not yet unlocked
+    public List<GameObject> GetAllLockedItems()
+    {
+        return this.itemsFromResources.Where(a => !this.UnlockedItems.Any(b => b != a.name)).ToList();
+    }
+
+    public List<GameObject> GetItemsFromResources()
+    {
+        return this.itemsFromResources;
     }
 
     public void PurchaseItem(Item item)

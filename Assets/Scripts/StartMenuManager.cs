@@ -4,12 +4,19 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine.UI;
 
 public class StartMenuManager : MonoBehaviour 
 {
     public GameObject HighScoreMenu;
 
     public GameObject GameModeMenu;
+
+    public GameObject UnlockedItemsMenu;
+
+    public UnlockableItem UnlockableItemTemplate;
+
+    public ItemPane UnlockedItemDisplay;
 
     public bool MenuOpened { get { return this.HighScoreMenu.activeSelf; } }
 
@@ -38,6 +45,28 @@ public class StartMenuManager : MonoBehaviour
     {        
         SoundManager.Instance.PlayMusic(MusicChoice.Menu);
         SerializationManager.Instance.Load();
+
+        PopulateUnlockableItemUI();
+    }
+
+    private void PopulateUnlockableItemUI()
+    {
+        List<GameObject> items = PlayerManager.Instance.GetItemsFromResources();
+        foreach (GameObject item in items)
+        {
+            UnlockableItem newInst = Instantiate(UnlockableItemTemplate);            
+            Image uiImage = newInst.GetComponent<Image>();
+            bool locked = !PlayerManager.Instance.UnlockedItems.Any(a => a == item.name);
+            newInst.SetItem(item.GetComponent<Item>(), !locked);
+
+            uiImage.sprite = item.GetComponent<SpriteRenderer>().sprite;
+            if (locked)
+            {
+                uiImage.color = Color.black;            
+            }
+
+            this.UnlockedItemDisplay.AddItem(newInst.gameObject);
+        }
     }
 	
 	// Update is called once per frame
