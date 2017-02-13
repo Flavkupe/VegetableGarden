@@ -12,16 +12,22 @@ public class StartMenuManager : MonoBehaviour
     public GameObject GameModeMenu;
 
     public GameObject Menu;
+    public GameObject AchievmentsTab;
+    public GameObject SoundTab;
+    public GameObject HighScoresTab;
+    public GameObject ItemsTab;
+
+    public GameObject TutorialMenu;
 
     public UnlockableItem UnlockableItemTemplate;
 
     public ItemPane UnlockedItemDisplay;
 
-    public bool MenuOpened { get { return this.Menu.activeSelf; } }
+    public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf; } }
 
     public ScoreList ScoresLeft;
 
-    public ScoreList ScoresRight;
+    public ScoreList ScoresRight;    
 
     static StartMenuManager instance;
     public static StartMenuManager Instance
@@ -46,16 +52,14 @@ public class StartMenuManager : MonoBehaviour
         SerializationManager.Instance.Load();        
     }
 
-    public void OnClickMenuButton()
-    {
+    public void MenuInit()
+    {        
         if (!this.loaded)
         {
             this.LoadScores();
             this.PopulateUnlockableItemUI();
             this.loaded = true;
         }
-
-        this.Menu.SetActive(true);
     }
 
     private void PopulateUnlockableItemUI()
@@ -99,16 +103,63 @@ public class StartMenuManager : MonoBehaviour
     private void StartGame(GameMode mode)
     {
         PlayerManager.Instance.GameMode = mode;
+        PlayerManager.Instance.InitializeGame();
         SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }
 
     public void OnStartNormalGamePressed()
     {
-        this.StartGame(GameMode.Normal);
+        if (!this.MenuOpened)
+        {
+            this.StartGame(GameMode.Normal);
+        }
     }
 
     public void OnStartCasualGamePressed()
     {
-        this.StartGame(GameMode.Casual);
+        if (!this.MenuOpened)
+        {
+            this.StartGame(GameMode.Casual);
+        }
     }
+
+    public void OpenMenuToTab(int num)
+    {
+        OpenMenuToTab((StartMenuTabs)num);
+    }
+
+    public void OpenMenuToTab(StartMenuTabs tab)
+    {
+        this.MenuInit();
+
+        this.Menu.SetActive(true);
+        this.AchievmentsTab.SetActive(false);
+        this.SoundTab.SetActive(false);
+        this.HighScoresTab.SetActive(false);
+        this.ItemsTab.SetActive(false);
+        switch (tab)
+        {            
+            case StartMenuTabs.Achievments:
+                this.AchievmentsTab.SetActive(true);
+                break;
+            case StartMenuTabs.Items:
+                this.ItemsTab.SetActive(true);
+                break;
+            case StartMenuTabs.HighScores:
+                this.HighScoresTab.SetActive(true);
+                break;
+            case StartMenuTabs.Sound:
+            default:
+                this.SoundTab.SetActive(true);
+                break;
+        }
+    }
+}
+
+public enum StartMenuTabs
+{
+    Sound = 0,
+    Achievments = 1,
+    Items = 2,
+    HighScores = 3
 }

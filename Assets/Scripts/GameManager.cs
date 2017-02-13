@@ -31,7 +31,8 @@ public class GameManager : MonoBehaviour
     public GameObject ItemBacks;
 
     public float GlowDuration = 20.0f;
-    public float GlowActivationWindow = 4.0f;
+    public float GlowActivationWindow = 4.0f;    
+
     public float ParticleDensityMultiplier = 0.25f;
 
     public GemGrid Grid;
@@ -48,6 +49,16 @@ public class GameManager : MonoBehaviour
         this.cashForPointsDuration = duration;
     }
 
+    public void TriggerTradeCash(int amountPerDollar)
+    {
+        int cash = PlayerManager.Instance.Cash;        
+        int points = cash * amountPerDollar;
+        this.UpdateScore(points);
+        this.UpdateCash(-cash);
+        Vector3 pos = this.CashUI.transform.position;
+        this.GenerateParticleStream(points, pos.x, pos.y, false);        
+    }
+
     [HideInInspector]
     public bool NextSwapFree = false;
 
@@ -62,7 +73,7 @@ public class GameManager : MonoBehaviour
 
     public FloatyText FloatyText;
 
-    public void UpdateGlowActicationWindow()
+    public void UpdateGlowActivationWindow()
     {
         this.Grid.SetGlowActicationWindow(this.GetTotalGlowActivationWindow());
     }
@@ -160,6 +171,7 @@ public class GameManager : MonoBehaviour
             this.InventoryPane.gameObject.SetActive(false);
         }
 
+        this.CashUI.SetText(PlayerManager.Instance.Cash.ToString());
         this.Grid.PopulateGrid(goal.MaxGems);
         this.SetGameTimeLimit(goal.Time);
         this.SetScore(goal.ScoreGoal);        
@@ -195,6 +207,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator BeatLevel()
     {
+        this.CheckLevelBeatAchievments();
+
         this.ScreenTint.gameObject.SetActive(true);
         this.GoalBillboard.SetSuccess();
         this.StartCoroutine(this.GoalBillboard.Animate());        
@@ -252,6 +266,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CheckLevelBeatAchievments()
+    {
+        // Checks only happen in Normal mode
+        if (PlayerManager.Instance.GameMode == GameMode.Normal)
+        {
+            // NOTE: these assume level was just incremented 
+            if (!PlayerManager.Instance.Achievments.BigScore &&
+                    PlayerManager.Instance.CurrentLevel == 6)
+            {
+                // Big score achievement, for reaching level 7.
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.BigScoreIcon);
+                PlayerManager.Instance.Achievments.BigScore = true;
+            }
+
+            if (!PlayerManager.Instance.Achievments.BiggerScore &&
+                    PlayerManager.Instance.CurrentLevel == 9)
+            {
+                // Big score achievement, for reaching level 10.
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.BiggerScoreIcon);
+                PlayerManager.Instance.Achievments.BiggerScore = true;
+            }
+
+            if (!PlayerManager.Instance.Achievments.BiggestScore &&
+                    PlayerManager.Instance.CurrentLevel == 19)
+            {
+                // Big score achievement, for reaching level 20.
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.BiggestScoreIcon);
+                PlayerManager.Instance.Achievments.BiggestScore = true;
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -281,6 +327,7 @@ public class GameManager : MonoBehaviour
         if (this.visibleScore <= 0 && this.Grid.CanMakeMove())
         {         
             PlayerManager.Instance.CurrentLevel++;
+            
             this.StartCoroutine(this.BeatLevel());
             return;
         }
@@ -303,6 +350,13 @@ public class GameManager : MonoBehaviour
 
     public void BoostTime(int seconds)
     {
+        if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.TimeToWasteProgress, -1, 0) &&
+            PlayerManager.Instance.Achievments.TimeToWasteProgress == 0)
+        {
+            // Time to waste achievment for using clocks enough times
+            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.TimeToWasteIcon);
+        }
+
         this.gameTimer = this.gameTimer.Add(TimeSpan.FromSeconds(seconds));
         this.UpdateTimerText();
     }
@@ -321,6 +375,11 @@ public class GameManager : MonoBehaviour
 
     public void SetGameTimeLimit(long seconds)
     {
+        if (PlayerManager.Instance.Achievments.TimeToWasteProgress == 0)
+        {
+            seconds += 10;
+        }
+
         this.gameTimer = new TimeSpan(TimeSpan.TicksPerSecond * seconds);
     }
 
@@ -354,6 +413,13 @@ public class GameManager : MonoBehaviour
     public void UpdateCash(int increment)
     {
         PlayerManager.Instance.Cash += increment;
+        if (!PlayerManager.Instance.Achievments.CashMoney &&
+            PlayerManager.Instance.Cash >= 2000)
+        {
+            PlayerManager.Instance.Achievments.CashMoney = true;
+            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.CashMoneyIcon);
+        }
+
         this.CashUI.SetText(PlayerManager.Instance.Cash.ToString());
     }
 
@@ -376,17 +442,44 @@ public class GameManager : MonoBehaviour
             {
                 totalVal += 25;
                 totalVal += 25 * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
+
+                if (PlayerManager.Instance.Achievments.IrrigationStationProgress == 0)
+                {
+                    totalVal += 25;
+                }                
             }
 
             if (gem.GemColor == GemColor.Purple)
             {
                 totalVal += 100 * PlayerManager.Instance.PurpleGemBonus; // eggplant bonus
             }
+
+            if (gem.GemType == GemType.Tomato && PlayerManager.Instance.Achievments.MatoProgress == 0)
+            {
+                totalVal += 10;
+            }
+
+            if (gem.GemType == GemType.Pumpkin && PlayerManager.Instance.Achievments.PunkinProgress == 0)
+            {
+                totalVal += 10;
+            }
         }
 
         if (cashForPointsDuration > 0.0f)
         {
+            // DoubleScore item bonus
             totalVal *= 2;
+        }
+
+        if (PlayerManager.Instance.Achievments.BigScore)
+        {
+            // BigScore bonus
+            totalVal = (int)((float)totalVal * 1.1f);
+        }
+        if (PlayerManager.Instance.Achievments.BiggerScore)
+        {
+            // BiggerScore bonus
+            totalVal = (int)((float)totalVal * 1.1f);
         }
 
         GameUtils.LogCoordConcat(string.Format("Gained {0} from {1} matches", totalVal, matches.Count), matches);
@@ -407,6 +500,12 @@ public class GameManager : MonoBehaviour
         totalVal += glowCount;
         totalVal += glowCount * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
         totalVal += matches.Count(a => a.GemColor == GemColor.Purple) * PlayerManager.Instance.PurpleGemBonus; // eggplant item bonus
+
+        if (PlayerManager.Instance.Achievments.CashMoney)
+        {
+            totalVal++;
+        }
+
         return totalVal;
     }
 
@@ -420,8 +519,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CheckAchievmentMatchProgress(List<Gem> matches)
+    {
+        // Tomato achievments
+        if (PlayerManager.Instance.Achievments.MatoProgress > 0)
+        {
+            int count = matches.Count(a => a.GemType == GemType.Tomato);
+            if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.MatoProgress, -count, 0) &&
+                PlayerManager.Instance.Achievments.MatoProgress == 0)
+            {
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.MatoIcon);
+            }
+        }
+
+        // Pumpkin achievments
+        if (PlayerManager.Instance.Achievments.PunkinProgress > 0)
+        {
+            int count = matches.Count(a => a.GemType == GemType.Pumpkin);
+            if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.PunkinProgress, -count, 0) &&
+                PlayerManager.Instance.Achievments.PunkinProgress == 0)
+            {
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.PunkinIcon);
+            }
+        }
+    }
+
     public void ProcessMatchRewards(List<Gem> matches)
-    {        
+    {
+        this.CheckAchievmentMatchProgress(matches);
+
         // Calculate score, raise score bubble
         int scoreValue = this.GetScoreValue(matches);
         int cashValue = this.GetCashValue(matches);
@@ -442,13 +568,20 @@ public class GameManager : MonoBehaviour
         this.GenerateParticleStream(scoreValue, averageMatchX, averageMatchY);        
     }
 
-    private void GenerateParticleStream(int numParticles, float sourceX, float sourceY)
+    private void GenerateParticleStream(int numParticles, float sourceX, float sourceY, bool fromGrid = true)
     {
         if (this.MatchParticles != null)
         {
             ParticleSystem particles = Instantiate(this.MatchParticles);
-            particles.transform.parent = this.Grid.transform;
-            particles.transform.localPosition = new Vector3(sourceX, sourceY);
+            if (fromGrid)
+            {
+                particles.transform.parent = this.Grid.transform;
+                particles.transform.localPosition = new Vector3(sourceX, sourceY);
+            }
+            else
+            {
+                particles.transform.position = new Vector3(sourceX, sourceY);
+            }
 
             Vector3 target = new Vector3(this.ScoreUI.transform.position.x, this.ScoreUI.transform.position.y);
             Vector3 flatPos = new Vector3(particles.transform.position.x, particles.transform.position.y);

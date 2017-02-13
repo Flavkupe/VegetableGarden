@@ -23,6 +23,5 @@ public enum EffectType
     ExtraGold,
     FastDrop,
     IrrigationPoints,
-    IrrigationDuration,
     PurpleGemColorBonus,
 }

@@ -13,6 +13,7 @@ public class SaveData : ISerializable
     public List<string> UnlockedItems = new List<string>();
     public List<int> Scores = new List<int>();
     public int UniversalScore = 0;
+    public Achievments Achievments = new Achievments();
 
     public SaveData()
     {
@@ -23,7 +24,7 @@ public class SaveData : ISerializable
         try
         {
             Scores = (List<int>)info.GetValue("Scores", typeof(List<int>));
-        }catch {}
+        } catch {}
 
         try
         {
@@ -34,6 +35,11 @@ public class SaveData : ISerializable
         {
             UniversalScore = info.GetInt32("UniversalScore");
         } catch {}
+
+        try
+        {
+            Achievments = (Achievments)info.GetValue("Achievments", typeof(Achievments));
+        } catch {}
     }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -41,6 +47,7 @@ public class SaveData : ISerializable
         info.AddValue("Scores", Scores, typeof(List<int>));
         info.AddValue("UnlockedItems", UnlockedItems, typeof(List<string>));
         info.AddValue("UniversalScore", UniversalScore);
+        info.AddValue("Achievments", Achievments);
     }
 }
 
@@ -69,6 +76,7 @@ public class SerializationManager : MonoBehaviour
             data.Scores = PlayerManager.Instance.HighScores;
             data.UnlockedItems = PlayerManager.Instance.UnlockedItems;
             data.UniversalScore = PlayerManager.Instance.UniversalScore;
+            data.Achievments = PlayerManager.Instance.Achievments;
 
             using (Stream stream = File.Open(FilePath, FileMode.OpenOrCreate))
             {
@@ -105,6 +113,7 @@ public class SerializationManager : MonoBehaviour
                 PlayerManager.Instance.HighScores = data.Scores;
                 PlayerManager.Instance.UnlockedItems = data.UnlockedItems;
                 PlayerManager.Instance.UniversalScore = data.UniversalScore;
+                PlayerManager.Instance.Achievments = data.Achievments;
             }
         }        
         catch (Exception ex)

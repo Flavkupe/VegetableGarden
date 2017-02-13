@@ -93,7 +93,7 @@ public class LevelGoalSign : MonoBehaviour
     public void SetSuccess()
     {
         this.GoalText.SetText("Success!");
-        this.TimeText.SetText(string.Empty);
+        this.TimeText.SetText(string.Format("Ready for level {0} ?", PlayerManager.Instance.CurrentLevel + 1));
         this.Icon.sprite = null;
     }
 

@@ -30,22 +30,30 @@ public class Item : MonoBehaviour, IClickableItem
     }
 
     void Start()
-    {       
-        this.Grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GemGrid>();
+    {
         this.sprite = this.GetComponent<SpriteRenderer>();
+        if (GameManager.Instance != null)
+        {
+            this.Grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GemGrid>();            
 
-        GameObject cooldownTextObj = Instantiate(GameManager.Instance.GetFromResources("Prefabs/TextOverSprite"));
-        cooldownTextObj.transform.SetParent(this.transform, false);
-        this.cooldownText = cooldownTextObj.GetComponent<TextOverSprite>();
+            GameObject cooldownTextObj = Instantiate(GameManager.Instance.GetFromResources("Prefabs/TextOverSprite"));
+            cooldownTextObj.transform.SetParent(this.transform, false);
+            this.cooldownText = cooldownTextObj.GetComponent<TextOverSprite>();
 
-        // Generate the item backs
-        this.itemBack = Instantiate(GameManager.Instance.ItemBacks);
-        this.itemBack.transform.parent = this.transform;
-        this.itemBack.transform.localPosition = new Vector3(0.0f, 0.0f);
+            // Generate the item backs
+            this.itemBack = Instantiate(GameManager.Instance.ItemBacks);
+            this.itemBack.transform.parent = this.transform;
+            this.itemBack.transform.localPosition = new Vector3(0.0f, 0.0f);
+        }
     }
 
     void Update()
-    {        
+    {
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         if (this.CurrentCooldown > 0.0f)
         {
             this.CurrentCooldown -= Time.deltaTime;
@@ -66,6 +74,11 @@ public class Item : MonoBehaviour, IClickableItem
 
     void OnMouseEnter()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         GameManager.Instance.Tooltip.SetStats(this.Cost.ToString(), this.Description, ((int)this.Cooldown).ToString());
         GameManager.Instance.Tooltip.SetVisible(true);
     }
@@ -76,7 +89,12 @@ public class Item : MonoBehaviour, IClickableItem
     }
 
     public virtual void ProcessMouseDown()
-    {        
+    {
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
         {
             SoundManager.Instance.PlaySound(SoundEffects.Use);

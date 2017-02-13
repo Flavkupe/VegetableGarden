@@ -62,6 +62,7 @@ public class ShopManager : MonoBehaviour {
 
     public void ContinueGame()
     {
+        SerializationManager.Instance.Save();
         SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
     }    
 
@@ -146,6 +147,7 @@ public class ShopManager : MonoBehaviour {
             string transactionStr = (item.Owned ? "+" : "-") + "$" + item.GetTransactionPrice();
             FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y,
                 this.FloatyText, null, Color.yellow);
+            this.Tooltip.gameObject.SetActive(false);
         }
 
         this.RefreshMoneySign();

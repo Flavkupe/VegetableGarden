@@ -60,6 +60,19 @@ public static class GameUtils
         }
     }
 
+    /// <summary>
+    /// Change value by amount and provides capped bounds.
+    /// </summary>
+    /// <returns>True if value changes, false otherwise.</returns>
+    public static bool CappedIncrement(ref int value, int amount, int? lowerBound = null, int? upperBound = null)
+    {
+        int initValue = value;
+        value += amount;
+        if (lowerBound != null) value = Math.Max(lowerBound.Value, value);
+        if (upperBound != null) value = Math.Min(upperBound.Value, value);
+        return initValue != value;
+    }
+
     public static string GetGemLogStats(Gem gem)
     {
         return string.Format("[{0},{1} ({2})]", gem.GridX, gem.GridY, gem.GemId);

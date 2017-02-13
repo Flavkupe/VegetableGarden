@@ -25,6 +25,11 @@ public class Item_Boost : Item
                 GameManager.Instance.EnableCashForPoints(20.0f);
                 return true;
             }
+            else if (Boost == BoostType.TradeCash_10)
+            {
+                GameManager.Instance.TriggerTradeCash(10);
+                return true;
+            }
         }
 
         return false;
@@ -40,5 +45,14 @@ public enum BoostType
 {
     Time_20,
     FreeSwap,
+
+    /// <summary>
+    /// For 20 seconds, no cash but double points
+    /// </summary>
     CashForPoints_20,
+
+    /// <summary>
+    /// Trade cash 
+    /// </summary>
+    TradeCash_10,
 }

@@ -12,6 +12,8 @@ public class PlayerManager : MonoBehaviour {
 
     public GameMode GameMode = GameMode.Normal;
 
+    public Achievments Achievments = new Achievments();
+
     /// <summary>
     /// Price percent in which costs go up per level.
     /// </summary>
@@ -20,10 +22,11 @@ public class PlayerManager : MonoBehaviour {
 
     public int CurrentLevel = 0;
 
-    public float MusicVol = 1.0f;
-    public float SfxVol = 1.0f;
+    public float MusicVol = 0.5f;
+    public float SfxVol = 0.5f;
 
     public List<string> UnlockedItems = new List<string>();
+    public HashSet<string> PermanentItemsPurchased = new HashSet<string>();
     public List<int> HighScores = new List<int>();
     public int UniversalScore = 0; // total score accross all games
     public int TotalScore = 0;
@@ -33,10 +36,30 @@ public class PlayerManager : MonoBehaviour {
 
     // Use this for initialization
     void Awake() {
+        if (instance != null)
+        {
+            // Only one may exist!
+            Destroy(this.gameObject);
+            return;
+        }
+
         DontDestroyOnLoad(this.transform.gameObject);
         instance = this;
 
         LoadResources();
+    }
+
+    public void InitializeGame()
+    {
+        this.Cash = 0;
+        this.inventory.Clear();
+        this.CurrentLevel = 0;
+
+        if (Achievments.BigPockets)
+        {
+            this.inventory.Add(GetAllAvailableShopItems().Select(a => a.GetComponent<Item>())
+                                                         .Where(a => !a.IsInstantUse).ToList().GetRandom());
+        }
     }
 	
 	// Update is called once per frame
@@ -68,7 +91,13 @@ public class PlayerManager : MonoBehaviour {
     public int GetTrueItemCost(Item item)
     {
         float inflationRatio = (1.0f + (this.LevelCostRamp * (float)(this.CurrentLevel - 1)));
-        return (int)((float)item.Cost * inflationRatio);
+        float inflatedCost = (int)((float)item.Cost * inflationRatio);
+        if (Achievments.CoffersProgress <= 0)
+        {
+            inflatedCost *= 0.9f;
+        }
+
+        return (int)inflatedCost;
     }
 
     private void LoadResources()
@@ -80,7 +109,8 @@ public class PlayerManager : MonoBehaviour {
     public List<GameObject> GetAllAvailableShopItems()
     {
         return this.itemsFromResources.Where(a => !this.inventory.Any(b => b.name == a.name) &&
-                                                  this.UnlockedItems.Any(c => c == a.name)).ToList();                                     
+                                                  this.UnlockedItems.Any(c => c == a.name) && 
+                                                  !this.PermanentItemsPurchased.Contains(a.name)).ToList();                                     
     }
 
     // Items which are not yet unlocked
@@ -96,15 +126,31 @@ public class PlayerManager : MonoBehaviour {
 
     public void PurchaseItem(Item item)
     {        
-        this.Cash -= GetTrueItemCost(item);
+        int cost = GetTrueItemCost(item);
+        this.Cash -= cost;
         if (item.IsInstantUse)
-        {
+        {            
             this.ApplyInstantItem(item);
+            this.PermanentItemsPurchased.Add(item.name);
         }
         else
         {
             this.AddItem(item);
         }
+
+        if (this.inventory.Count + this.PermanentItemsPurchased.Count >= 10 &&
+            !PlayerManager.Instance.Achievments.BigPockets)
+        {
+            PlayerManager.Instance.Achievments.BigPockets = true;
+            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.BigPocketsIcon);
+        }
+
+        // Coffers achievment progress
+        if (GameUtils.CappedIncrement(ref this.Achievments.CoffersProgress, -cost, 0) &&
+            this.Achievments.CoffersProgress == 0)
+        {
+            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.CoffersIcon);            
+        }        
     }
 
     public int GoldGainBonus = 0;
@@ -128,18 +174,16 @@ public class PlayerManager : MonoBehaviour {
                     break;
                 case EffectType.FastDrop:
                     this.FastDropMultiplierBonus++;
-                    break;
-                case EffectType.IrrigationDuration:
+                    break;                
+                case EffectType.IrrigationPoints:
                     this.IrrigationDurationBonus += 3.0f;
                     this.IrrigationTimingWindow++;
                     if (GameManager.Instance != null)
                     {
-                        GameManager.Instance.UpdateGlowActicationWindow();
+                        GameManager.Instance.UpdateGlowActivationWindow();
                     }
 
-                    break;
-                case EffectType.IrrigationPoints:
-                    this.IrrigationPointsBonus++;                    
+                    this.IrrigationPointsBonus++;
                     break;
                 case EffectType.SlowTime:
                     this.SlowTimeMultiplierBonus *= 0.8f;
@@ -161,4 +205,68 @@ public enum GameMode
 {
     Casual,
     Normal
+}
+
+[Serializable]
+public class Achievments
+{
+    /// <summary>
+    /// Match 1000 punkins
+    /// Pumpkins worth 10% more.
+    /// </summary>
+    public int PunkinProgress = 1000;
+
+    /// <summary>
+    /// Match 1000 tomatoes
+    /// Tomatoes worth 10% more.
+    /// </summary>
+    public int MatoProgress = 1000;
+
+    /// <summary>
+    /// Have 2000 gold at once.
+    /// Get 1 extra gold after each match.
+    /// </summary>
+    public bool CashMoney = false;
+
+    /// <summary>
+    /// Make it to level 6.
+    /// Get 10% extra score each match.
+    /// </summary>
+    public bool BigScore = false;
+
+    /// <summary>
+    /// Make it to level 10.
+    /// Get 10% extra score each match.
+    /// </summary>
+    public bool BiggerScore = false;
+
+    /// <summary>
+    /// Make it to level 20.
+    /// Nothing!
+    /// </summary>
+    public bool BiggestScore = false;
+
+    /// <summary>
+    /// Have 10 items at once.
+    /// Start with random item each time.
+    /// </summary>
+    public bool BigPockets = false;
+
+    /// <summary>
+    /// Spend 10000 gold.
+    /// Items cost 10% less.
+    /// </summary>
+    public int CoffersProgress = 10000;
+
+    /// <summary>
+    /// Use Time boost 100 times.
+    /// 10 extra starting seconds each round.
+    /// </summary>
+    public int TimeToWasteProgress = 100;
+
+    /// <summary>
+    /// Irrigated 20000 times.
+    /// 50% more points from irrigation.
+    /// </summary>
+    public int IrrigationStationProgress = 20000;
 }

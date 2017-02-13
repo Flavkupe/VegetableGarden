@@ -67,7 +67,7 @@ public class Gem : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        this.GlowTimer = new CooldownTimer(GameManager.Instance.GetTotalGlowDuration(), false);
+        this.GlowTimer = new CooldownTimer(GameManager.Instance.GetTotalGlowDuration(), true);
         this.sparkles = Instantiate(GameManager.Instance.Sparkles);
         this.sparkles.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
         this.sparkles.transform.parent = this.transform;
@@ -165,6 +165,13 @@ public class Gem : MonoBehaviour
 
         if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
         {
+            if (this.GlowTimer.IsExpired && 
+                GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.IrrigationStationProgress, -1, 0) &&
+                PlayerManager.Instance.Achievments.IrrigationStationProgress == 0)                
+            {
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.IrrigationStationIcon);
+            }
+
             // Irrigate on either condition, but do not continue if move is disallowed
             this.GlowTimer.Reset();            
             this.sparkles.SetActive(true);

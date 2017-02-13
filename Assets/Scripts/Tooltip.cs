@@ -34,6 +34,10 @@ public class Tooltip : MonoBehaviour
         {
             this.cooldown.text = "Cooldown: " + cooldown;
         }
+        else
+        {
+            this.cooldown.text = "Permanent effect";
+        }
 
         this.desc.text = desc;
     }
