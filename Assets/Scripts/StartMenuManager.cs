@@ -11,11 +11,14 @@ public class StartMenuManager : MonoBehaviour
     private bool loaded = false;
     public GameObject GameModeMenu;
 
+    public GameObject NameMenu;
     public GameObject Menu;
     public GameObject AchievmentsTab;
     public GameObject SoundTab;
     public GameObject HighScoresTab;
     public GameObject ItemsTab;
+
+    public Button SetNameButton;
 
     public GameObject TutorialMenu;
 
@@ -23,7 +26,7 @@ public class StartMenuManager : MonoBehaviour
 
     public ItemPane UnlockedItemDisplay;
 
-    public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf; } }
+    public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }
 
     public ScoreList ScoresLeft;
 
@@ -49,7 +52,12 @@ public class StartMenuManager : MonoBehaviour
 	void Start () 
     {        
         SoundManager.Instance.PlayMusic(MusicChoice.Menu);
-        SerializationManager.Instance.Load();        
+        SerializationManager.Instance.Load();
+
+        if (string.IsNullOrEmpty(PlayerManager.Instance.PlayerName))
+        {
+            this.NameMenu.SetActive(true);
+        }
     }
 
     public void MenuInit()
@@ -153,6 +161,18 @@ public class StartMenuManager : MonoBehaviour
                 this.SoundTab.SetActive(true);
                 break;
         }
+    }
+
+    public void SetPlayerName(string playerName)
+    {
+        PlayerManager.Instance.PlayerName = playerName;
+        this.SetNameButton.interactable = !string.IsNullOrEmpty(playerName);
+    }
+
+    public void SetNameConfirm()
+    {
+        SerializationManager.Instance.Save();
+        this.NameMenu.SetActive(false);
     }
 }
 

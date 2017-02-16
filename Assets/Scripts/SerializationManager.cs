@@ -14,6 +14,7 @@ public class SaveData : ISerializable
     public List<int> Scores = new List<int>();
     public int UniversalScore = 0;
     public Achievments Achievments = new Achievments();
+    public string PlayerName;
 
     public SaveData()
     {
@@ -40,6 +41,11 @@ public class SaveData : ISerializable
         {
             Achievments = (Achievments)info.GetValue("Achievments", typeof(Achievments));
         } catch {}
+
+        try
+        {
+            PlayerName = info.GetString("PlayerName");
+        } catch {}
     }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -48,6 +54,7 @@ public class SaveData : ISerializable
         info.AddValue("UnlockedItems", UnlockedItems, typeof(List<string>));
         info.AddValue("UniversalScore", UniversalScore);
         info.AddValue("Achievments", Achievments);
+        info.AddValue("PlayerName", PlayerName);        
     }
 }
 
@@ -77,6 +84,7 @@ public class SerializationManager : MonoBehaviour
             data.UnlockedItems = PlayerManager.Instance.UnlockedItems;
             data.UniversalScore = PlayerManager.Instance.UniversalScore;
             data.Achievments = PlayerManager.Instance.Achievments;
+            data.PlayerName = PlayerManager.Instance.PlayerName;
 
             using (Stream stream = File.Open(FilePath, FileMode.OpenOrCreate))
             {
@@ -114,6 +122,7 @@ public class SerializationManager : MonoBehaviour
                 PlayerManager.Instance.UnlockedItems = data.UnlockedItems;
                 PlayerManager.Instance.UniversalScore = data.UniversalScore;
                 PlayerManager.Instance.Achievments = data.Achievments;
+                PlayerManager.Instance.PlayerName = data.PlayerName;
             }
         }        
         catch (Exception ex)

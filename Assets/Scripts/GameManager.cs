@@ -243,8 +243,13 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        WWWForm form = new WWWForm();
+        form.AddField("Name", PlayerManager.Instance.PlayerName ?? "___Unknown___");
+        form.AddField("Score", PlayerManager.Instance.TotalScore);
+        WWW request = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", form);
+
         this.GotoMenu();
-    }    
+    }
 
     public IEnumerator BeatLevel()
     {

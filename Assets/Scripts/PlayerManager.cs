@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class PlayerManager : MonoBehaviour {
     public GameMode GameMode = GameMode.Normal;
 
     public Achievments Achievments = new Achievments();
+
+    public string PlayerName = null;
 
     /// <summary>
     /// Price percent in which costs go up per level.
