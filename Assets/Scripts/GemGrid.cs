@@ -40,8 +40,7 @@ public class GemGrid : MonoBehaviour
 
     public Gem Selected = null;
 
-    private List<Gem> activeGems = new List<Gem>();
-    private float SLIDE_SPEED = 3.5F;
+    private List<Gem> activeGems = new List<Gem>();    
     private bool gridMatchingIsActive = false;
 
     void Awake()
@@ -156,7 +155,7 @@ public class GemGrid : MonoBehaviour
 
     public float GetTotalSlideSpeed()
     {
-        return this.SLIDE_SPEED * PlayerManager.Instance.FastDropMultiplierBonus;
+        return GameManager.Instance.SlideSpeed * PlayerManager.Instance.FastDropMultiplierBonus;
     }
 	
 	// Update is called once per frame
@@ -186,7 +185,7 @@ public class GemGrid : MonoBehaviour
             return false;
         }
 
-        if (!this.CreatesMatchesOnSwap(gem1, gem2))
+        if (!this.IsLegalSwap(gem1, gem2))
         {
             return false;
         }
@@ -212,7 +211,8 @@ public class GemGrid : MonoBehaviour
             if (matches != null && matches.Count > 0)
             {
                 this.StartCoroutine(this.ProcessMatches(matches));
-                this.timeAfterMatch.Reset();                                    
+                this.timeAfterMatch.Reset();
+                GameManager.Instance.AfterIrrigation(this.timeAfterMatch);                                 
             }
             else
             {
@@ -398,10 +398,11 @@ public class GemGrid : MonoBehaviour
         }               
     }
 
-    private List<List<Gem>> GetMatchesOnSwap(Gem gem1, Gem gem2)
+    private List<List<Gem>> GetMatchesOnSwap(Gem gem1, Gem gem2,
+        MatchOverrideRules gem1Rules = null, MatchOverrideRules gem2Rules = null)
     {
-        List<Gem> matches1 = this.GetMatches(gem1, gem2.GridX, gem2.GridY);
-        List<Gem> matches2 = this.GetMatches(gem2, gem1.GridX, gem1.GridY);
+        List<Gem> matches1 = this.GetMatches(gem1, gem2.GridX, gem2.GridY, gem1Rules);
+        List<Gem> matches2 = this.GetMatches(gem2, gem1.GridX, gem1.GridY, gem2Rules);
         return new List<List<Gem>> { matches1, matches2 };
     }
 
@@ -419,10 +420,27 @@ public class GemGrid : MonoBehaviour
         return this.GetMatches(gem, targetX, targetY).Count > 0;
     }
 
-    public bool CreatesMatchesOnSwap(Gem gem1, Gem gem2)
+    /// <summary>
+    /// Checks if the swap is legal based on 3 things: 
+    /// 1) Free swap is enabled
+    /// 2) A regular match is created
+    /// 3) Color swap is enabled and the swap is legal from that
+    /// </summary>
+    /// <param name="gem1"></param>
+    /// <param name="gem2"></param>
+    /// <returns></returns>
+    public bool IsLegalSwap(Gem gem1, Gem gem2)
     {
-        return GameManager.Instance.NextSwapFree || 
-            this.GetMatchesOnSwap(gem1, gem2).Any(a => a.Count > 0);
+        MatchOverrideRules rules1 = null;
+        MatchOverrideRules rules2 = null;
+        if (GameManager.Instance.IsColorSwapEnabled)
+        {
+            rules1 = new MatchOverrideRules() { ByColor = gem1.GemColor };
+            rules2 = new MatchOverrideRules() { ByColor = gem2.GemColor };
+        }
+
+        return GameManager.Instance.NextSwapFree ||             
+            this.GetMatchesOnSwap(gem1, gem2, rules1, rules2).Any(a => a.Count > 0);
     }
 
     public List<Gem> GetMatches(Gem gem, int targetX, int targetY, MatchOverrideRules additionalRules = null) 

@@ -15,7 +15,10 @@ public class GameManager : MonoBehaviour
     /// Array of UI elements to hide on casual mode
     /// </summary>
     public GameObject[] HideOnCasual;
-        
+
+    public ItemPane CooldownPane;
+    public CooldownIcon CooldownIcon;
+
     public SetabbleText ScoreUI = null;
     public SetabbleText CashUI = null;
     public SetabbleText TimerUI = null;
@@ -30,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject ItemBacks;
 
+    public float SlideSpeed = 6.0f;
+
     public float GlowDuration = 20.0f;
     public float GlowActivationWindow = 4.0f;    
 
@@ -43,10 +48,41 @@ public class GameManager : MonoBehaviour
 
     public int MaxLevelScoreIncrease = 1000;
 
-    private float cashForPointsDuration = 0;
-    public void EnableCashForPoints(float duration)
+    private CooldownTimer cashForPointsTimer = new CooldownTimer(20.0f, true);
+    public void EnableCashForPoints(float duration, Item_Boost item)
     {
-        this.cashForPointsDuration = duration;
+        this.cashForPointsTimer.SetBaseline(duration);
+        this.cashForPointsTimer.Reset();
+        this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, cashForPointsTimer);
+    }
+
+    // Color-swap stuff
+    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
+    private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
+    public void EnableColorSwap(Item_Boost item)
+    {
+        colorSwapTimer.Reset();
+        this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, colorSwapTimer);        
+    }
+
+    // typeId is just to identify existing cooldowns
+    private void UpdateOrCreateCooldownIcon(Sprite icon, CooldownTimer timer)
+    {
+        // Search if one exists first
+        if (this.CooldownPane.Items.Any(a => a.GetComponent<CooldownIcon>().GetTimer() == timer))
+        {
+            // Leave it alone; it will reset on its own
+            return;
+        }
+
+        CooldownIcon cooldownIcon = Instantiate(this.CooldownIcon);
+        if (icon != null)
+        {
+            cooldownIcon.SetIcon(icon);
+        }
+        cooldownIcon.ParentPane = this.CooldownPane;
+        cooldownIcon.SetTimer(timer);
+        this.CooldownPane.AddItem(cooldownIcon.gameObject, true);        
     }
 
     public void TriggerTradeCash(int amountPerDollar)
@@ -178,6 +214,11 @@ public class GameManager : MonoBehaviour
         this.GoalBillboard.SetGoal(new LevelGoal(goal.ScoreGoal, goal.Time));
         TooltipUI.SetVisible(false);                 
         this.StartCoroutine(this.GoalBillboard.Animate());
+    }
+
+    public void AfterIrrigation(CooldownTimer timeAfterMatch)
+    {
+        this.UpdateOrCreateCooldownIcon(null, timeAfterMatch);
     }
 
     void GoalBillboard_DoneAnimating(object sender, EventArgs e)
@@ -332,9 +373,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (cashForPointsDuration > 0.0f)
+        if (!cashForPointsTimer.IsExpired)
         {
-            cashForPointsDuration -= Time.deltaTime;
+            cashForPointsTimer.Tick(Time.deltaTime);
+        }
+
+        if (!colorSwapTimer.IsExpired)
+        {
+            colorSwapTimer.Tick(Time.deltaTime);
         }
 
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;
@@ -465,7 +511,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (cashForPointsDuration > 0.0f)
+        if (!cashForPointsTimer.IsExpired)
         {
             // DoubleScore item bonus
             totalVal *= 2;
@@ -489,7 +535,7 @@ public class GameManager : MonoBehaviour
 
     public int GetCashValue(List<Gem> matches)
     {
-        if (cashForPointsDuration > 0.0f)
+        if (!cashForPointsTimer.IsExpired)
         {
             return 0;
         }

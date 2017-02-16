@@ -9,6 +9,11 @@ public class ItemPane : MonoBehaviour
 
     private List<GameObject> inventory = new List<GameObject>();
 
+    public List<GameObject> Items
+    {
+        get { return this.inventory; }
+    }
+
     public float ItemSizeXDefault = 0.64f;
     public float ItemSizeYDefault = 0.64f;
 
@@ -24,7 +29,7 @@ public class ItemPane : MonoBehaviour
     {	
 	}
 
-    public void AddItem(GameObject item)
+    public void AddItem(GameObject item, bool constantLocalScale = false)
     {
         BoxCollider2D box = item.GetComponent<BoxCollider2D>();
         if (box != null)
@@ -38,7 +43,13 @@ public class ItemPane : MonoBehaviour
             item.transform.GetChild(i).localScale *= this.ItemScaleFactor;
         }
 
-        item.transform.SetParent(this.transform);        
+        item.transform.SetParent(this.transform);    
+        
+        if (constantLocalScale)
+        {
+            item.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        }
+            
         this.inventory.Add(item);        
         this.RefreshLayout();
     }

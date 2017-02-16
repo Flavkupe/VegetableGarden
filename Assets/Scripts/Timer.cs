@@ -20,6 +20,7 @@ public abstract class Timer<T> where T : struct
     /// Gets how much time left before expiry
     /// </summary>
     public abstract float TimeLeft { get; }
+    public abstract float TimeLeftPercent { get; }    
 
     public abstract void SetBaseline(T amount);
 }
@@ -47,6 +48,14 @@ public class CooldownTimer : Timer<float>
         get
         {
             return this.current >= this.baseline;
+        }
+    }
+
+    public override float TimeLeftPercent
+    {
+        get
+        {
+            return baseline == 0.0f ? 0.0f : (1.0f - (this.current / this.baseline));            
         }
     }
 

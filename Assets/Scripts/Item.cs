@@ -20,6 +20,8 @@ public class Item : MonoBehaviour, IClickableItem
 
     private GameObject itemBack = null;
 
+    public SpriteRenderer Sprite { get { return this.sprite ?? this.GetComponent<SpriteRenderer>(); } }
+
     public virtual bool IsInstantUse
     {
         get { return false; }

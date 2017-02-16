@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour {
 
-    private List<Item> inventory = new List<Item>();
+    public List<Item> inventory = new List<Item>();
     
     public int Cash = 0;
 
@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour {
     /// Price percent in which costs go up per level.
     /// </summary>
     public float LevelCostRamp = 0.1f;
-    public float SellValueRatio = 0.25f;    
+    public float SellValueRatio = 0.25f;
 
     public int CurrentLevel = 0;
 
@@ -160,7 +160,7 @@ public class PlayerManager : MonoBehaviour {
     public float SlowTimeMultiplierBonus = 1.0f;
     public int IrrigationPointsBonus = 0;
 
-    public int PurpleGemBonus = 0;    
+    public int PurpleGemBonus = 0;
 
     private void ApplyInstantItem(Item item)
     {

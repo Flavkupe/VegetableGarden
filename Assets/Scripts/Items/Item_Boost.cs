@@ -22,12 +22,17 @@ public class Item_Boost : Item
             }
             else if (Boost == BoostType.CashForPoints_20)
             {
-                GameManager.Instance.EnableCashForPoints(20.0f);
+                GameManager.Instance.EnableCashForPoints(20.0f, this);
                 return true;
             }
             else if (Boost == BoostType.TradeCash_10)
             {
                 GameManager.Instance.TriggerTradeCash(10);
+                return true;
+            }
+            else if (Boost == BoostType.ColorSwap_20)
+            {
+                GameManager.Instance.EnableColorSwap(this);
                 return true;
             }
         }
@@ -55,4 +60,9 @@ public enum BoostType
     /// Trade cash 
     /// </summary>
     TradeCash_10,
+
+    /// <summary>
+    /// For 20 seconds, can swap vegetables based on color
+    /// </summary>
+    ColorSwap_20,
 }
