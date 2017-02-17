@@ -160,6 +160,12 @@ public class GemGrid : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         this.timeAfterMatch.Tick(Time.deltaTime);
 	}
 

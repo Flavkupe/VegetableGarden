@@ -117,6 +117,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         this.CurrentLevel = 0;
+        this.TotalScore = 0;
 
         if (Achievments.BigPockets)
         {

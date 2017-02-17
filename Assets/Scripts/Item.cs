@@ -65,6 +65,12 @@ public class Item : MonoBehaviour, IClickableItem
         }
     }
 
+    /// <summary>
+    /// Whether or not the item can be used while the board is in movement. If false,
+    /// item can be used whenever as long as cooldown is ready.
+    /// </summary>
+    public virtual bool MustWaitForStaticBoard { get { return true; } }
+
     public void ResetCooldown()
     {
         this.cooldownTimer.Fill();
@@ -129,14 +135,15 @@ public class Item : MonoBehaviour, IClickableItem
         {
             return;
         }
-
-        if (this.Grid.CanMakeMove() && this.cooldownTimer.IsExpired)
+        
+        if (this.cooldownTimer.IsExpired && 
+            (!this.MustWaitForStaticBoard || this.Grid.CanMakeMove()))
         {
             SoundManager.Instance.PlaySound(SoundEffects.Use);
             this.TriggerEffect();
             this.cooldownTimer.Reset();
             this.sprite.color = Color.black;
-        }   
+        }        
         else
         {
             SoundManager.Instance.PlaySound(SoundEffects.Error);

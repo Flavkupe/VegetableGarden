@@ -8,6 +8,8 @@ public class Item_Boost : Item
 
     public float Magnitude = 20.0f;
 
+    public override bool MustWaitForStaticBoard { get { return false; } }
+
     public override bool TriggerEffect()
     {
         if (GameManager.Instance != null)

@@ -77,6 +77,11 @@ public class Gem : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        if (GameManager.Instance == null || GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
         mouseReleased = Input.GetMouseButtonUp(0);
 
         if (this.GlowTimer.Tick(Time.deltaTime).IsExpired)
