@@ -258,29 +258,41 @@ public class GemGrid : MonoBehaviour
                 yield return null;
             }
 
-            if (getRewards)
+            // HACK: This check is for a really rare race condition that sadly i can't find.
+            // If this happens, ignore this round and check again for matches. It's
+            // almost a try/catch.
+            if (!allMatches.Any(gem => gem == null))
             {
-                foreach (List<Gem> group in tempMatchGroups)
+                if (getRewards)
                 {
-                    if (group.Count > 0)
+                    foreach (List<Gem> group in tempMatchGroups)
                     {
-                        GameManager.Instance.ProcessMatchRewards(new List<Gem>(group));
+                        if (group.Count > 0)
+                        {
+                            if (group.Any(gem => gem == null))
+                            {
+                                // Try extra hard to avoid nulls!
+                                continue;
+                            }
+
+                            GameManager.Instance.ProcessMatchRewards(new List<Gem>(group));
+                        }
                     }
                 }
-            }
-            else
-            {
-                // After first round of "matches", subsequent matches
-                //  resulting from drop should get rewards
-                getRewards = true;
-            }
+                else
+                {
+                    // After first round of "matches", subsequent matches
+                    //  resulting from drop should get rewards
+                    getRewards = true;
+                }
 
-            foreach (Gem match in allMatches)
-            {
-                this.RemoveGem(match);
-            }
+                foreach (Gem match in allMatches)
+                {
+                    this.RemoveGem(match);
+                }
 
-            SoundManager.Instance.PlaySound(SoundEffects.Pop);
+                SoundManager.Instance.PlaySound(SoundEffects.Pop);
+            }
 
             this.DropRows();
 
@@ -304,8 +316,7 @@ public class GemGrid : MonoBehaviour
                 // Add additional resulting maches to grand total
                 allMatches.AddRange(additionalMatches);
             }
-        } while (allMatches.Count > 0);
-        
+        } while (allMatches.Count > 0); 
 
         gridMatchingIsActive = false;
     }

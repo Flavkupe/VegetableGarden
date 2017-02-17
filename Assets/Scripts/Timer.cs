@@ -30,6 +30,20 @@ public class CooldownTimer : Timer<float>
     private float baseline;
     private float current = 0.0f;
 
+    private float? tempBaseline = null;
+
+    public event EventHandler OnTimerExpired;
+
+    public void SetTempBaseline(float val)
+    {
+        tempBaseline = val;
+    }
+
+    public void RemoveTempBaseline()
+    {
+        tempBaseline = null;
+    }
+
     public CooldownTimer(float baseline, bool startFull)
     {
         this.baseline = baseline;
@@ -43,11 +57,13 @@ public class CooldownTimer : Timer<float>
     {
     }
 
+    private float TrueBaseline { get { return this.tempBaseline ?? this.baseline; } }
+
     public override bool IsExpired
     {
         get
         {
-            return this.current >= this.baseline;
+            return this.current >= this.TrueBaseline;
         }
     }
 
@@ -55,7 +71,7 @@ public class CooldownTimer : Timer<float>
     {
         get
         {
-            return baseline == 0.0f ? 0.0f : (1.0f - (this.current / this.baseline));            
+            return TrueBaseline == 0.0f ? 0.0f : (1.0f - (this.current / this.TrueBaseline));            
         }
     }
 
@@ -63,8 +79,13 @@ public class CooldownTimer : Timer<float>
     {
         get
         {
-            return Mathf.Max(0.0f, this.baseline - this.current);
+            return Mathf.Max(0.0f, this.TrueBaseline - this.current);
         }
+    }
+
+    public void Fill()
+    {
+        this.current = this.baseline;
     }
 
     public override void Reset(float? amount = null)
@@ -82,6 +103,14 @@ public class CooldownTimer : Timer<float>
         if (this.current < this.baseline)
         {
             this.current += delta;
+            if (this.IsExpired)
+            {
+                // Just now expired
+                if (OnTimerExpired != null) 
+                {
+                    OnTimerExpired(this, new EventArgs());
+                }
+            }
         }
 
         return this;

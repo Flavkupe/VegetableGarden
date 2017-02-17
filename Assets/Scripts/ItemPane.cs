@@ -68,7 +68,7 @@ public class ItemPane : MonoBehaviour
     {
         if (item.transform.parent == this.transform)
         {
-            item.transform.parent = null;
+            item.transform.SetParent(null);
         }
 
         this.inventory.Remove(item);

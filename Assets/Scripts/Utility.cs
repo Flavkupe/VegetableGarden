@@ -80,6 +80,6 @@ public static class GameUtils
 
     public static void LogCoordConcat(string label, List<Gem> gems)
     {
-        Debug.Log(label + ": " + string.Join("; ", gems.Select(gem => GetGemLogStats(gem)).ToArray()));
+        //Debug.Log(label + ": " + string.Join("; ", gems.Select(gem => GetGemLogStats(gem)).ToArray()));
     }
 }

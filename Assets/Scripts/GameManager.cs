@@ -48,21 +48,62 @@ public class GameManager : MonoBehaviour
 
     public int MaxLevelScoreIncrease = 1000;
 
+    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
+
     private CooldownTimer cashForPointsTimer = new CooldownTimer(20.0f, true);
-    public void EnableCashForPoints(float duration, Item_Boost item)
+    private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
+    private CooldownTimer itemSpreeTimer = new CooldownTimer(20.0f, true);    
+
+    private void ActivateItemWithTimer(float duration, Item_Boost item, CooldownTimer timer)
     {
-        this.cashForPointsTimer.SetBaseline(duration);
-        this.cashForPointsTimer.Reset();
-        this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, cashForPointsTimer);
+        timer.SetBaseline(duration);
+        timer.Reset();
+        this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, timer);
     }
 
-    // Color-swap stuff
-    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
-    private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
-    public void EnableColorSwap(Item_Boost item)
+    public void EnableCashForPoints(float duration, Item_Boost item)
     {
-        colorSwapTimer.Reset();
-        this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, colorSwapTimer);        
+        this.ActivateItemWithTimer(duration, item, this.cashForPointsTimer);       
+    }
+
+    public void ActivateItemSpree(float duration, Item_Boost item)
+    {
+        this.ActivateItemWithTimer(duration, item, this.itemSpreeTimer);
+        foreach (GameObject obj in this.InventoryPane.Items)
+        {
+            // add temp timers
+            Item objItem = obj.GetComponent<Item>();
+            if (objItem != null && objItem.CooldownCanBeSpreed)
+            {
+                objItem.cooldownTimer.SetTempBaseline(1.0f);
+            }
+        }
+
+        this.itemSpreeTimer.OnTimerExpired += ItemSpreeTimer_OnTimerExpired;
+    }
+
+    private void ItemSpreeTimer_OnTimerExpired(object sender, EventArgs e)
+    {
+        // remove temp timers
+        foreach (GameObject obj in this.InventoryPane.Items)
+        {
+            Item objItem = obj.GetComponent<Item>();
+            if (objItem != null && objItem.CooldownCanBeSpreed)
+            {
+                objItem.cooldownTimer.RemoveTempBaseline();
+                if (objItem.CooldownCanBeReset)
+                {
+                    objItem.cooldownTimer.Fill();
+                }
+            }
+        }
+
+        this.itemSpreeTimer.OnTimerExpired -= ItemSpreeTimer_OnTimerExpired;
+    }
+
+    public void EnableColorSwap(float duration, Item_Boost item)
+    {
+        this.ActivateItemWithTimer(duration, item, this.colorSwapTimer);    
     }
 
     // typeId is just to identify existing cooldowns
@@ -83,6 +124,18 @@ public class GameManager : MonoBehaviour
         cooldownIcon.ParentPane = this.CooldownPane;
         cooldownIcon.SetTimer(timer);
         this.CooldownPane.AddItem(cooldownIcon.gameObject, true);        
+    }
+
+    public void DestroyCooldowns()
+    {
+        foreach (GameObject obj in this.InventoryPane.Items)
+        {
+            Item item = obj.GetComponent<Item>();
+            if (item != null && item.CooldownCanBeReset)
+            {
+                item.ResetCooldown();
+            }
+        }
     }
 
     public void TriggerTradeCash(int amountPerDollar)
@@ -386,6 +439,11 @@ public class GameManager : MonoBehaviour
         if (!colorSwapTimer.IsExpired)
         {
             colorSwapTimer.Tick(Time.deltaTime);
+        }
+
+        if (!itemSpreeTimer.IsExpired)
+        {
+            itemSpreeTimer.Tick(Time.deltaTime);
         }
 
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;

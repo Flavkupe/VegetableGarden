@@ -35,6 +35,8 @@ public class PlayerManager : MonoBehaviour {
     public int TotalScore = 0;
     public List<Item> Inventory { get { return this.inventory; } }
 
+    public bool DebugMode = false;
+
     private List<GameObject> itemsFromResources = null; 
 
     // Use this for initialization
@@ -55,7 +57,11 @@ public class PlayerManager : MonoBehaviour {
     public void InitializeGame()
     {
         this.Cash = 0;
-        this.inventory.Clear();
+        if (!DebugMode)
+        {
+            this.inventory.Clear();
+        }
+
         this.CurrentLevel = 0;
 
         if (Achievments.BigPockets)

@@ -8,10 +8,13 @@ public class Item : MonoBehaviour, IClickableItem
     public float Cooldown = 0.0f;
     public string Description = string.Empty;
 
+    public CooldownTimer cooldownTimer = new CooldownTimer(100.0f, true);
+
+    public bool CooldownCanBeReset = true;
+    public bool CooldownCanBeSpreed = true;
+
     public int PointsToUnlock = int.MaxValue;
-
-    protected float CurrentCooldown = 0.0f;    
-
+    
     public GemGrid Grid = null;
 
     private SpriteRenderer sprite = null;
@@ -33,6 +36,7 @@ public class Item : MonoBehaviour, IClickableItem
 
     void Start()
     {
+        this.cooldownTimer.SetBaseline(this.Cooldown);
         this.sprite = this.GetComponent<SpriteRenderer>();
         if (GameManager.Instance != null)
         {
@@ -49,6 +53,22 @@ public class Item : MonoBehaviour, IClickableItem
         }
     }
 
+    public void ResetCooldown()
+    {
+        this.cooldownTimer.Fill();
+        this.UpdateCooldownUI();
+    }
+
+    private void UpdateCooldownUI()
+    {
+        this.cooldownText.SetText(((int)this.cooldownTimer.TimeLeft).ToString());
+        if (this.cooldownTimer.IsExpired)
+        {
+            this.cooldownText.SetText(string.Empty);            
+            this.sprite.color = Color.white;
+        }
+    }
+
     void Update()
     {
         if (GameManager.Instance != null && GameManager.Instance.IsPaused)
@@ -56,17 +76,8 @@ public class Item : MonoBehaviour, IClickableItem
             return;
         }
 
-        if (this.CurrentCooldown > 0.0f)
-        {
-            this.CurrentCooldown -= Time.deltaTime;
-            this.cooldownText.SetText(((int)this.CurrentCooldown).ToString());
-            if (this.CurrentCooldown <= 0.0f)
-            {
-                this.cooldownText.SetText(string.Empty);
-                this.CurrentCooldown = 0.0f;
-                this.sprite.color = Color.white;
-            }
-        }        
+        cooldownTimer.Tick(Time.deltaTime);
+        UpdateCooldownUI();                            
     }
 
     public virtual bool TriggerEffect()
@@ -97,11 +108,11 @@ public class Item : MonoBehaviour, IClickableItem
             return;
         }
 
-        if (this.Grid.CanMakeMove() && this.CurrentCooldown <= 0.0f)
+        if (this.Grid.CanMakeMove() && this.cooldownTimer.IsExpired)
         {
             SoundManager.Instance.PlaySound(SoundEffects.Use);
             this.TriggerEffect();
-            this.CurrentCooldown = this.Cooldown;
+            this.cooldownTimer.Reset();
             this.sprite.color = Color.black;
         }   
         else
