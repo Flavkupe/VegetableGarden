@@ -165,11 +165,10 @@ public class Gem : MonoBehaviour
 
         if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
         {
-            if (this.GlowTimer.IsExpired && 
-                GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.IrrigationStationProgress, -1, 0) &&
-                PlayerManager.Instance.Achievments.IrrigationStationProgress == 0)                
+            if (this.GlowTimer.IsExpired) 
             {
-                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.IrrigationStationIcon);
+                PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.IrrigationStation,
+                    ref PlayerManager.Instance.Achievments.IrrigationStationProgress, 1, AchievmentManager.Instance.IrrigationStationIcon);
             }
 
             // Irrigate on either condition, but do not continue if move is disallowed

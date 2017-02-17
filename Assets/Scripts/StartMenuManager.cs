@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class StartMenuManager : MonoBehaviour 
 {
@@ -17,6 +18,7 @@ public class StartMenuManager : MonoBehaviour
     public GameObject SoundTab;
     public GameObject HighScoresTab;
     public GameObject ItemsTab;
+    public GameObject InnerMenu;
 
     public Button SetNameButton;
 
@@ -26,7 +28,7 @@ public class StartMenuManager : MonoBehaviour
 
     public ItemPane UnlockedItemDisplay;
 
-    public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }
+    public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }    
 
     public ScoreList ScoresLeft;
 
@@ -36,6 +38,12 @@ public class StartMenuManager : MonoBehaviour
     public static StartMenuManager Instance
     { 
         get { return instance; } 
+    }
+
+    public void StartAnew()
+    {
+        SerializationManager.Instance.DeleteProgress();        
+        SceneManager.LoadScene("StartMenu");
     }
 
     public void ShowModeMenu()
@@ -58,6 +66,31 @@ public class StartMenuManager : MonoBehaviour
         {
             this.NameMenu.SetActive(true);
         }
+
+        if (PlayerManager.Instance.JustFinishedGame)
+        {
+            StartCoroutine(this.LogToLeaderboard());
+        }
+    }
+
+    private IEnumerator LogToLeaderboard()
+    {
+        WWWForm formData = new WWWForm();
+        formData.AddField("Name", PlayerManager.Instance.PlayerName ?? "___Unknown___");
+        formData.AddField("Score", PlayerManager.Instance.TotalScore.ToString());
+        formData.AddField("Data", PlayerManager.Instance.GetExportDataString());
+        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", formData);
+
+        yield return www;
+
+        if (www.error != null)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log("Form upload complete!");
+        }
     }
 
     public void MenuInit()
@@ -68,7 +101,7 @@ public class StartMenuManager : MonoBehaviour
             this.PopulateUnlockableItemUI();
             this.loaded = true;
         }
-    }
+    }    
 
     private void PopulateUnlockableItemUI()
     {
@@ -138,6 +171,11 @@ public class StartMenuManager : MonoBehaviour
 
     public void OpenMenuToTab(StartMenuTabs tab)
     {
+        if (InnerMenu != null && InnerMenu.activeSelf)
+        {
+            return;
+        }
+
         this.MenuInit();
 
         this.Menu.SetActive(true);
@@ -156,9 +194,12 @@ public class StartMenuManager : MonoBehaviour
             case StartMenuTabs.HighScores:
                 this.HighScoresTab.SetActive(true);
                 break;
-            case StartMenuTabs.Sound:
-            default:
+            case StartMenuTabs.Sound:            
                 this.SoundTab.SetActive(true);
+                break;
+            case StartMenuTabs.Close:
+            default:
+                this.Menu.SetActive(false);
                 break;
         }
     }
@@ -181,5 +222,6 @@ public enum StartMenuTabs
     Sound = 0,
     Achievments = 1,
     Items = 2,
-    HighScores = 3
+    HighScores = 3,
+    Close = 4,
 }

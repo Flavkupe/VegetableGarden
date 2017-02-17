@@ -155,4 +155,15 @@ public class SerializationManager : MonoBehaviour
 	void Update () {
 		
 	}
+
+    public void DeleteProgress()
+    {
+        PlayerManager.Instance.DeleteProgress();
+        if (File.Exists(FilePath))
+        {
+            File.Delete(FilePath);
+        }
+
+        this.Save();
+    }
 }

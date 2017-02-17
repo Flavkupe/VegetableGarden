@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,7 @@ public class AchievmentIcon : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        if (!this.IsUnlocked())
+        if (!PlayerManager.Instance.HasAchievment(this.Type))
         {
             this.GetComponent<Image>().color = Color.black;
         }
@@ -35,62 +36,38 @@ public class AchievmentIcon : MonoBehaviour {
         switch (Type)
         {
             case AchievmentType.Punkin:
-                amountReq = pm.Achievments.PunkinProgress;
+                amountReq = pm.AchievmentGoals.Punkin - pm.Achievments.PunkinProgress;
                 break;
             case AchievmentType.Mato:
-                amountReq = pm.Achievments.MatoProgress;
+                amountReq = pm.AchievmentGoals.Mato - pm.Achievments.MatoProgress;
                 break;
             case AchievmentType.Coffers:
-                amountReq = pm.Achievments.CoffersProgress;
+                amountReq = pm.AchievmentGoals.Coffers - pm.Achievments.CoffersProgress;
                 break;
             case AchievmentType.TimeToWaste:
-                amountReq = pm.Achievments.TimeToWasteProgress;
+                amountReq = pm.AchievmentGoals.TimeToWaste - pm.Achievments.TimeToWasteProgress;
                 break;
             case AchievmentType.IrrigationStation:
-                amountReq = pm.Achievments.IrrigationStationProgress;
+                amountReq = pm.AchievmentGoals.IrrigationStation - pm.Achievments.IrrigationStationProgress;
+                break;
+            case AchievmentType.FlipFloppin:
+                amountReq = pm.AchievmentGoals.FlipFloppin - pm.Achievments.FlipFloppinProgress;
+                break;
+            case AchievmentType.TiredOfWaiting:
+                amountReq = (int)(pm.AchievmentGoals.TiredOfWaiting - pm.Achievments.TiredOfWaitingProgress);
                 break;
             default:
                 break;
         }
 
-        return string.Format(LockedText, amountReq);
-    }
-
-    private bool IsUnlocked()
-    {
-        PlayerManager pm = PlayerManager.Instance;
-        switch (Type)
-        {
-            case AchievmentType.Punkin:
-                return pm.Achievments.PunkinProgress == 0; ;
-            case AchievmentType.Mato:
-                return pm.Achievments.MatoProgress == 0; ;
-            case AchievmentType.CashMoney:
-                return pm.Achievments.CashMoney;
-            case AchievmentType.BigScore:
-                return pm.Achievments.BigScore;
-            case AchievmentType.BiggerScore:
-                return pm.Achievments.BiggerScore;
-            case AchievmentType.BiggestScore:
-                return pm.Achievments.BiggestScore;
-            case AchievmentType.BigPockets:
-                return pm.Achievments.BigPockets;
-            case AchievmentType.Coffers:
-                return pm.Achievments.CoffersProgress == 0; ;
-            case AchievmentType.TimeToWaste:
-                return pm.Achievments.TimeToWasteProgress == 0;
-            case AchievmentType.IrrigationStation:
-                return pm.Achievments.IrrigationStationProgress == 0; ;
-            default:
-                return false;
-        }
+        return string.Format(LockedText, Math.Max(0, amountReq));
     }
 
     public void OnMouseExit()
     {
         if (this.MessageBox != null)
         {
-            this.MessageBox.SetText("Earn Achievments! Get permanent bonuses!");
+            this.MessageBox.SetText("Earn Achievments! Get permanent bonuses!", Color.red);
         }
     }
 
@@ -98,13 +75,13 @@ public class AchievmentIcon : MonoBehaviour {
     {
         if (this.MessageBox != null)
         {
-            if (this.IsUnlocked())
+            if (PlayerManager.Instance.HasAchievment(this.Type))
             {
-                MessageBox.SetText(this.UnlockedText);
+                MessageBox.SetText(this.UnlockedText, Color.green);
             }
             else
             {
-                MessageBox.SetText(this.ToUnlock());
+                MessageBox.SetText(this.ToUnlock(), Color.black);
             }
         }
     }
@@ -121,5 +98,19 @@ public enum AchievmentType
     BigPockets,
     Coffers,
     TimeToWaste,
-    IrrigationStation
+    IrrigationStation,
+    FlipFloppin,
+    TiredOfWaiting
+}
+
+[Serializable]
+public class AchievmentGoals
+{
+    public int Punkin = 700;
+    public int Mato = 700;
+    public int Coffers = 8000;
+    public int TimeToWaste = 100;
+    public int IrrigationStation = 5000;
+    public int FlipFloppin = 100;
+    public float TiredOfWaiting = 200000.0f;
 }

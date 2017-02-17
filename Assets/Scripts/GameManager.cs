@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public SetabbleText CashUI = null;
     public SetabbleText TimerUI = null;
     public Tooltip TooltipUI = null;    
+
     public Camera MainCamera = null;
 
     public ItemPane InventoryPane = null;
@@ -101,9 +102,16 @@ public class GameManager : MonoBehaviour
         this.itemSpreeTimer.OnTimerExpired -= ItemSpreeTimer_OnTimerExpired;
     }
 
+    public void ActivateFreeSwap()
+    {
+        this.NextSwapFree = true;
+        PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.FlipFloppin,
+            ref PlayerManager.Instance.Achievments.FlipFloppinProgress, 1, AchievmentManager.Instance.FlipFloppinIcon);
+    }
+
     public void EnableColorSwap(float duration, Item_Boost item)
     {
-        this.ActivateItemWithTimer(duration, item, this.colorSwapTimer);    
+        this.ActivateItemWithTimer(duration, item, this.colorSwapTimer);                
     }
 
     // typeId is just to identify existing cooldowns
@@ -281,6 +289,11 @@ public class GameManager : MonoBehaviour
 
     public void GotoMenu() 
     {
+        if (SerializationManager.Instance != null)
+        {
+            SerializationManager.Instance.Save();
+        }
+
         SceneManager.LoadScene("StartMenu");            
     }
 
@@ -296,10 +309,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        WWWForm form = new WWWForm();
-        form.AddField("Name", PlayerManager.Instance.PlayerName ?? "___Unknown___");
-        form.AddField("Score", PlayerManager.Instance.TotalScore);
-        WWW request = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", form);
+        PlayerManager.Instance.JustFinishedGame = true;
 
         this.GotoMenu();
     }
@@ -459,12 +469,8 @@ public class GameManager : MonoBehaviour
 
     public void BoostTime(int seconds)
     {
-        if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.TimeToWasteProgress, -1, 0) &&
-            PlayerManager.Instance.Achievments.TimeToWasteProgress == 0)
-        {
-            // Time to waste achievment for using clocks enough times
-            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.TimeToWasteIcon);
-        }
+        PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.TimeToWaste,
+            ref PlayerManager.Instance.Achievments.TimeToWasteProgress, 1, AchievmentManager.Instance.TimeToWasteIcon);
 
         this.gameTimer = this.gameTimer.Add(TimeSpan.FromSeconds(seconds));
         this.UpdateTimerText();
@@ -484,7 +490,7 @@ public class GameManager : MonoBehaviour
 
     public void SetGameTimeLimit(long seconds)
     {
-        if (PlayerManager.Instance.Achievments.TimeToWasteProgress == 0)
+        if (PlayerManager.Instance.HasAchievment(AchievmentType.TimeToWaste))
         {
             seconds += 10;
         }
@@ -552,7 +558,7 @@ public class GameManager : MonoBehaviour
                 totalVal += 25;
                 totalVal += 25 * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
 
-                if (PlayerManager.Instance.Achievments.IrrigationStationProgress == 0)
+                if (PlayerManager.Instance.HasAchievment(AchievmentType.IrrigationStation))
                 {
                     totalVal += 25;
                 }                
@@ -563,12 +569,12 @@ public class GameManager : MonoBehaviour
                 totalVal += 100 * PlayerManager.Instance.PurpleGemBonus; // eggplant bonus
             }
 
-            if (gem.GemType == GemType.Tomato && PlayerManager.Instance.Achievments.MatoProgress == 0)
+            if (gem.GemType == GemType.Tomato && PlayerManager.Instance.HasAchievment(AchievmentType.Mato))
             {
                 totalVal += 10;
             }
 
-            if (gem.GemType == GemType.Pumpkin && PlayerManager.Instance.Achievments.PunkinProgress == 0)
+            if (gem.GemType == GemType.Pumpkin && PlayerManager.Instance.HasAchievment(AchievmentType.Punkin))
             {
                 totalVal += 10;
             }
@@ -631,26 +637,14 @@ public class GameManager : MonoBehaviour
     private void CheckAchievmentMatchProgress(List<Gem> matches)
     {
         // Tomato achievments
-        if (PlayerManager.Instance.Achievments.MatoProgress > 0)
-        {
-            int count = matches.Count(a => a.GemType == GemType.Tomato);
-            if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.MatoProgress, -count, 0) &&
-                PlayerManager.Instance.Achievments.MatoProgress == 0)
-            {
-                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.MatoIcon);
-            }
-        }
+        int matoCount = matches.Count(a => a.GemType == GemType.Tomato);
+        PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.Mato,
+            ref PlayerManager.Instance.Achievments.MatoProgress, matoCount, AchievmentManager.Instance.MatoIcon);
 
-        // Pumpkin achievments
-        if (PlayerManager.Instance.Achievments.PunkinProgress > 0)
-        {
-            int count = matches.Count(a => a.GemType == GemType.Pumpkin);
-            if (GameUtils.CappedIncrement(ref PlayerManager.Instance.Achievments.PunkinProgress, -count, 0) &&
-                PlayerManager.Instance.Achievments.PunkinProgress == 0)
-            {
-                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.PunkinIcon);
-            }
-        }
+        // Pumpkin achievments          
+        int punkinCount = matches.Count(a => a.GemType == GemType.Pumpkin);
+        PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.Punkin,
+            ref PlayerManager.Instance.Achievments.PunkinProgress, punkinCount, AchievmentManager.Instance.PunkinIcon);
     }
 
     public void ProcessMatchRewards(List<Gem> matches)

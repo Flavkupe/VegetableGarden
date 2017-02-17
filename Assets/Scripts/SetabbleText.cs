@@ -23,7 +23,7 @@ public class SetabbleText : MonoBehaviour
 	
 	}
 
-    public void SetText(string score)
+    public void SetText(string score, Color? color = null)
     {
         if (textObject == null)
         {
@@ -33,11 +33,16 @@ public class SetabbleText : MonoBehaviour
         if (textObject != null)
         {
             textObject.text = score;
+            
         }
 
         if (shadowTextObject != null)
         {
             shadowTextObject.text = score;
+            if (color != null)
+            {
+                shadowTextObject.color = color.Value;
+            }
         }
     }
 }

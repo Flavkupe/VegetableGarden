@@ -36,6 +36,18 @@ public class Item : MonoBehaviour, IClickableItem
 
     void Start()
     {
+        if (PlayerManager.Instance.HasAchievment(AchievmentType.FlipFloppin))
+        {
+            this.Cooldown /= 2.0f;
+        }
+
+        if (PlayerManager.Instance.HasAchievment(AchievmentType.TiredOfWaiting))
+        {
+            this.Cooldown--;            
+        }
+
+        this.Cooldown = Math.Max(1.0f, this.Cooldown);
+
         this.cooldownTimer.SetBaseline(this.Cooldown);
         this.sprite = this.GetComponent<SpriteRenderer>();
         if (GameManager.Instance != null)
@@ -74,6 +86,16 @@ public class Item : MonoBehaviour, IClickableItem
         if (GameManager.Instance != null && GameManager.Instance.IsPaused)
         {
             return;
+        }
+
+        // Progress towards this achievment
+        if (!PlayerManager.Instance.HasAchievment(AchievmentType.TiredOfWaiting))
+        {
+            PlayerManager.Instance.Achievments.TiredOfWaitingProgress += Time.deltaTime;
+            if (PlayerManager.Instance.HasAchievment(AchievmentType.TiredOfWaiting))
+            {
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.TiredOfWaitingIcon);
+            }
         }
 
         cooldownTimer.Tick(Time.deltaTime);

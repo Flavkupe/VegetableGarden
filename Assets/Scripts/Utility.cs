@@ -56,7 +56,7 @@ public static class GameUtils
     {
         if (PlayerManager.Instance != null && PlayerManager.Instance.LoggingEnabled)
         {
-            Debug.Log(message);
+            //Debug.Log(message);
         }
     }
 

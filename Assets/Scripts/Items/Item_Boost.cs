@@ -18,8 +18,8 @@ public class Item_Boost : Item
                 return true;
             }        
             else if (Boost == BoostType.FreeSwap)
-            {
-                GameManager.Instance.NextSwapFree = true;
+            {                
+                GameManager.Instance.ActivateFreeSwap();
                 return true;
             }
             else if (Boost == BoostType.CashForPoints_20)

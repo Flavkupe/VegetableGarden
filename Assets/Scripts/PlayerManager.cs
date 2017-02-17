@@ -5,17 +5,20 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerManager : MonoBehaviour {
-
+public class PlayerManager : MonoBehaviour
+{
     public List<Item> inventory = new List<Item>();
     
     public int Cash = 0;
 
     public GameMode GameMode = GameMode.Normal;
 
-    public Achievments Achievments = new Achievments();
+    public Achievments Achievments;
+    public AchievmentGoals AchievmentGoals;
 
     public string PlayerName = null;
+
+    public bool JustFinishedGame = false;
 
     /// <summary>
     /// Price percent in which costs go up per level.
@@ -37,7 +40,57 @@ public class PlayerManager : MonoBehaviour {
 
     public bool DebugMode = false;
 
-    private List<GameObject> itemsFromResources = null; 
+    public int GoldGainBonus = 0;
+    public float FastDropMultiplierBonus = 1.0f;
+    public float IrrigationDurationBonus = 0.0f;
+    public float IrrigationTimingWindow = 0.0f;
+    public float SlowTimeMultiplierBonus = 1.0f;
+    public int IrrigationPointsBonus = 0;
+
+    public int PurpleGemBonus = 0;    
+
+    private List<GameObject> itemsFromResources = null;
+
+    public void DeleteProgress()
+    {
+        this.Achievments = new Achievments();
+        this.UnlockedItems.Clear();
+        this.UniversalScore = 0;
+        this.PlayerName = null;
+    }
+
+    public bool HasAchievment(AchievmentType type)
+    {
+        switch (type)
+        {
+            case AchievmentType.Punkin:
+                return this.Achievments.PunkinProgress >= this.AchievmentGoals.Punkin;
+            case AchievmentType.Mato:
+                return this.Achievments.MatoProgress >= this.AchievmentGoals.Mato;
+            case AchievmentType.CashMoney:
+                return this.Achievments.CashMoney;
+            case AchievmentType.BigScore:
+                return this.Achievments.BigScore;
+            case AchievmentType.BiggerScore:
+                return this.Achievments.BiggerScore;
+            case AchievmentType.BiggestScore:
+                return this.Achievments.BiggestScore;
+            case AchievmentType.BigPockets:
+                return this.Achievments.BigPockets;
+            case AchievmentType.Coffers:
+                return this.Achievments.CoffersProgress >= this.AchievmentGoals.Coffers;
+            case AchievmentType.TimeToWaste:
+                return this.Achievments.TimeToWasteProgress >= this.AchievmentGoals.TimeToWaste;
+            case AchievmentType.IrrigationStation:
+                return this.Achievments.IrrigationStationProgress >= this.AchievmentGoals.IrrigationStation;
+            case AchievmentType.FlipFloppin:
+                return this.Achievments.FlipFloppinProgress >= this.AchievmentGoals.FlipFloppin;
+            case AchievmentType.TiredOfWaiting:
+                return this.Achievments.TiredOfWaitingProgress >= this.AchievmentGoals.TiredOfWaiting;
+            default:
+                return false;
+        }
+    }
 
     // Use this for initialization
     void Awake() {
@@ -56,6 +109,7 @@ public class PlayerManager : MonoBehaviour {
 
     public void InitializeGame()
     {
+        this.JustFinishedGame = false;
         this.Cash = 0;
         if (!DebugMode)
         {
@@ -80,6 +134,15 @@ public class PlayerManager : MonoBehaviour {
         this.HighScores.Add(score);
         this.HighScores = this.HighScores.OrderByDescending(a => a).ToList();
         this.HighScores = this.HighScores.GetRange(0, Math.Min(10, this.HighScores.Count));
+    }
+
+    public string GetExportDataString()
+    {
+        string items = string.Format("'items':'{0}'", string.Join(",", this.inventory.Select(a => a.name).ToArray()));
+        string universalScore = string.Format("'uniscore':'{0}'", UniversalScore);
+        string level = string.Format("'level':'{0}'", CurrentLevel);
+        string mode = string.Format("'mode':'{0}'", GameMode.ToString());
+        return string.Format("{{ {0} {1} {2} {3} }}", items, universalScore, level, mode);
     }
 
     private static PlayerManager instance = null;
@@ -155,21 +218,9 @@ public class PlayerManager : MonoBehaviour {
         }
 
         // Coffers achievment progress
-        if (GameUtils.CappedIncrement(ref this.Achievments.CoffersProgress, -cost, 0) &&
-            this.Achievments.CoffersProgress == 0)
-        {
-            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.CoffersIcon);            
-        }        
+        PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.Coffers,
+            ref PlayerManager.Instance.Achievments.CoffersProgress, cost, AchievmentManager.Instance.CoffersIcon);    
     }
-
-    public int GoldGainBonus = 0;
-    public float FastDropMultiplierBonus = 1.0f;
-    public float IrrigationDurationBonus = 0.0f;
-    public float IrrigationTimingWindow = 0.0f;
-    public float SlowTimeMultiplierBonus = 1.0f;
-    public int IrrigationPointsBonus = 0;
-
-    public int PurpleGemBonus = 0;
 
     private void ApplyInstantItem(Item item)
     {
@@ -208,7 +259,24 @@ public class PlayerManager : MonoBehaviour {
     {
         this.inventory.Add(item);
     }
+
+
+    public void ProgressTowardsAchievment(AchievmentType type, ref int field, int amount, AchievmentIcon icon)
+    {        
+        if (!this.HasAchievment(type))
+        {
+            field += amount;
+            if (this.HasAchievment(type))
+            {
+                if (AchievmentManager.Instance != null)
+                {
+                    AchievmentManager.Instance.AnnounceAchievment(icon);
+                }
+            }
+        }
+    }
 }
+
 
 public enum GameMode
 {
@@ -223,13 +291,13 @@ public class Achievments
     /// Match 1000 punkins
     /// Pumpkins worth 10% more.
     /// </summary>
-    public int PunkinProgress = 1000;
+    public int PunkinProgress = 0;
 
     /// <summary>
     /// Match 1000 tomatoes
     /// Tomatoes worth 10% more.
     /// </summary>
-    public int MatoProgress = 1000;
+    public int MatoProgress = 0;
 
     /// <summary>
     /// Have 2000 gold at once.
@@ -265,17 +333,21 @@ public class Achievments
     /// Spend 10000 gold.
     /// Items cost 10% less.
     /// </summary>
-    public int CoffersProgress = 10000;
+    public int CoffersProgress = 0;
 
     /// <summary>
     /// Use Time boost 100 times.
     /// 10 extra starting seconds each round.
     /// </summary>
-    public int TimeToWasteProgress = 100;
+    public int TimeToWasteProgress = 0;
 
     /// <summary>
     /// Irrigated 20000 times.
     /// 50% more points from irrigation.
     /// </summary>
-    public int IrrigationStationProgress = 20000;
+    public int IrrigationStationProgress = 0;
+
+    public int FlipFloppinProgress = 0;
+
+    public float TiredOfWaitingProgress = 0.0f;
 }
