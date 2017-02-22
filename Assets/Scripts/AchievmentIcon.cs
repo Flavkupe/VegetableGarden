@@ -56,6 +56,12 @@ public class AchievmentIcon : MonoBehaviour {
             case AchievmentType.TiredOfWaiting:
                 amountReq = (int)(pm.AchievmentGoals.TiredOfWaiting - pm.Achievments.TiredOfWaitingProgress);
                 break;
+            case AchievmentType.CashMoney:
+                amountReq = PlayerManager.Instance.AchievmentGoals.CashMoney;
+                break;
+            case AchievmentType.BigPockets:
+                amountReq = PlayerManager.Instance.AchievmentGoals.BigPockets;
+                break;
             default:
                 break;
         }
@@ -113,4 +119,6 @@ public class AchievmentGoals
     public int IrrigationStation = 5000;
     public int FlipFloppin = 100;
     public float TiredOfWaiting = 200000.0f;
+    public int CashMoney = 2000;
+    public int BigPockets = 10;
 }

@@ -10,6 +10,8 @@ using UnityEngine.Networking;
 public class StartMenuManager : MonoBehaviour 
 {
     private bool loaded = false;
+    private bool loadedLeaderboard = false;
+
     public GameObject GameModeMenu;
 
     public GameObject NameMenu;
@@ -19,8 +21,13 @@ public class StartMenuManager : MonoBehaviour
     public GameObject HighScoresTab;
     public GameObject ItemsTab;
     public GameObject InnerMenu;
+    public GameObject LeaderboardTab;
 
     public Button SetNameButton;
+
+    public SetabbleText LeaderboardLoadingText;
+    public ScoreList LeaderboardScoresLeft;
+    public ScoreList LeaderboardScoresRight;
 
     public GameObject TutorialMenu;
 
@@ -31,7 +38,6 @@ public class StartMenuManager : MonoBehaviour
     public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }    
 
     public ScoreList ScoresLeft;
-
     public ScoreList ScoresRight;    
 
     static StartMenuManager instance;
@@ -39,6 +45,8 @@ public class StartMenuManager : MonoBehaviour
     { 
         get { return instance; } 
     }
+
+    public int Math5 { get; private set; }
 
     public void StartAnew()
     {
@@ -93,6 +101,63 @@ public class StartMenuManager : MonoBehaviour
         }
     }
 
+    public void LoadLeaderboard()
+    {
+        if (!this.loadedLeaderboard)
+        {
+            StartCoroutine(this.GetTopTenForLeaderboard());
+        }
+    }
+
+    private IEnumerator GetTopTenForLeaderboard()
+    {
+        this.LeaderboardLoadingText.gameObject.SetActive(true);
+        this.LeaderboardLoadingText.SetText("Loading...");
+        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/GetTopTen/");
+
+        yield return www;        
+
+        if (www.error != null)
+        {
+            this.LeaderboardLoadingText.SetText("Could not contact server!");
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Debug.Log("http download complete!");
+            this.loadedLeaderboard = true;
+            this.LeaderboardLoadingText.gameObject.SetActive(false);
+            this.ParseLeaderboardText(www.text);
+        }
+    }
+
+    [Serializable]
+    public class ScoreData
+    {
+        public int Score; 
+        public string Name; 
+    }
+
+    private void ParseLeaderboardText(string text)
+    {
+        if (!string.IsNullOrEmpty(text))
+        {
+            ScoreData[] data = JsonHelper.FromJson<ScoreData>(text);
+
+            if (data != null && data.Length > 0)
+            {
+                List<string> leaderboardScores = new List<string>();
+                foreach (ScoreData item in data)
+                {
+                    leaderboardScores.Add(string.Format("{0} ({1})", item.Score, item.Name));
+                }
+
+                this.LeaderboardScoresLeft.SetScores(leaderboardScores.Take(Math.Min(5, leaderboardScores.Count)).ToList());
+                this.LeaderboardScoresRight.SetScores(leaderboardScores.Skip(5).ToList());                           
+            }
+        }
+    }
+
     public void MenuInit()
     {        
         if (!this.loaded)
@@ -130,7 +195,7 @@ public class StartMenuManager : MonoBehaviour
 
     public void LoadScores()
     {
-        List<int> scores = PlayerManager.Instance.HighScores;
+        List<string> scores = PlayerManager.Instance.HighScores.Select(a => a.ToString()).ToList();
         
         int leftRange = Mathf.Min(scores.Count, this.ScoresLeft.Rows);
         this.ScoresLeft.SetScores(scores.GetRange(0, leftRange));
@@ -183,6 +248,7 @@ public class StartMenuManager : MonoBehaviour
         this.SoundTab.SetActive(false);
         this.HighScoresTab.SetActive(false);
         this.ItemsTab.SetActive(false);
+        this.LeaderboardTab.SetActive(false);
         switch (tab)
         {            
             case StartMenuTabs.Achievments:
@@ -196,6 +262,10 @@ public class StartMenuManager : MonoBehaviour
                 break;
             case StartMenuTabs.Sound:            
                 this.SoundTab.SetActive(true);
+                break;
+            case StartMenuTabs.Leaderboard:
+                this.LeaderboardTab.SetActive(true);
+                this.LoadLeaderboard();
                 break;
             case StartMenuTabs.Close:
             default:
@@ -224,4 +294,5 @@ public enum StartMenuTabs
     Items = 2,
     HighScores = 3,
     Close = 4,
+    Leaderboard = 5,
 }

@@ -211,7 +211,7 @@ public class PlayerManager : MonoBehaviour
             this.AddItem(item);
         }
 
-        if (this.inventory.Count + this.PermanentItemsPurchased.Count >= 10 &&
+        if (this.inventory.Count + this.PermanentItemsPurchased.Count >= PlayerManager.Instance.AchievmentGoals.BigPockets &&
             !PlayerManager.Instance.Achievments.BigPockets)
         {
             PlayerManager.Instance.Achievments.BigPockets = true;
@@ -247,7 +247,7 @@ public class PlayerManager : MonoBehaviour
                     this.IrrigationPointsBonus++;
                     break;
                 case EffectType.SlowTime:
-                    this.SlowTimeMultiplierBonus *= 0.8f;
+                    this.SlowTimeMultiplierBonus *= 0.9f;
                     break;
                 case EffectType.PurpleGemColorBonus:
                     this.PurpleGemBonus++;

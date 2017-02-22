@@ -21,13 +21,13 @@ public class ScoreList : MonoBehaviour {
 		
 	}
 
-    public void SetScores(List<int> values)
+    public void SetScores(List<string> values)
     {        
         int current = 0;
         if (this.Textbox != null)
         {
             this.Textbox.text = string.Empty;
-            foreach (int value in values)
+            foreach (string value in values)
             {
                 this.Textbox.text += (current + this.StartingNum) + ") " + value + "\n";
                 current++;

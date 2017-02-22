@@ -529,7 +529,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerManager.Instance.Cash += increment;
         if (!PlayerManager.Instance.Achievments.CashMoney &&
-            PlayerManager.Instance.Cash >= 2000)
+            PlayerManager.Instance.Cash >= PlayerManager.Instance.AchievmentGoals.CashMoney)
         {
             PlayerManager.Instance.Achievments.CashMoney = true;
             AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.CashMoneyIcon);
@@ -589,12 +589,12 @@ public class GameManager : MonoBehaviour
         if (PlayerManager.Instance.Achievments.BigScore)
         {
             // BigScore bonus
-            totalVal = (int)((float)totalVal * 1.1f);
+            totalVal = (int)((float)totalVal * 1.05f);
         }
         if (PlayerManager.Instance.Achievments.BiggerScore)
         {
             // BiggerScore bonus
-            totalVal = (int)((float)totalVal * 1.1f);
+            totalVal = (int)((float)totalVal * 1.05f);
         }
 
         GameUtils.LogCoordConcat(string.Format("Gained {0} from {1} matches", totalVal, matches.Count), matches);
