@@ -13,6 +13,8 @@ public enum GridGemType
 public class GemGrid : MonoBehaviour 
 {
     private CooldownTimer timeAfterMatch;
+    private CooldownTimer hintTimer;
+    public float HintTimeout = 5.0f;   
 
     public class MatchOverrideRules
     {
@@ -54,6 +56,7 @@ public class GemGrid : MonoBehaviour
 	// Use this for initialization
 	void Start() 
     {
+        this.hintTimer = new CooldownTimer(HintTimeout, false);
         this.timeAfterMatch = new CooldownTimer(GameManager.Instance.GetTotalGlowActivationWindow(), true);
     }
 
@@ -167,7 +170,20 @@ public class GemGrid : MonoBehaviour
         }
 
         this.timeAfterMatch.Tick(Time.deltaTime);
-	}
+
+        if (this.CanMakeMove() && !GameManager.Instance.IsPaused)
+        {
+            if (this.hintTimer.Tick(Time.deltaTime).IsExpired)
+            {
+                this.hintTimer.Reset();
+                Gem hintGem = this.LookForPossibleMatch();
+                if (hintGem != null && hintGem.gameObject != null)
+                {
+                    GameManager.Instance.CreateHintCallout(hintGem);
+                }
+            }
+        }
+    }
 
     public void SetGlowActicationWindow(float window)
     {
@@ -217,8 +233,9 @@ public class GemGrid : MonoBehaviour
             if (matches != null && matches.Count > 0)
             {
                 this.StartCoroutine(this.ProcessMatches(matches));
-                this.timeAfterMatch.Reset();
-                GameManager.Instance.AfterIrrigation(this.timeAfterMatch);                                 
+                this.timeAfterMatch.Reset();                
+                GameManager.Instance.AfterIrrigation(this.timeAfterMatch);
+                this.hintTimer.Reset();
             }
             else
             {
@@ -245,6 +262,8 @@ public class GemGrid : MonoBehaviour
             rules = MatchOverrideRules.None;
         }
 
+        GameManager.Instance.ClearHintCallouts();
+
         List<List<Gem>> tempMatchGroups = new List<List<Gem>>();
         List<Gem> allMatches = new List<Gem>();
         foreach (List<Gem> group in matchGroups)
@@ -255,7 +274,7 @@ public class GemGrid : MonoBehaviour
         }
 
         do
-        {                
+        {
             HashSet<Gem> additionalMatches = new HashSet<Gem>();
             rules.IgnoreList = additionalMatches;
 
@@ -325,6 +344,11 @@ public class GemGrid : MonoBehaviour
         } while (allMatches.Count > 0); 
 
         gridMatchingIsActive = false;
+    }
+
+    public bool HasMatches(MatchOverrideRules rules = null)
+    {
+        return this.GetAllMatches(rules).Count > 0;
     }
 
     /// <summary>
@@ -573,7 +597,56 @@ public class GemGrid : MonoBehaviour
         }
 
         return matches;
-    }    
+    }
+
+    public Gem LookForPossibleMatch()
+    {
+        List<Gem> gemsToCheck = new List<Gem>(this.activeGems);
+        while (gemsToCheck.Count > 0)
+        {
+            Gem gem = gemsToCheck.GetRandom();
+            gemsToCheck.Remove(gem);
+            if (gem.gameObject != null)
+            {
+                List<Gem> neighbors = this.GetNeighbors(gem); 
+                foreach (Gem neighbor in neighbors)
+                {
+                    if (this.CreatesMatches(gem, neighbor.GridX, neighbor.GridY))
+                    {                        
+                        return gem;
+                    }
+                }                           
+            }
+        }
+
+        return null;
+    }
+
+    private List<Gem> GetNeighbors(Gem gem)
+    {
+        List<Gem> gems = new List<Gem>();
+        if (gem != null)
+        {            
+            if (gem.GridX > 0)
+            {
+                gems.Add(this.gemGrid[gem.GridX - 1, gem.GridY]);
+            }
+            if (gem.GridY > 0)
+            {
+                gems.Add(this.gemGrid[gem.GridX, gem.GridY - 1]);
+            }
+            if (gem.GridX < this.GridDimensionsX - 1)
+            {
+                gems.Add(this.gemGrid[gem.GridX + 1, gem.GridY]);
+            }
+            if (gem.GridY < this.GridDimensionsY - 1)
+            {
+                gems.Add(this.gemGrid[gem.GridX, gem.GridY + 1]);
+            }
+        }
+
+        return gems;
+    }
 
     private bool AreAdjacent(Gem gem1, Gem gem2)
     {

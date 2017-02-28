@@ -143,7 +143,10 @@ public class PlayerManager : MonoBehaviour
         string universalScore = string.Format("'uniscore':'{0}'", UniversalScore);
         string level = string.Format("'level':'{0}'", CurrentLevel);
         string mode = string.Format("'mode':'{0}'", GameMode.ToString());
-        return string.Format("{{ {0} {1} {2} {3} }}", items, universalScore, level, mode);
+        string platform = string.Format("'platform':'{0}'", Application.platform.ToString());
+        string version = string.Format("'version':'{0}'", Application.version);
+        string score = string.Format("'score':'{0}'", this.TotalScore.ToString()); 
+        return string.Format("{{ {0} {1} {2} {3} {4} {5} {6} }}", items, universalScore, level, mode, platform, version, score);
     }
 
     private static PlayerManager instance = null;

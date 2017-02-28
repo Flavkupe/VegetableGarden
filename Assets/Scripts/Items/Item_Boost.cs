@@ -10,6 +10,16 @@ public class Item_Boost : Item
 
     public override bool MustWaitForStaticBoard { get { return false; } }
 
+    protected override void ApplyCooldownBonus()
+    {        
+        if (this.Boost == BoostType.FreeSwap && PlayerManager.Instance.HasAchievment(AchievmentType.FlipFloppin))
+        {
+            this.Cooldown /= 2.0f;
+        }
+
+        base.ApplyCooldownBonus();
+    }
+
     public override bool TriggerEffect()
     {
         if (GameManager.Instance != null)

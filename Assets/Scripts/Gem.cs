@@ -64,6 +64,8 @@ public class Gem : MonoBehaviour
 
     private Vector3? destination = null;
 
+    public ParticleSystem MatchParticles;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -232,6 +234,19 @@ public class Gem : MonoBehaviour
 
     public IEnumerator Vanish()
     {
+        if (this.gameObject == null)
+        {
+            yield return null;
+        }
+
+        if (this.MatchParticles != null)
+        {
+            ParticleSystem particles = Instantiate(this.MatchParticles);
+            particles.transform.position = this.transform.position;
+            particles.Play();
+            Destroy(particles.gameObject, 4.0f);
+        }
+
         bool vanished = false;       
         while (!vanished)
         {
@@ -252,8 +267,11 @@ public class Gem : MonoBehaviour
             }            
             catch
             {
-                Destroy(this.gameObject);
-                vanished = true;
+                if (this.gameObject != null)
+                {
+                    Destroy(this.gameObject);
+                    vanished = true;
+                }
             }
 
             if (!vanished)

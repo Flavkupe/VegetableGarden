@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System.Security.Policy;
 
 public class StartMenuManager : MonoBehaviour 
 {
@@ -23,6 +24,11 @@ public class StartMenuManager : MonoBehaviour
     public GameObject InnerMenu;
     public GameObject LeaderboardTab;
 
+    public GameObject ExitSign;
+    public GameObject HowToPlay;
+
+    public GameObject CreditScreen;
+
     public Button SetNameButton;
 
     public SetabbleText LeaderboardLoadingText;
@@ -38,7 +44,9 @@ public class StartMenuManager : MonoBehaviour
     public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }    
 
     public ScoreList ScoresLeft;
-    public ScoreList ScoresRight;    
+    public ScoreList ScoresRight;
+    
+    private string key1 = "5bsufazvpkqb24guldp8omtg0g8hey6vt4mkb5i5o0szp111cr8o2rv1nisd5rly35xetdah98ib8co1sau0smnmsynsfc6lr64j";        
 
     static StartMenuManager instance;
     public static StartMenuManager Instance
@@ -46,10 +54,25 @@ public class StartMenuManager : MonoBehaviour
         get { return instance; } 
     }
 
-    public int Math5 { get; private set; }
+    public void ShowCredits()
+    {
+        if (this.CreditScreen.activeSelf)
+        {
+            return;
+        }
+        else
+        {
+            this.CreditScreen.SetActive(true);
+        }
+    }
 
     public void StartAnew()
     {
+        if (this.CreditScreen.activeSelf)
+        {
+            return;
+        }
+
         SerializationManager.Instance.DeleteProgress();        
         SceneManager.LoadScene("StartMenu");
     }
@@ -67,6 +90,15 @@ public class StartMenuManager : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {        
+        if (Application.platform != RuntimePlatform.Android)
+        {
+            // Exit sign has no use outside of android.
+            this.ExitSign.SetActive(false);
+
+            // Move the How To Play sign up
+            this.HowToPlay.transform.localPosition = new Vector3(this.HowToPlay.transform.localPosition.x, 20, 0);
+        }        
+
         SoundManager.Instance.PlayMusic(MusicChoice.Menu);
         SerializationManager.Instance.Load();
 
@@ -83,10 +115,14 @@ public class StartMenuManager : MonoBehaviour
 
     private IEnumerator LogToLeaderboard()
     {
+        //string encScore = PlayerManager.Instance.TotalScore.ToString().Encrypt(key1);
+        string encData = PlayerManager.Instance.GetExportDataString().Encrypt(key1);
+
         WWWForm formData = new WWWForm();
         formData.AddField("Name", PlayerManager.Instance.PlayerName ?? "___Unknown___");
-        formData.AddField("Score", PlayerManager.Instance.TotalScore.ToString());
-        formData.AddField("Data", PlayerManager.Instance.GetExportDataString());
+        formData.AddField("Score", 0);
+        formData.AddField("Data", encData);
+
         WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", formData);
 
         yield return www;
@@ -113,10 +149,9 @@ public class StartMenuManager : MonoBehaviour
     {
         this.LeaderboardLoadingText.gameObject.SetActive(true);
         this.LeaderboardLoadingText.SetText("Loading...");
-        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/GetTopTen/");
+        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/GetTopTen/");        
 
         yield return www;        
-
         if (www.error != null)
         {
             this.LeaderboardLoadingText.SetText("Could not contact server!");
@@ -191,7 +226,26 @@ public class StartMenuManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	}
+        if (Input.GetMouseButtonDown(0) && this.CreditScreen.activeSelf)
+        {
+            this.CreditScreen.SetActive(false);
+            return;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            if (this.Menu.activeSelf)
+            {
+                // Esc out of menu
+                this.Menu.SetActive(false);
+            }
+            else
+            {
+                // Quit if esc while open
+                Application.Quit();
+            }
+        }
+    }
 
     public void LoadScores()
     {

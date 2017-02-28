@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
     private int visibleScore = 0;
 
-    private int trueScore = 0;
+    private int trueScore = 0;    
 
     /// <summary>
     /// Array of UI elements to hide on casual mode
@@ -37,7 +37,9 @@ public class GameManager : MonoBehaviour
     public float SlideSpeed = 6.0f;
 
     public float GlowDuration = 20.0f;
-    public float GlowActivationWindow = 4.0f;    
+    public float GlowActivationWindow = 4.0f;
+
+    public float HintCalloutDuration = 2.0f;  
 
     public float ParticleDensityMultiplier = 0.25f;
 
@@ -47,9 +49,19 @@ public class GameManager : MonoBehaviour
 
     public ParticleSystem MatchParticles;
 
-    public int MaxLevelScoreIncrease = 1000;
+    public TutorialAnimation HintCalloutPointerTemplate;
+    private List<TutorialAnimation> activeHintCallouts = new List<TutorialAnimation>();
 
-    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
+    public int MaxLevelScoreIncrease = 1000;    
+
+    /// <summary>
+    /// Level at which difficulty starts ramping up quite a bit!
+    /// </summary>
+    public int FirstMajorRampLevel = 15;
+    public int MajorRampTimeDecrease = 3;
+    public int MajorRampScoreIncrease = 1000;
+
+    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }    
 
     private CooldownTimer cashForPointsTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
@@ -107,6 +119,11 @@ public class GameManager : MonoBehaviour
         this.NextSwapFree = true;
         PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.FlipFloppin,
             ref PlayerManager.Instance.Achievments.FlipFloppinProgress, 1, AchievmentManager.Instance.FlipFloppinIcon);
+        if (this.Grid.Selected != null)
+        {
+            this.Grid.Selected.SetSelected(false);
+            this.Grid.Selected = null;
+        }
     }
 
     public void EnableColorSwap(float duration, Item_Boost item)
@@ -214,7 +231,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        instance = this;
+        instance = this;        
+
         MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;
 
@@ -240,12 +258,20 @@ public class GameManager : MonoBehaviour
 
     private void InitializeRound()
     {
+        this.ClearHintCallouts();            
         this.ScreenTint.gameObject.SetActive(true);
         LevelGoal goal = null;  
         if (PlayerManager.Instance.CurrentLevel >= this.LevelGoals.Length) 
         {
             goal = this.LevelGoals.Last();
             goal.ScoreGoal += this.MaxLevelScoreIncrease;
+
+            if (PlayerManager.Instance.CurrentLevel > FirstMajorRampLevel)
+            {
+                int ramp = PlayerManager.Instance.CurrentLevel - FirstMajorRampLevel;
+                goal.ScoreGoal += MajorRampScoreIncrease * ramp;
+                goal.Time -= MajorRampTimeDecrease;
+            }
         }
         else
         {
@@ -288,13 +314,15 @@ public class GameManager : MonoBehaviour
     }
 
     public void GotoMenu() 
-    {
-        if (SerializationManager.Instance != null)
-        {
-            SerializationManager.Instance.Save();
-        }
-
+    {        
         SceneManager.LoadScene("StartMenu");            
+    }
+
+    public void ExitClicked()
+    {
+        this.isPaused = false;
+        this.Menu.SetActive(false);      
+        StartCoroutine(Lose());
     }
 
     public IEnumerator Lose()
@@ -405,17 +433,25 @@ public class GameManager : MonoBehaviour
                 PlayerManager.Instance.Achievments.BiggestScore = true;
             }
         }
-    }
+    }    
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         if (Input.GetMouseButtonDown(0))
         {
             if (this.GoalBillboard.Animating)
             {
                 this.GoalBillboard.CurrentMovementSpeed *= 5.0f;
                 this.GoalBillboard.CurrentLingerTime = 0.0f;
+            }
+        }        
+
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            if (!this.Menu.activeSelf)
+            {                
+                this.OpenMenu(true);
             }
         }
 
@@ -624,7 +660,6 @@ public class GameManager : MonoBehaviour
         return totalVal;
     }
 
-
     public void OpenMenu (bool open)
     {
         if (this.Menu != null && !this.GoalBillboard.Animating)
@@ -669,6 +704,39 @@ public class GameManager : MonoBehaviour
         }
         
         this.GenerateParticleStream(scoreValue, averageMatchX, averageMatchY);        
+    }
+
+    private bool clearLock = false;
+    public void ClearHintCallouts()
+    {
+        if (clearLock) return;
+
+        clearLock = true;
+
+        foreach (TutorialAnimation callout in this.activeHintCallouts)
+        {
+            if (callout != null && callout.gameObject != null)
+            {
+                Destroy(callout.gameObject);
+            }
+        }
+
+        activeHintCallouts.Clear();
+
+        clearLock = false;
+    }
+
+    public void CreateHintCallout(Gem gem)
+    {
+        
+        TutorialAnimation callout = Instantiate(this.HintCalloutPointerTemplate);
+        
+        callout.MoveAction.XInit = gem.transform.position.x;
+        callout.MoveAction.XFinish = gem.transform.position.x;
+        callout.MoveAction.YInit = gem.transform.position.y - 0.50f;
+        callout.MoveAction.YFinish = gem.transform.position.y - 0.25f;
+        callout.InitAction();
+        this.activeHintCallouts.Add(callout);
     }
 
     private void GenerateParticleStream(int numParticles, float sourceX, float sourceY, bool fromGrid = true)

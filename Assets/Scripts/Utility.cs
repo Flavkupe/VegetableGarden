@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
@@ -63,6 +64,27 @@ public static class ExtensionFunctions
                 hashSet.Add(item);
             }
         }
+    }
+
+    public static string Encrypt(this string input, string key)
+    {
+        byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
+        byte[] keyArray;
+
+        SHA1CryptoServiceProvider hash = new SHA1CryptoServiceProvider();
+        keyArray = hash.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+        byte[] trimmedBytes = new byte[24];
+        Buffer.BlockCopy(keyArray, 0, trimmedBytes, 0, 20);
+        keyArray = trimmedBytes;
+
+        TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+        tripleDES.Key = keyArray;
+        tripleDES.Mode = CipherMode.ECB;
+        tripleDES.Padding = PaddingMode.PKCS7;
+        ICryptoTransform cTransform = tripleDES.CreateEncryptor();
+        byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+        tripleDES.Clear();
+        return Convert.ToBase64String(resultArray, 0, resultArray.Length);
     }
 }
 

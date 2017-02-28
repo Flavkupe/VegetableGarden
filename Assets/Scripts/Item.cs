@@ -32,19 +32,19 @@ public class Item : MonoBehaviour, IClickableItem
 
     void Awake()
     { 
+    }    
+
+    protected virtual void ApplyCooldownBonus()
+    {
+        if (PlayerManager.Instance.HasAchievment(AchievmentType.TiredOfWaiting))
+        {
+            this.Cooldown--;
+        }
     }
 
     void Start()
     {
-        if (PlayerManager.Instance.HasAchievment(AchievmentType.FlipFloppin))
-        {
-            this.Cooldown /= 2.0f;
-        }
-
-        if (PlayerManager.Instance.HasAchievment(AchievmentType.TiredOfWaiting))
-        {
-            this.Cooldown--;            
-        }
+        this.ApplyCooldownBonus();
 
         this.Cooldown = Math.Max(1.0f, this.Cooldown);
 
@@ -129,6 +129,11 @@ public class Item : MonoBehaviour, IClickableItem
         GameManager.Instance.Tooltip.SetVisible(false);
     }
 
+    public virtual bool CanTriggerEffect()
+    {
+        return true;
+    }
+
     public virtual void ProcessMouseDown()
     {
         if (GameManager.Instance != null && GameManager.Instance.IsPaused)
@@ -136,7 +141,7 @@ public class Item : MonoBehaviour, IClickableItem
             return;
         }
         
-        if (this.cooldownTimer.IsExpired && 
+        if (this.cooldownTimer.IsExpired && this.CanTriggerEffect() &&
             (!this.MustWaitForStaticBoard || this.Grid.CanMakeMove()))
         {
             SoundManager.Instance.PlaySound(SoundEffects.Use);
