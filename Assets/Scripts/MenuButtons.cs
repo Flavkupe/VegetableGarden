@@ -23,7 +23,7 @@ public class MenuButtons : MonoBehaviour {
 
         if (this.Choice == MenuButtonChoices.Start)
         {
-            StartMenuManager.Instance.ShowModeMenu();
+            StartMenuManager.Instance.OnStartNormalGamePressed();
         }
         else if (this.Choice == MenuButtonChoices.Quit)
         {

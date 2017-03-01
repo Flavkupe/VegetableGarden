@@ -251,7 +251,10 @@ public class GameManager : MonoBehaviour
         {
             foreach (GameObject obj in this.HideOnCasual)
             {
-                obj.SetActive(false);  
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                }
             }
         }
     }
