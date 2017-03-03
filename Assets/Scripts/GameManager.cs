@@ -49,6 +49,8 @@ public class GameManager : MonoBehaviour
 
     public ParticleSystem MatchParticles;
 
+    public WeedSettings WeedSettings;
+
     public TutorialAnimation HintCalloutPointerTemplate;
     private List<TutorialAnimation> activeHintCallouts = new List<TutorialAnimation>();
 
@@ -61,17 +63,31 @@ public class GameManager : MonoBehaviour
     public int MajorRampTimeDecrease = 3;
     public int MajorRampScoreIncrease = 1000;
 
-    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }    
+    public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
 
+
+    private List<CooldownTimer> cooldownTimers = new List<CooldownTimer>();
     private CooldownTimer cashForPointsTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
-    private CooldownTimer itemSpreeTimer = new CooldownTimer(20.0f, true);    
+    private CooldownTimer itemSpreeTimer = new CooldownTimer(20.0f, true);
+    private CooldownTimer pickaxeTimer = new CooldownTimer(20.0f, true);
+    private CooldownTimer shovelTimer = new CooldownTimer(20.0f, true);
 
     private void ActivateItemWithTimer(float duration, Item_Boost item, CooldownTimer timer)
     {
         timer.SetBaseline(duration);
         timer.Reset();
         this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, timer);
+    }
+
+    public void ActivateShovel(float duration, Item_Boost item)
+    {
+        this.ActivateItemWithTimer(duration, item, this.shovelTimer);
+    }
+
+    public void ActivatePickaxe(float duration, Item_Boost item)
+    {
+        this.ActivateItemWithTimer(duration, item, this.pickaxeTimer);
     }
 
     public void EnableCashForPoints(float duration, Item_Boost item)
@@ -176,6 +192,10 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool NextSwapFree = false;
 
+    public bool IsQuickMiningEnabled { get { return !this.pickaxeTimer.IsExpired; } }
+
+    public bool IsQuickShovelingEnabled { get { return !this.shovelTimer.IsExpired; } }
+
     public LevelGoal[] LevelGoals;
 
     private Dictionary<string, GameObject> resourceMap = new Dictionary<string, GameObject>();
@@ -231,7 +251,16 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        instance = this;        
+        instance = this;
+
+        this.cooldownTimers = new List<CooldownTimer>()
+        {
+            this.colorSwapTimer,
+            this.itemSpreeTimer,
+            this.pickaxeTimer,
+            this.shovelTimer,
+            this.cashForPointsTimer,
+        };
 
         MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         this.GoalBillboard.DoneAnimating += GoalBillboard_DoneAnimating;
@@ -259,12 +288,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void InitializeRound()
+    public LevelGoal GetLevelGoal()
     {
-        this.ClearHintCallouts();            
-        this.ScreenTint.gameObject.SetActive(true);
-        LevelGoal goal = null;  
-        if (PlayerManager.Instance.CurrentLevel >= this.LevelGoals.Length) 
+        LevelGoal goal = null;
+        if (PlayerManager.Instance.CurrentLevel >= this.LevelGoals.Length)
         {
             goal = this.LevelGoals.Last();
             goal.ScoreGoal += this.MaxLevelScoreIncrease;
@@ -280,6 +307,16 @@ public class GameManager : MonoBehaviour
         {
             goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
         }
+
+        return goal;
+    }
+
+    private void InitializeRound()
+    {        
+        this.ClearHintCallouts();
+        this.ScreenTint.gameObject.SetActive(true);
+
+        LevelGoal goal = this.GetLevelGoal();
 
         this.InventoryPane.ClearList();
         if (PlayerManager.Instance.Inventory.Count > 0)
@@ -480,19 +517,12 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!cashForPointsTimer.IsExpired)
+        foreach (CooldownTimer timer in this.cooldownTimers)
         {
-            cashForPointsTimer.Tick(Time.deltaTime);
-        }
-
-        if (!colorSwapTimer.IsExpired)
-        {
-            colorSwapTimer.Tick(Time.deltaTime);
-        }
-
-        if (!itemSpreeTimer.IsExpired)
-        {
-            itemSpreeTimer.Tick(Time.deltaTime);
+            if (!timer.IsExpired)
+            {
+                timer.Tick(Time.deltaTime);
+            }
         }
 
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;
@@ -581,13 +611,10 @@ public class GameManager : MonoBehaviour
     {
         int totalVal = 0;
         int matchCount = matches.Count;
-        if (matchCount <= 3)
+        totalVal += matches.Sum(a => a.BasePointValue);
+        if (matchCount > 3)
         {
-            totalVal = 100;
-        }
-        else
-        {
-            totalVal = (matchCount - 3) * 200;
+            totalVal += (matchCount - 3) * 100;
         }
 
         foreach (Gem gem in matches)
@@ -648,16 +675,19 @@ public class GameManager : MonoBehaviour
             return 0;
         }
 
-        int totalVal = matches.Count;
-        totalVal += matches.Count * PlayerManager.Instance.GoldGainBonus; // gold gain item bonus
-        int glowCount = matches.Count(a => a.IsGlowing);
-        totalVal += glowCount;
-        totalVal += glowCount * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
-        totalVal += matches.Count(a => a.GemColor == GemColor.Purple) * PlayerManager.Instance.PurpleGemBonus; // eggplant item bonus
-
-        if (PlayerManager.Instance.Achievments.CashMoney)
+        int totalVal = matches.Sum(a => a.BaseMoneyValue);
+        if (totalVal > 0)
         {
-            totalVal++;
+            totalVal += matches.Count * PlayerManager.Instance.GoldGainBonus; // gold gain item bonus
+            int glowCount = matches.Count(a => a.IsGlowing);
+            totalVal += glowCount;
+            totalVal += glowCount * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
+            totalVal += matches.Count(a => a.GemColor == GemColor.Purple) * PlayerManager.Instance.PurpleGemBonus; // eggplant item bonus
+
+            if (PlayerManager.Instance.Achievments.CashMoney)
+            {
+                totalVal++;
+            }
         }
 
         return totalVal;
@@ -776,11 +806,27 @@ public class GameManager : MonoBehaviour
 }
 
 [Serializable]
+public class WeedSettings
+{
+    public Weeds WeedsTemplate;
+    public FreezeGem FreezeGemTemplate;
+    public Weeds RedOreTemplate;
+
+    public GameObject IceGraphic;
+    public ParticleSystem IceClickParticles;
+    public ParticleSystem IceKillParticles;
+}
+
+[Serializable]
 public class LevelGoal
 {
     public int ScoreGoal = 0;
     public int Time = 0;
     public int MaxGems = 6;
+
+    public float WeedsProbability = 0.10f;
+    public float FreezeGemProbability = 0.05f;
+    public float RedOreProbability = 0.01f;
 
     public LevelGoal(int scoreGoal, int time)
     {

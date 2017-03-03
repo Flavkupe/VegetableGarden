@@ -21,8 +21,7 @@ public class GemGrid : MonoBehaviour
         public GemColor? ByColor = null;
         public HashSet<Gem> IgnoreList = new HashSet<Gem>();
 
-        public static MatchOverrideRules None { get { return new MatchOverrideRules(); } }
-        
+        public static MatchOverrideRules None { get { return new MatchOverrideRules(); } }        
     }
 
     public int GridDimensionsX = 8;
@@ -76,6 +75,8 @@ public class GemGrid : MonoBehaviour
             this.activeGems.Clear();
         }
 
+        this.currentGemSelection.Clear();
+
         if (this.GemType == GridGemType.Vegetable)
         {
             this.currentGemSelection.AddRange(this.vegetableResources);
@@ -94,7 +95,7 @@ public class GemGrid : MonoBehaviour
                 Gem gem = this.currentGemSelection.GetRandom();
                 this.currentGemSelection.Remove(gem);
             }
-        }
+        }        
 
         for (int x = 0; x < GridDimensionsX; ++x)
         {
@@ -126,11 +127,31 @@ public class GemGrid : MonoBehaviour
 
     private Gem GetRandomGemInstance()
     {
-        Gem gem = this.currentGemSelection.GetRandom();
+        Gem gem = null;
+        LevelGoal level = GameManager.Instance.GetLevelGoal();
+        
+        float rand = UnityEngine.Random.Range(0.0f, 1.0f);
+        if (rand < level.FreezeGemProbability)
+        {
+            gem = GameManager.Instance.WeedSettings.FreezeGemTemplate;
+        }
+        else if (rand < level.WeedsProbability)
+        {
+            gem = GameManager.Instance.WeedSettings.WeedsTemplate;
+        }
+        else if (rand < level.RedOreProbability)
+        {
+            gem = GameManager.Instance.WeedSettings.RedOreTemplate;
+        }
+        else
+        {
+            gem = this.currentGemSelection.GetRandom();
+        }
+
         Gem instance = Instantiate(gem);
         instance.Grid = this;
         instance.GemId = globalId++;
-        return instance;
+        return instance;        
     }
 
     public void MoveGemTo(Gem gem, int x, int y, bool slide = false, bool outsideGrid = false)
@@ -195,7 +216,7 @@ public class GemGrid : MonoBehaviour
         if (gem1 == null || gem2 == null)
         {
             return false;
-        }
+        }        
 
         if (gem1 == gem2)
         {
@@ -213,6 +234,11 @@ public class GemGrid : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void DestroyOnClick(Gem gem)
+    {
+        this.StartCoroutine(this.ProcessMatches(new List<Gem>() { gem }));
     }
 
     public bool TrySwapWith(Gem gem1, Gem gem2)
@@ -485,7 +511,12 @@ public class GemGrid : MonoBehaviour
     }
 
     public List<Gem> GetMatches(Gem gem, int targetX, int targetY, MatchOverrideRules additionalRules = null) 
-    {       
+    {
+        if (!gem.CanMatchThree)
+        {
+            return new List<Gem>();
+        }
+
         if (additionalRules == null) 
         {
             additionalRules = MatchOverrideRules.None;
@@ -622,7 +653,7 @@ public class GemGrid : MonoBehaviour
         return null;
     }
 
-    private List<Gem> GetNeighbors(Gem gem)
+    public List<Gem> GetNeighbors(Gem gem)
     {
         List<Gem> gems = new List<Gem>();
         if (gem != null)

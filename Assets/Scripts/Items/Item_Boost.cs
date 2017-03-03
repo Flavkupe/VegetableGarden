@@ -59,6 +59,16 @@ public class Item_Boost : Item
                 GameManager.Instance.DestroyCooldowns();
                 return true;
             }
+            else if (Boost == BoostType.Pickaxe)
+            {
+                GameManager.Instance.ActivatePickaxe(Magnitude, this);
+                return true;
+            }
+            else if (Boost == BoostType.Shovel)
+            {
+                GameManager.Instance.ActivateShovel(Magnitude, this);
+                return true;
+            }
         }
 
         return false;
@@ -94,4 +104,8 @@ public enum BoostType
     ItemSpree,
 
     DestroyCooldowns,
+
+    Pickaxe,
+
+    Shovel,
 }

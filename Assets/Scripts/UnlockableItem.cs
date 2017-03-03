@@ -11,7 +11,7 @@ public class UnlockableItem : MonoBehaviour {
     private Item BackingItem;
 
     public Image Background;
-    public Text Text;
+    public string Text;
 
 	// Use this for initialization
 	void Start () {
@@ -25,11 +25,27 @@ public class UnlockableItem : MonoBehaviour {
     {        
         this.BackingItem = item;
         int diff = Mathf.Max(0, item.PointsToUnlock - PlayerManager.Instance.UniversalScore);
-        this.Text.text = unlocked ? item.Name : string.Format("{0} points to unlock!", diff);
+        this.Text = unlocked ? item.Name : string.Format("{0} points to unlock!", diff);
         if (unlocked)
         {
             Vector2 delta = this.Background.rectTransform.sizeDelta;
             this.Background.rectTransform.sizeDelta = new Vector2(800, delta.y);
+        }
+    }
+
+    public void HideTextFromUI()
+    {
+        if (StartMenuManager.Instance != null)
+        {
+            StartMenuManager.Instance.HideItemText();
+        }
+    }
+
+    public void ShowTextInUI()
+    {
+        if (StartMenuManager.Instance != null)
+        {
+            StartMenuManager.Instance.ShowItemText(this.Text);
         }
     }
 }

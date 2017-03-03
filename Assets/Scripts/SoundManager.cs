@@ -21,6 +21,8 @@ public class SoundManager : MonoBehaviour {
     public Slider MusicSlider;
     public Slider SfxSlider;
 
+    public SpecialSoundEffects SpecialSoundEffects;
+
     private static SoundManager instance = null;
 
     public static SoundManager Instance
@@ -90,6 +92,16 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
+    public void PlaySound(AudioClip clip)
+    {
+        if (this.SoundSource == null)
+        {
+            return;
+        }
+
+        SoundSource.PlayOneShot(clip);
+    }
+
     public void PlaySound(SoundEffects soundEffect)
     {
         if (this.SoundSource == null)
@@ -138,6 +150,13 @@ public class SoundManager : MonoBehaviour {
 
         MusicSource.Play();
     }
+}
+
+[Serializable]
+public class SpecialSoundEffects
+{
+    public AudioClip[] IceCarveSounds;
+    public AudioClip[] IceKillSounds;
 }
 
 public enum SoundEffects

@@ -22,6 +22,10 @@ public enum GemType
     Broccoli,
     GreenPepper,
     Cucumber,
+
+    Weeds,
+    FreezeGem,
+    ValuableOre,
 }
 
 public enum GemColor
@@ -32,7 +36,9 @@ public enum GemColor
     Red, // Beet, Tomato
     Purple, // Eggplant
 
-    Half // Any gems (half of board)
+    Half, // Any gems (half of board)
+
+    None,
 }
 
 public class Gem : MonoBehaviour 
@@ -52,22 +58,43 @@ public class Gem : MonoBehaviour
     public Transform Hover;
     public Transform Frame;
 
+    public GameObject Ice;
+
     public bool InTransition = false;
 
     private GameObject sparkles = null;
 
     private CooldownTimer GlowTimer;
 
-    public bool IsGlowing {  get { return !this.GlowTimer.IsExpired; } }
+    public virtual bool CanMatchThree { get { return !this.IsFrozen; } }
+
+    public ParticleSystem OnClickParticle;
+
+    public bool IsGlowing {  get { return (this.GlowTimer != null && !this.GlowTimer.IsExpired); } }
 
     private bool mouseReleased = false;
 
     private Vector3? destination = null;
 
+    public void Freeze()
+    {
+        GameObject ice = Instantiate(GameManager.Instance.WeedSettings.IceGraphic);
+        this.Ice = ice;
+        ice.transform.position = this.transform.position;
+        ice.transform.SetParent(this.transform);
+        this.freezeHp = 3;
+    }
+
     public ParticleSystem MatchParticles;
 
-	// Use this for initialization
-	void Start () 
+    public int BasePointValue = 25;
+    public int BaseMoneyValue = 1;
+
+    private int freezeHp = 0;
+    public bool IsFrozen { get { return this.freezeHp > 0; } }
+
+    // Use this for initialization
+    void Start () 
     {
         this.GlowTimer = new CooldownTimer(GameManager.Instance.GetTotalGlowDuration(), true);
         this.sparkles = Instantiate(GameManager.Instance.Sparkles);
@@ -79,6 +106,22 @@ public class Gem : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        this.OnUpdate();
+    }
+
+    protected virtual void AnimateOnClickParticle()
+    {
+        if (this.OnClickParticle != null && this.gameObject != null)
+        {
+            ParticleSystem system = Instantiate(this.OnClickParticle);
+            system.transform.position = this.transform.position;
+            system.Play();
+            Destroy(system.gameObject, 4.0f);
+        }
+    }
+
+    protected virtual void OnUpdate()
+    {
         if (GameManager.Instance == null || GameManager.Instance.IsPaused)
         {
             return;
@@ -86,22 +129,22 @@ public class Gem : MonoBehaviour
 
         mouseReleased = Input.GetMouseButtonUp(0);
 
-        if (this.GlowTimer.Tick(Time.deltaTime).IsExpired)
+        if (this.sparkles != null && this.GlowTimer.Tick(Time.deltaTime).IsExpired)
         {
             // If glow expires
             this.sparkles.SetActive(false);
-        }        
+        }
 
         if (this.InTransition)
         {
             Debug.Assert(destination != null, "destination cannot be null if in transition");
             if (!this.transform.localPosition.IsNear(destination.Value))
             {
-                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, destination.Value, 
-                    Time.deltaTime * GameManager.Instance.Grid.GetTotalSlideSpeed());                
+                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, destination.Value,
+                    Time.deltaTime * GameManager.Instance.Grid.GetTotalSlideSpeed());
             }
             else
-            {            
+            {
                 // snap into place once near enough
                 this.transform.localPosition = destination.Value;
                 this.InTransition = false;
@@ -170,17 +213,25 @@ public class Gem : MonoBehaviour
             return;
         }
 
+        this.HandleMouseDown();
+    }
+
+    protected virtual void HandleMouseDown()
+    {
+        if (GameManager.Instance.IsPaused)
+        {
+            return;
+        }
+
+        if (this.IsFrozen)
+        {
+            this.OnClickIce();
+            return;            
+        }
+
         if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
         {
-            if (this.GlowTimer.IsExpired) 
-            {
-                PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.IrrigationStation,
-                    ref PlayerManager.Instance.Achievments.IrrigationStationProgress, 1, AchievmentManager.Instance.IrrigationStationIcon);
-            }
-
-            // Irrigate on either condition, but do not continue if move is disallowed
-            this.GlowTimer.Reset();            
-            this.sparkles.SetActive(true);
+            this.Irrigate();
 
             if (!this.Grid.CanMakeMove())
             {
@@ -197,6 +248,44 @@ public class Gem : MonoBehaviour
 
             this.SetSelected(true);
         }
+    }
+
+    private void OnClickIce()
+    {
+        this.freezeHp--;
+        ParticleSystem particles = null;
+        if (this.freezeHp > 0)
+        {
+            particles = Instantiate(GameManager.Instance.WeedSettings.IceClickParticles);
+            SoundManager.Instance.PlaySound(SoundManager.Instance.SpecialSoundEffects.IceCarveSounds.GetRandom());
+        }
+        else
+        {            
+            particles = Instantiate(GameManager.Instance.WeedSettings.IceKillParticles);
+            SoundManager.Instance.PlaySound(SoundManager.Instance.SpecialSoundEffects.IceKillSounds.GetRandom());
+            if (this.Ice != null)
+            {
+                Destroy(this.Ice.gameObject);
+                this.Ice = null;
+            }
+        }
+
+        particles.transform.position = this.transform.position;
+        particles.Play();
+        Destroy(particles, 4.0f);
+    }
+
+    private void Irrigate()
+    {
+        if (this.GlowTimer.IsExpired)
+        {
+            PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.IrrigationStation,
+                ref PlayerManager.Instance.Achievments.IrrigationStationProgress, 1, AchievmentManager.Instance.IrrigationStationIcon);
+        }
+
+        // Irrigate on either condition, but do not continue if move is disallowed
+        this.GlowTimer.Reset();
+        this.sparkles.SetActive(true);
     }
 
     void OnMouseOver()
@@ -232,13 +321,8 @@ public class Gem : MonoBehaviour
         this.Hover.gameObject.SetActive(false);
     }
 
-    public IEnumerator Vanish()
+    protected virtual void ShowMatchParticles()
     {
-        if (this.gameObject == null)
-        {
-            yield return null;
-        }
-
         if (this.MatchParticles != null)
         {
             ParticleSystem particles = Instantiate(this.MatchParticles);
@@ -246,6 +330,16 @@ public class Gem : MonoBehaviour
             particles.Play();
             Destroy(particles.gameObject, 4.0f);
         }
+    }
+
+    public virtual IEnumerator Vanish()
+    {
+        if (this.gameObject == null)
+        {
+            yield return null;
+        }
+
+        this.ShowMatchParticles();
 
         bool vanished = false;       
         while (!vanished)

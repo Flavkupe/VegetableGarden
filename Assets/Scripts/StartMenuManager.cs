@@ -40,6 +40,23 @@ public class StartMenuManager : MonoBehaviour
     public UnlockableItem UnlockableItemTemplate;
 
     public ItemPane UnlockedItemDisplay;
+    public SetabbleText UnlockableItemText;
+
+    public void HideItemText()
+    {
+        if (this.UnlockableItemText != null)
+        {
+            this.UnlockableItemText.SetText(string.Empty);
+        }
+    }
+
+    public void ShowItemText(string text)
+    {
+        if (this.UnlockableItemText != null)
+        {
+            this.UnlockableItemText.SetText(text);
+        }
+    }
 
     public bool MenuOpened { get { return this.Menu.activeSelf || this.TutorialMenu.activeSelf || this.NameMenu.activeSelf; } }    
 
