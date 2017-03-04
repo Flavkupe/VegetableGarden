@@ -93,6 +93,9 @@ public class Gem : MonoBehaviour
     private int freezeHp = 0;
     public bool IsFrozen { get { return this.freezeHp > 0; } }
 
+    public bool IsRock { get { return this.GemType == GemType.ValuableOre ||
+                                      this.GemType == GemType.FreezeGem; } }
+
     // Use this for initialization
     void Start () 
     {
@@ -253,6 +256,9 @@ public class Gem : MonoBehaviour
     private void OnClickIce()
     {
         this.freezeHp--;
+
+        this.freezeHp -= PlayerManager.Instance.HammerBonus;
+
         ParticleSystem particles = null;
         if (this.freezeHp > 0)
         {
@@ -275,7 +281,7 @@ public class Gem : MonoBehaviour
         Destroy(particles, 4.0f);
     }
 
-    private void Irrigate()
+    public virtual void Irrigate()
     {
         if (this.GlowTimer.IsExpired)
         {

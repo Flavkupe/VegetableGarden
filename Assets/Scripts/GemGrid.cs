@@ -123,23 +123,40 @@ public class GemGrid : MonoBehaviour
         }
     }
 
+    public void IrrigateAll()
+    {
+        foreach (Gem gem in this.activeGems)
+        {
+            gem.Irrigate();
+        }
+    }
+
+    public List<Gem> ActiveGems { get { return this.activeGems; } }
+
     private static int globalId = 0;
 
     private Gem GetRandomGemInstance()
     {
         Gem gem = null;
         LevelGoal level = GameManager.Instance.GetLevelGoal();
-        
+
+        float badLuckMultiplier = PlayerManager.Instance.LuckyCharmEnabled ? 0.5f : 1.0f;
+        float goodLuckMultiplier = PlayerManager.Instance.LuckyCharmEnabled ? 2.0f : 1.0f;
+
+        float freezeEvent = level.FreezeGemProbability;
+        float weedsEvent = freezeEvent + level.WeedsProbability;
+        float redOreEvent = weedsEvent + level.RedOreProbability;
+
         float rand = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (rand < level.FreezeGemProbability)
+        if (rand < freezeEvent * badLuckMultiplier)
         {
             gem = GameManager.Instance.WeedSettings.FreezeGemTemplate;
         }
-        else if (rand < level.WeedsProbability)
+        else if (rand < weedsEvent * badLuckMultiplier)
         {
             gem = GameManager.Instance.WeedSettings.WeedsTemplate;
         }
-        else if (rand < level.RedOreProbability)
+        else if (rand < redOreEvent * goodLuckMultiplier)
         {
             gem = GameManager.Instance.WeedSettings.RedOreTemplate;
         }

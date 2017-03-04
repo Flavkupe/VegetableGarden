@@ -24,4 +24,7 @@ public enum EffectType
     FastDrop,
     IrrigationPoints,
     PurpleGemColorBonus,
+    LessRockHP,
+    BonusWeedValue,
+    LuckyCharm,
 }

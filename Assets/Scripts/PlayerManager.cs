@@ -47,7 +47,11 @@ public class PlayerManager : MonoBehaviour
     public float SlowTimeMultiplierBonus = 1.0f;
     public int IrrigationPointsBonus = 0;
 
-    public int PurpleGemBonus = 0;    
+    public int HammerBonus = 0;
+
+    public int PurpleGemBonus = 0;
+
+    public bool BonusWeedValueEnabled = false;
 
     private List<GameObject> itemsFromResources = null;
 
@@ -157,6 +161,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     public bool LoggingEnabled = false;
+    public bool LuckyCharmEnabled = false;
 
     public void SellItem(Item item)
     {
@@ -255,6 +260,16 @@ public class PlayerManager : MonoBehaviour
                 case EffectType.PurpleGemColorBonus:
                     this.PurpleGemBonus++;
                     break;
+                case EffectType.LessRockHP:
+                    this.HammerBonus += 3;
+                    break;
+                case EffectType.BonusWeedValue:
+                    this.BonusWeedValueEnabled = true;
+                    break;
+                case EffectType.LuckyCharm:
+                    this.LuckyCharmEnabled = true;
+                    break;
+
             }
         }
     }

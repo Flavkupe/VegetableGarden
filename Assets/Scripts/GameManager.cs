@@ -63,10 +63,12 @@ public class GameManager : MonoBehaviour
     public int MajorRampTimeDecrease = 3;
     public int MajorRampScoreIncrease = 1000;
 
+    public Weather CurrentWeather = Weather.Normal;
+    public CooldownTimer weatherEffectTimer;
+
     public bool IsColorSwapEnabled { get { return !this.colorSwapTimer.IsExpired; } }
 
-
-    private List<CooldownTimer> cooldownTimers = new List<CooldownTimer>();
+    private List<CooldownTimer> itemCooldownTimers = new List<CooldownTimer>();
     private CooldownTimer cashForPointsTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer colorSwapTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer itemSpreeTimer = new CooldownTimer(20.0f, true);
@@ -78,6 +80,11 @@ public class GameManager : MonoBehaviour
         timer.SetBaseline(duration);
         timer.Reset();
         this.UpdateOrCreateCooldownIcon(item.Sprite.sprite, timer);
+    }
+
+    public void ActivateMagicFlask()
+    {
+        this.Grid.IrrigateAll();
     }
 
     public void ActivateShovel(float duration, Item_Boost item)
@@ -253,7 +260,7 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
 
-        this.cooldownTimers = new List<CooldownTimer>()
+        this.itemCooldownTimers = new List<CooldownTimer>()
         {
             this.colorSwapTimer,
             this.itemSpreeTimer,
@@ -317,6 +324,9 @@ public class GameManager : MonoBehaviour
         this.ScreenTint.gameObject.SetActive(true);
 
         LevelGoal goal = this.GetLevelGoal();
+
+        this.CurrentWeather = goal.Weather;
+        this.weatherEffectTimer = new CooldownTimer(goal.WeatherEffectTimer, false);
 
         this.InventoryPane.ClearList();
         if (PlayerManager.Instance.Inventory.Count > 0)
@@ -517,7 +527,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        foreach (CooldownTimer timer in this.cooldownTimers)
+        foreach (CooldownTimer timer in this.itemCooldownTimers)
         {
             if (!timer.IsExpired)
             {
@@ -525,9 +535,28 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (this.CurrentWeather != Weather.Normal && 
+            this.weatherEffectTimer.Tick(Time.deltaTime).IsExpired)
+        {
+            this.weatherEffectTimer.Reset();
+            this.TakeWeatherEffect();
+        }
+
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;
         this.gameTimer = this.gameTimer.Subtract(TimeSpan.FromSeconds(secondsToPass));
         this.UpdateTimerText();
+    }
+
+    private void TakeWeatherEffect()
+    {
+        if (this.CurrentWeather == Weather.Snowy)
+        {
+            Gem gem = this.Grid.ActiveGems.GetRandom();
+            if (!gem.IsFrozen && !gem.IsRock)
+            {
+                gem.Freeze();
+            }
+        }
     }
 
     private void UpdateTimerText()
@@ -644,6 +673,19 @@ public class GameManager : MonoBehaviour
             {
                 totalVal += 10;
             }
+
+            if (PlayerManager.Instance.BonusWeedValueEnabled)
+            {
+                // Prospector satchel value!
+                if (gem.GemType == GemType.Weeds)
+                {
+                    totalVal += 3;
+                }
+                else if (gem.IsRock)
+                {
+                    totalVal += 10;
+                }
+            }
         }
 
         if (!cashForPointsTimer.IsExpired)
@@ -687,6 +729,22 @@ public class GameManager : MonoBehaviour
             if (PlayerManager.Instance.Achievments.CashMoney)
             {
                 totalVal++;
+            }
+        }
+
+        foreach (Gem gem in matches)
+        {
+            if (PlayerManager.Instance.BonusWeedValueEnabled)
+            {
+                // Prospector satchel value!
+                if (gem.GemType == GemType.Weeds)
+                {
+                    totalVal += 1;
+                }
+                else if (gem.IsRock)
+                {
+                    totalVal += 10;
+                }
             }
         }
 
@@ -814,7 +872,7 @@ public class WeedSettings
 
     public GameObject IceGraphic;
     public ParticleSystem IceClickParticles;
-    public ParticleSystem IceKillParticles;
+    public ParticleSystem IceKillParticles;    
 }
 
 [Serializable]
@@ -823,6 +881,9 @@ public class LevelGoal
     public int ScoreGoal = 0;
     public int Time = 0;
     public int MaxGems = 6;
+
+    public Weather Weather = Weather.Normal;
+    public float WeatherEffectTimer = 5.0f;
 
     public float WeedsProbability = 0.10f;
     public float FreezeGemProbability = 0.05f;
@@ -833,4 +894,12 @@ public class LevelGoal
         this.ScoreGoal = scoreGoal;
         this.Time = time;
     }
+}
+
+public enum Weather
+{
+    Normal,
+    Dry,
+    Snowy,
+    Rainy
 }

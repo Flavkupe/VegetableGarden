@@ -10,6 +10,11 @@ public class Weeds : Gem
     public AudioClip[] CarveSounds;
     public AudioClip[] KillSounds;
 
+    public override void Irrigate()
+    {
+        // Do nothing
+    }    
+
     protected override void HandleMouseDown()
     {
         if (this.IsFrozen)
@@ -19,17 +24,22 @@ public class Weeds : Gem
             return;
         }
 
-        if (GameManager.Instance.IsQuickMiningEnabled && this.GemType != GemType.Weeds)
+        if (GameManager.Instance.IsQuickMiningEnabled && this.IsRock)
         {
             this.HP -= 5;
         }
-        else if (GameManager.Instance.IsQuickShovelingEnabled && this.GemType == GemType.Weeds)
+        else if (GameManager.Instance.IsQuickShovelingEnabled && !this.IsRock)
         {
             this.HP -= 5;
         }
         else
         {
             this.HP--;
+        }
+
+        if (this.IsRock)
+        {
+            this.HP -= PlayerManager.Instance.HammerBonus;
         }
 
         this.AnimateOnClickParticle();

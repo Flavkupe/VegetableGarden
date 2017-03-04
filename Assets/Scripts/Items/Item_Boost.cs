@@ -69,6 +69,11 @@ public class Item_Boost : Item
                 GameManager.Instance.ActivateShovel(Magnitude, this);
                 return true;
             }
+            else if (Boost == BoostType.Magic_Flask)
+            {
+                GameManager.Instance.ActivateMagicFlask();
+                return true;
+            }
         }
 
         return false;
@@ -108,4 +113,6 @@ public enum BoostType
     Pickaxe,
 
     Shovel,
+
+    Magic_Flask,
 }
