@@ -328,6 +328,8 @@ public class GameManager : MonoBehaviour
         this.CurrentWeather = goal.Weather;
         this.weatherEffectTimer = new CooldownTimer(goal.WeatherEffectTimer, false);
 
+        WeatherManager.Instance.SetupWeather(this.CurrentWeather);
+
         this.InventoryPane.ClearList();
         if (PlayerManager.Instance.Inventory.Count > 0)
         {
@@ -556,7 +558,7 @@ public class GameManager : MonoBehaviour
             {
                 gem.Freeze();
             }
-        }
+        }        
     }
 
     private void UpdateTimerText()
