@@ -369,4 +369,9 @@ public class Achievments
     public int FlipFloppinProgress = 0;
 
     public float TiredOfWaitingProgress = 0.0f;
+
+    /// <summary>
+    /// Unlocked pickaxe, shovel, swap and time boost
+    /// </summary>
+    public bool Boutique = false;
 }

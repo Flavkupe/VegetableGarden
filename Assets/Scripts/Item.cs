@@ -17,6 +17,8 @@ public class Item : MonoBehaviour, IClickableItem
     
     public GemGrid Grid = null;
 
+    public bool IsEssentialItem = false;
+
     private SpriteRenderer sprite = null;
 
     private TextOverSprite cooldownText = null;

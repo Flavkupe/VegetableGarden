@@ -17,7 +17,8 @@ public class AchievmentManager : MonoBehaviour
     public AchievmentIcon TimeToWasteIcon;
     public AchievmentIcon IrrigationStationIcon;
     public AchievmentIcon FlipFloppinIcon;
-    public AchievmentIcon TiredOfWaitingIcon;    
+    public AchievmentIcon TiredOfWaitingIcon;
+    public AchievmentIcon Boutique;
 
     private static AchievmentManager instance = null;
     

@@ -422,7 +422,13 @@ public class GameManager : MonoBehaviour
                     yield return null;
                 }
             }
-        }  
+        }
+
+        if (!PlayerManager.Instance.Achievments.Boutique &&
+            PlayerManager.Instance.UnlockedItems.Contains("Pickaxe"))
+        {            
+            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.Boutique);            
+        }
         
         SerializationManager.Instance.Save();
                 

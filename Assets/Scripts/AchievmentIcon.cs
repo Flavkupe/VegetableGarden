@@ -106,7 +106,8 @@ public enum AchievmentType
     TimeToWaste,
     IrrigationStation,
     FlipFloppin,
-    TiredOfWaiting
+    TiredOfWaiting,
+    Boutique
 }
 
 [Serializable]

@@ -8,7 +8,8 @@ public class ShopManager : MonoBehaviour {
 
     public ShopItem[] ShopItems;
 
-    public Tooltip Tooltip;
+    public Tooltip TooltipR;
+    public Tooltip TooltipL;
 
     public SetabbleText MoneyText;
 
@@ -39,7 +40,7 @@ public class ShopManager : MonoBehaviour {
 
         instance = this;
         LoadItemsFromResources();
-        LoadPanel();
+        //LoadPanel();
         this.RefreshMoneySign();
     }
 
@@ -69,6 +70,15 @@ public class ShopManager : MonoBehaviour {
     private void LoadItemsFromResources()
     {
         List<GameObject> objects = PlayerManager.Instance.GetAllAvailableShopItems();
+
+        if (PlayerManager.Instance.Achievments.Boutique)
+        {
+            foreach (ShopItem shopItem in this.ShopItems)
+            {
+                //TODO
+            }
+        }
+
         foreach (ShopItem shopItem in this.ShopItems)
         {
             if (objects.Count == 0)
@@ -147,7 +157,7 @@ public class ShopManager : MonoBehaviour {
             string transactionStr = (item.Owned ? "+" : "-") + "$" + item.GetTransactionPrice();
             FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y,
                 this.FloatyText, null, Color.yellow);
-            this.Tooltip.gameObject.SetActive(false);
+            this.TooltipR.gameObject.SetActive(false);
         }
 
         this.RefreshMoneySign();
