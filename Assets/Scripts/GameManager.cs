@@ -518,7 +518,7 @@ public class GameManager : MonoBehaviour
         {
             if (this.GoalBillboard.Animating)
             {
-                this.GoalBillboard.CurrentMovementSpeed *= 2.0f;
+                this.GoalBillboard.CurrentMovementSpeed *= 3.0f;
                 this.GoalBillboard.CurrentLingerTime = 0.0f;
             }
         }        

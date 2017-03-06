@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TutorialManager : MonoBehaviour {
 
-    public Tutorial[] Pages;
+    public Tutorial[] Pages;    
 
     public GameObject TutorialMenu;
 
