@@ -24,6 +24,15 @@ public class Weeds : Gem
             return;
         }
 
+        if (!PlayerManager.Instance.HasAchievment(AchievmentType.RockyBalboa))
+        {
+            PlayerManager.Instance.Achievments.RockyBalboaProgress++;
+            if (PlayerManager.Instance.HasAchievment(AchievmentType.RockyBalboa))
+            {
+                AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.RockyBalboaIcon);
+            }
+        }
+
         if (GameManager.Instance.IsQuickMiningEnabled && this.IsRock)
         {
             this.HP -= 5;
@@ -39,7 +48,7 @@ public class Weeds : Gem
 
         if (this.IsRock)
         {
-            this.HP -= PlayerManager.Instance.HammerBonus;
+            this.HP -= PlayerManager.Instance.Bonuses.HammerBonus;
         }
 
         this.AnimateOnClickParticle();
@@ -80,8 +89,19 @@ public class Weeds : Gem
 
     // Use this for initialization
     void Start () {
-		
-	}
+        this.OnStart();
+    }
+
+    protected virtual void OnStart()
+    {
+        if (this.IsRock)
+        {
+            if (PlayerManager.Instance.HasAchievment(AchievmentType.RockyBalboa))
+            {
+                this.HP -= 2;
+            }
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {

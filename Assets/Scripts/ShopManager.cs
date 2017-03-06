@@ -3,18 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour {
+
+    public int ItemLimit = 10;
+
+    public GameObject SellPane;
+    public GameObject BuyPane;
 
     public ShopItem[] ShopItems;
 
     public Tooltip TooltipR;
     public Tooltip TooltipL;
 
+    public SetabbleText BuySellText;
+
     public SetabbleText MoneyText;
 
-    public ItemPane SellPane;
-    public GameObject SellSign;
+    public ItemPane ItemPane;    
+
+    public LockedShopPanel EssentialsPanel;
 
     public ShopItem ShopItemTemplate;
 
@@ -22,7 +31,9 @@ public class ShopManager : MonoBehaviour {
 
     private static ShopManager instance;
 
-    public Loading Loading; 
+    public Loading Loading;
+
+    private bool sellMode = false;
 
     public static ShopManager Instance
     {
@@ -39,9 +50,26 @@ public class ShopManager : MonoBehaviour {
         }
 
         instance = this;
-        LoadItemsFromResources();
-        //LoadPanel();
+        PopulateShelves();
+        LoadOrRefreshItemPanel();
         this.RefreshMoneySign();
+    }
+
+    public void ToggleSellMode()
+    {
+        this.sellMode = !this.sellMode;
+        if (this.sellMode)
+        {
+            this.BuyPane.gameObject.SetActive(false);
+            this.SellPane.gameObject.SetActive(true);
+            this.BuySellText.SetText("Buy");
+        }
+        else
+        {
+            this.BuyPane.gameObject.SetActive(true);
+            this.SellPane.gameObject.SetActive(false);
+            this.BuySellText.SetText("Sell");
+        }
     }
 
     private void RefreshMoneySign()
@@ -67,21 +95,33 @@ public class ShopManager : MonoBehaviour {
         SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
     }    
 
-    private void LoadItemsFromResources()
+    private void PopulateShelves()
     {
-        List<GameObject> objects = PlayerManager.Instance.GetAllAvailableShopItems();
+        List<Item> items = PlayerManager.Instance.GetAllAvailableShopItems();
 
-        if (PlayerManager.Instance.Achievments.Boutique)
+        this.EssentialsPanel.TogglePane(!PlayerManager.Instance.Achievments.Boutique);
+
+        if (this.EssentialsPanel.UnlockedPanel.activeSelf && PlayerManager.Instance.Achievments.Boutique)
         {
-            foreach (ShopItem shopItem in this.ShopItems)
+            foreach (ShopItem shopItem in this.EssentialsPanel.ShopItems)
             {
-                //TODO
+                Queue<Item> essentialItems = new Queue<Item>(items.Select(a => a.GetComponent<Item>()).Where(b => b.IsEssentialItem).ToList());
+                if (essentialItems.Count == 0)
+                {
+                    shopItem.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Item item = essentialItems.Dequeue();
+                    items.Remove(item);                    
+                    shopItem.InitializeItem(item, false);
+                }
             }
         }
 
         foreach (ShopItem shopItem in this.ShopItems)
         {
-            if (objects.Count == 0)
+            if (items.Count == 0)
             {
                 shopItem.gameObject.SetActive(false);
 
@@ -89,31 +129,32 @@ public class ShopManager : MonoBehaviour {
             else
             {
                 shopItem.gameObject.SetActive(true);
-                GameObject instance = objects.GetRandom();
-                objects.Remove(instance);
-                shopItem.InitializeItem(instance.GetComponent<Item>(), false);
+                Item item = items.GetRandom();
+                items.Remove(item);                
+                shopItem.InitializeItem(item, false);
             }
         }
     }
 
-    private void LoadPanel()
+    private void LoadOrRefreshItemPanel()
     {
         if (this.SellPane != null)
         {
             if (PlayerManager.Instance.Inventory.Count == 0)
-            {
-                this.SellSign.SetActive(false);
-                this.SellPane.gameObject.SetActive(false);
+            {                
                 return;
             }
+
+            this.ItemPane.ClearList();
 
             foreach (Item item in PlayerManager.Instance.Inventory)
             {
                 ShopItem shopItem = Instantiate(this.ShopItemTemplate);
                 shopItem.gameObject.SetActive(true);
+                shopItem.Tooltip = this.TooltipR;
                 shopItem.transform.localScale = shopItem.transform.localScale *= 0.8f;
                 shopItem.InitializeItem(item, true);
-                this.SellPane.AddItem(shopItem.gameObject);
+                this.ItemPane.AddItem(shopItem.gameObject);
             }
         }
     }    
@@ -138,11 +179,20 @@ public class ShopManager : MonoBehaviour {
         {
             // BUY
             int cost = PlayerManager.Instance.GetTrueItemCost(item.BackingItem);
-            if (PlayerManager.Instance.Cash >= cost)
+
+            if (!item.BackingItem.IsInstantUse && PlayerManager.Instance.Inventory.Count >= this.ItemLimit)
+            {
+                FloatyText text = GameUtils.GenerateFloatyTextAt("Cannot carry more items!\nSell some items!",
+                    item.transform.position.x, item.transform.position.y, this.FloatyText, null, Color.red, TextAnchor.UpperLeft, 12);
+                SoundManager.Instance.PlaySound(SoundEffects.Error);                
+                transacted = false;
+            }
+            else if (PlayerManager.Instance.Cash >= cost)
             {
                 SoundManager.Instance.PlaySound(SoundEffects.Kachink);
                 PlayerManager.Instance.PurchaseItem(item.BackingItem);
                 item.gameObject.SetActive(false);
+                this.LoadOrRefreshItemPanel();
                 transacted = true;
             }
             else
@@ -158,6 +208,7 @@ public class ShopManager : MonoBehaviour {
             FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y,
                 this.FloatyText, null, Color.yellow);
             this.TooltipR.gameObject.SetActive(false);
+            this.TooltipL.gameObject.SetActive(false);            
         }
 
         this.RefreshMoneySign();

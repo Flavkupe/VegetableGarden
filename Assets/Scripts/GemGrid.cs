@@ -29,13 +29,10 @@ public class GemGrid : MonoBehaviour
 
     public int Dims = 64;
 
-    public GridGemType GemType = GridGemType.Vegetable;
-
     public Gem[,] gemGrid = null;
 
     public Camera Camera;
 
-    private Gem[] gemResources = null;
     private Gem[] vegetableResources = null;
     private List<Gem> currentGemSelection = new List<Gem>();
 
@@ -49,7 +46,6 @@ public class GemGrid : MonoBehaviour
         this.gemGrid = new Gem[GridDimensionsX, GridDimensionsY];
 
         this.vegetableResources = Resources.LoadAll<Gem>("Prefabs/Vegetables");
-        this.gemResources = Resources.LoadAll<Gem>("Prefabs/Gems");        
     }
 
 	// Use this for initialization
@@ -77,25 +73,33 @@ public class GemGrid : MonoBehaviour
 
         this.currentGemSelection.Clear();
 
-        if (this.GemType == GridGemType.Vegetable)
-        {
-            this.currentGemSelection.AddRange(this.vegetableResources);
-        }
-        else
-        {
-            this.currentGemSelection.AddRange(this.gemResources);
-        }
-
+        this.currentGemSelection.AddRange(this.vegetableResources);
+        
         if (gemLimit != null)
         {
-            int diff = this.currentGemSelection.Count - gemLimit.Value;
+            int diff = this.currentGemSelection.Count - gemLimit.Value;            
+
             for (int i = 0; i < diff; ++i)
             {
                 // Remove gems until we reach limit
                 Gem gem = this.currentGemSelection.GetRandom();
                 this.currentGemSelection.Remove(gem);
             }
-        }        
+
+            if (PlayerManager.Instance.Bonuses.PurplePower)
+            {
+                // If no purples, swap out first gem with eggplant
+                if (!this.currentGemSelection.Any(a => a.GemType == GemType.Eggplant))
+                {
+                    Gem eggplant = this.vegetableResources.ToList().FirstOrDefault(a => a.GemType == GemType.Eggplant);
+                    if (eggplant != null)
+                    {
+                        this.currentGemSelection.Remove(this.currentGemSelection[0]);
+                        this.currentGemSelection.Add(eggplant);
+                    }
+                }
+            }
+        }
 
         for (int x = 0; x < GridDimensionsX; ++x)
         {
@@ -123,6 +127,23 @@ public class GemGrid : MonoBehaviour
         }
     }
 
+    public void TransformGem(Gem gemToTransform, Gem newGem)
+    {
+        if (gemToTransform != null && newGem != null &&
+            gemToTransform.gameObject != null && newGem.gameObject != null)
+        {
+            this.activeGems.Remove(gemToTransform);
+            Vector3 pos = gemToTransform.transform.position;
+            int x = gemToTransform.GridX;
+            int y = gemToTransform.GridY;
+            newGem.transform.SetParent(this.transform);
+            newGem.Grid = this;
+            this.activeGems.Add(newGem);
+            Destroy(gemToTransform.gameObject);
+            this.MoveGemTo(newGem, x, y, false, false);
+        }
+    }
+
     public void IrrigateAll()
     {
         foreach (Gem gem in this.activeGems)
@@ -140,25 +161,35 @@ public class GemGrid : MonoBehaviour
         Gem gem = null;
         LevelGoal level = GameManager.Instance.GetLevelGoal();
 
-        float badLuckMultiplier = PlayerManager.Instance.LuckyCharmEnabled ? 0.5f : 1.0f;
-        float goodLuckMultiplier = PlayerManager.Instance.LuckyCharmEnabled ? 2.0f : 1.0f;
+        float badLuckMultiplier = PlayerManager.Instance.Bonuses.LuckyCharmEnabled ? 0.5f : 1.0f;
+        float goodLuckMultiplier = PlayerManager.Instance.Bonuses.LuckyCharmEnabled ? 2.0f : 1.0f;
 
-        float freezeEvent = level.FreezeGemProbability;
-        float weedsEvent = freezeEvent + level.WeedsProbability;
-        float redOreEvent = weedsEvent + level.RedOreProbability;
+        float freezeEvent = level.FreezeGemProbability * badLuckMultiplier;
+        float weedsEvent = freezeEvent + level.WeedsProbability * badLuckMultiplier;
+        float redOreEvent = weedsEvent + level.RedOreProbability * goodLuckMultiplier;
+        float poisonOreEvent = redOreEvent + level.PoisonOreProbability * badLuckMultiplier;
+        float redLeafProb = poisonOreEvent + level.RedLeafProbability * badLuckMultiplier;
 
         float rand = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (rand < freezeEvent * badLuckMultiplier)
+        if (rand < freezeEvent)
         {
             gem = GameManager.Instance.WeedSettings.FreezeGemTemplate;
         }
-        else if (rand < weedsEvent * badLuckMultiplier)
+        else if (rand < weedsEvent)
         {
             gem = GameManager.Instance.WeedSettings.WeedsTemplate;
         }
-        else if (rand < redOreEvent * goodLuckMultiplier)
+        else if (rand < redOreEvent)
         {
             gem = GameManager.Instance.WeedSettings.RedOreTemplate;
+        }
+        else if (rand < poisonOreEvent)
+        {
+            gem = GameManager.Instance.WeedSettings.PoisonRockTemplate;
+        }
+        else if (rand < redLeafProb)
+        {
+            gem = GameManager.Instance.WeedSettings.RedWeedsTemplate;
         }
         else
         {
@@ -196,7 +227,7 @@ public class GemGrid : MonoBehaviour
 
     public float GetTotalSlideSpeed()
     {
-        return GameManager.Instance.SlideSpeed * PlayerManager.Instance.FastDropMultiplierBonus;
+        return GameManager.Instance.SlideSpeed * PlayerManager.Instance.Bonuses.FastDropMultiplierBonus;
     }
 	
 	// Update is called once per frame
@@ -741,6 +772,18 @@ public class GemGrid : MonoBehaviour
                 // Randomly remove half of the gems
                 Gem gem = toRemove.GetRandom();
                 toRemove.Remove(gem);
+            }
+        }
+        else if (gemColor == GemColor.Undesirables)
+        {
+            toRemove = new List<Gem>();
+            foreach (Gem gem in this.activeGems)
+            {
+                // Randomly remove half of the gems
+                if (gem.IsAWeed || gem.GemType == GemType.PoisonRock || gem.GemType == GemType.FreezeGem)
+                {
+                    toRemove.Add(gem);
+                }
             }
         }
         else

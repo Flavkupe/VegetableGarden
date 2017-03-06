@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     private CooldownTimer itemSpreeTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer pickaxeTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer shovelTimer = new CooldownTimer(20.0f, true);
+    private CooldownTimer harvestStaffTimer = new CooldownTimer(20.0f, true);
 
     private void ActivateItemWithTimer(float duration, Item_Boost item, CooldownTimer timer)
     {
@@ -85,6 +86,11 @@ public class GameManager : MonoBehaviour
     public void ActivateMagicFlask()
     {
         this.Grid.IrrigateAll();
+    }
+
+    public void ActivateHarvestStaff(float duration, Item_Boost item)
+    {
+        this.ActivateItemWithTimer(duration, item, this.harvestStaffTimer);
     }
 
     public void ActivateShovel(float duration, Item_Boost item)
@@ -203,6 +209,8 @@ public class GameManager : MonoBehaviour
 
     public bool IsQuickShovelingEnabled { get { return !this.shovelTimer.IsExpired; } }
 
+    public bool IsHarvestStaffEnabled { get { return !this.harvestStaffTimer.IsExpired; } }
+
     public LevelGoal[] LevelGoals;
 
     private Dictionary<string, GameObject> resourceMap = new Dictionary<string, GameObject>();
@@ -221,12 +229,12 @@ public class GameManager : MonoBehaviour
 
     public float GetTotalGlowActivationWindow()
     {
-        return this.GlowActivationWindow + PlayerManager.Instance.IrrigationTimingWindow;
+        return this.GlowActivationWindow + PlayerManager.Instance.Bonuses.IrrigationTimingWindow;
     }
 
     public float GetTotalGlowDuration()
     {
-        return this.GlowDuration + PlayerManager.Instance.IrrigationDurationBonus;
+        return this.GlowDuration + PlayerManager.Instance.Bonuses.IrrigationDurationBonus;
     }
 
     public static GameManager Instance
@@ -267,6 +275,7 @@ public class GameManager : MonoBehaviour
             this.pickaxeTimer,
             this.shovelTimer,
             this.cashForPointsTimer,
+            this.harvestStaffTimer,
         };
 
         MainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -276,8 +285,7 @@ public class GameManager : MonoBehaviour
         {
             this.HideCasualModeParts();
         }
-
-        SoundManager.Instance.PlayMusic(MusicChoice.Level);
+        
         this.InitializeRound();
     }
 
@@ -323,12 +331,17 @@ public class GameManager : MonoBehaviour
         this.ClearHintCallouts();
         this.ScreenTint.gameObject.SetActive(true);
 
+        SoundManager.Instance.SetMusicTempo(1.0f);
+
         LevelGoal goal = this.GetLevelGoal();
 
         this.CurrentWeather = goal.Weather;
-        this.weatherEffectTimer = new CooldownTimer(goal.WeatherEffectTimer, false);
+        float time = goal.WeatherEffectTimer == 0.0f? float.MaxValue : goal.WeatherEffectTimer;
+        this.weatherEffectTimer = new CooldownTimer(time, false);
 
         WeatherManager.Instance.SetupWeather(this.CurrentWeather);
+
+        SoundManager.Instance.PlayLevelMusic(this.CurrentWeather);
 
         this.InventoryPane.ClearList();
         if (PlayerManager.Instance.Inventory.Count > 0)
@@ -381,6 +394,7 @@ public class GameManager : MonoBehaviour
     {
         this.ScreenTint.gameObject.SetActive(true);
         this.GoalBillboard.SetLoss(PlayerManager.Instance.TotalScore);
+        SoundManager.Instance.PlayMusic(MusicChoice.Lose);
         this.StartCoroutine(this.GoalBillboard.Animate());
         PlayerManager.Instance.AddScore(PlayerManager.Instance.TotalScore);
         SerializationManager.Instance.Save();
@@ -400,6 +414,7 @@ public class GameManager : MonoBehaviour
 
         this.ScreenTint.gameObject.SetActive(true);
         this.GoalBillboard.SetSuccess();
+        SoundManager.Instance.PlayMusic(MusicChoice.Win);
         this.StartCoroutine(this.GoalBillboard.Animate());        
         while (this.IsPaused)
         {
@@ -414,6 +429,15 @@ public class GameManager : MonoBehaviour
             {
                 // Show unlock for each unlocked item
                 PlayerManager.Instance.UnlockedItems.Add(item.name);
+
+                // Boutique achievement
+                if (!PlayerManager.Instance.Achievments.Boutique &&
+                PlayerManager.Instance.UnlockedItems.Contains("Pickaxe"))
+                {
+                    PlayerManager.Instance.Achievments.Boutique = true;
+                    AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.Boutique);
+                }
+
                 this.ScreenTint.gameObject.SetActive(true);
                 this.GoalBillboard.SetNewItem(item);
                 this.StartCoroutine(this.GoalBillboard.Animate());
@@ -422,13 +446,7 @@ public class GameManager : MonoBehaviour
                     yield return null;
                 }
             }
-        }
-
-        if (!PlayerManager.Instance.Achievments.Boutique &&
-            PlayerManager.Instance.UnlockedItems.Contains("Pickaxe"))
-        {            
-            AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.Boutique);            
-        }
+        }        
         
         SerializationManager.Instance.Save();
                 
@@ -450,7 +468,7 @@ public class GameManager : MonoBehaviour
     private void DoShop()
     {
         // Only load shop if there are shop items
-        List<GameObject> shopItems = PlayerManager.Instance.GetAllAvailableShopItems();
+        List<Item> shopItems = PlayerManager.Instance.GetAllAvailableShopItems();
         if (shopItems.Count > 0)
         {
             SceneManager.LoadScene("Shop", LoadSceneMode.Single);
@@ -500,7 +518,7 @@ public class GameManager : MonoBehaviour
         {
             if (this.GoalBillboard.Animating)
             {
-                this.GoalBillboard.CurrentMovementSpeed *= 5.0f;
+                this.GoalBillboard.CurrentMovementSpeed *= 2.0f;
                 this.GoalBillboard.CurrentLingerTime = 0.0f;
             }
         }        
@@ -527,7 +545,7 @@ public class GameManager : MonoBehaviour
 
         this.ScrollScore();
 
-        if (this.visibleScore <= 0 && this.Grid.CanMakeMove())
+        if (this.trueScore <= 0 && this.Grid.CanMakeMove())
         {         
             PlayerManager.Instance.CurrentLevel++;
             
@@ -547,15 +565,22 @@ public class GameManager : MonoBehaviour
             this.weatherEffectTimer.Tick(Time.deltaTime).IsExpired)
         {
             this.weatherEffectTimer.Reset();
-            this.TakeWeatherEffect();
+            this.ActivateWeatherEffect();
         }
 
-        double secondsToPass = Time.deltaTime * PlayerManager.Instance.SlowTimeMultiplierBonus;
+        float weatherTimeMultiplier = this.CurrentWeather == Weather.Rainy ? 1.05f : 1.0f;
+        double secondsToPass = Time.deltaTime * PlayerManager.Instance.Bonuses.SlowTimeMultiplierBonus * weatherTimeMultiplier;
         this.gameTimer = this.gameTimer.Subtract(TimeSpan.FromSeconds(secondsToPass));
+
+        if (this.gameTimer.TotalSeconds < 15.0f)
+        {
+            SoundManager.Instance.SetMusicTempo(1.2f);
+        }
+
         this.UpdateTimerText();
     }
 
-    private void TakeWeatherEffect()
+    private void ActivateWeatherEffect()
     {
         if (this.CurrentWeather == Weather.Snowy)
         {
@@ -564,7 +589,26 @@ public class GameManager : MonoBehaviour
             {
                 gem.Freeze();
             }
-        }        
+        }
+
+        if (this.CurrentWeather == Weather.Rainy)
+        {
+            Gem gem = this.Grid.ActiveGems.GetRandom();
+            if (!gem.IsFrozen && !gem.IsRock && !gem.IsAWeed)
+            {
+                gem.Irrigate();
+            }
+        }
+
+        if (this.CurrentWeather == Weather.Dry)
+        {
+            Gem gem = this.Grid.ActiveGems.GetRandom();
+            if (gem != null && !gem.IsFrozen && !gem.IsRock)
+            {
+                Gem weed = Instantiate(this.WeedSettings.WeedsTemplate);
+                this.Grid.TransformGem(gem, weed);
+            }
+        }
     }
 
     private void UpdateTimerText()
@@ -578,7 +622,16 @@ public class GameManager : MonoBehaviour
         PlayerManager.Instance.ProgressTowardsAchievment(AchievmentType.TimeToWaste,
             ref PlayerManager.Instance.Achievments.TimeToWasteProgress, 1, AchievmentManager.Instance.TimeToWasteIcon);
 
+        Vector3 pos = this.TimerUI.transform.position;
+        FloatyText text = GameUtils.GenerateFloatyTextAt("+" + seconds, pos.x, pos.y - 1.0f, this.FloatyText, null, Color.white);
+        text.MoveSpeed = 0.25f;        
         this.gameTimer = this.gameTimer.Add(TimeSpan.FromSeconds(seconds));
+
+        if (this.gameTimer.Seconds > 15.0f)
+        {
+            SoundManager.Instance.SetMusicTempo(1.0f);
+        }
+
         this.UpdateTimerText();
     }
 
@@ -647,8 +700,9 @@ public class GameManager : MonoBehaviour
     public int GetScoreValue(List<Gem> matches)
     {
         int totalVal = 0;
-        int matchCount = matches.Count;
-        totalVal += matches.Sum(a => a.BasePointValue);
+        int matchCount = matches.Count(a => !a.IsRotten); // discount rotten ones from count
+        int glowValue = 0;
+        totalVal += matches.Sum(a => a.IsRotten ? 1 : a.BasePointValue);
         if (matchCount > 3)
         {
             totalVal += (matchCount - 3) * 100;
@@ -656,20 +710,32 @@ public class GameManager : MonoBehaviour
 
         foreach (Gem gem in matches)
         {
+            if (gem.IsRotten)
+            {
+                continue;
+            }
+
             if (gem.IsGlowing)
             {
-                totalVal += 25;
-                totalVal += 25 * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
+                glowValue += 25;
+
+                glowValue += 25 * PlayerManager.Instance.Bonuses.IrrigationPointsBonus; // irrigation item bonus
 
                 if (PlayerManager.Instance.HasAchievment(AchievmentType.IrrigationStation))
                 {
-                    totalVal += 25;
-                }                
+                    glowValue += 25;
+                }
+
+                if (this.CurrentWeather == Weather.Dry)
+                {
+                    // Irrigation in dry weather worth a ton
+                    glowValue += 50;                    
+                }
             }
 
             if (gem.GemColor == GemColor.Purple)
             {
-                totalVal += 100 * PlayerManager.Instance.PurpleGemBonus; // eggplant bonus
+                totalVal += 100 * PlayerManager.Instance.Bonuses.PurpleGemBonus; // eggplant bonus
             }
 
             if (gem.GemType == GemType.Tomato && PlayerManager.Instance.HasAchievment(AchievmentType.Mato))
@@ -682,7 +748,7 @@ public class GameManager : MonoBehaviour
                 totalVal += 10;
             }
 
-            if (PlayerManager.Instance.BonusWeedValueEnabled)
+            if (PlayerManager.Instance.Bonuses.BonusWeedValueEnabled)
             {
                 // Prospector satchel value!
                 if (gem.GemType == GemType.Weeds)
@@ -711,7 +777,16 @@ public class GameManager : MonoBehaviour
         {
             // BiggerScore bonus
             totalVal = (int)((float)totalVal * 1.05f);
+        }        
+
+        if (this.CurrentWeather == Weather.Dry)
+        {
+            // In dry weather, points are halved
+            totalVal = (int)((float) totalVal / 2.0f);
         }
+
+        // Apply glowValue after penalties
+        totalVal += glowValue;
 
         GameUtils.LogCoordConcat(string.Format("Gained {0} from {1} matches", totalVal, matches.Count), matches);
 
@@ -728,11 +803,11 @@ public class GameManager : MonoBehaviour
         int totalVal = matches.Sum(a => a.BaseMoneyValue);
         if (totalVal > 0)
         {
-            totalVal += matches.Count * PlayerManager.Instance.GoldGainBonus; // gold gain item bonus
+            totalVal += matches.Count * PlayerManager.Instance.Bonuses.GoldGainBonus; // gold gain item bonus
             int glowCount = matches.Count(a => a.IsGlowing);
             totalVal += glowCount;
-            totalVal += glowCount * PlayerManager.Instance.IrrigationPointsBonus; // irrigation item bonus
-            totalVal += matches.Count(a => a.GemColor == GemColor.Purple) * PlayerManager.Instance.PurpleGemBonus; // eggplant item bonus
+            totalVal += glowCount * PlayerManager.Instance.Bonuses.IrrigationPointsBonus; // irrigation item bonus
+            totalVal += matches.Count(a => a.GemColor == GemColor.Purple) * PlayerManager.Instance.Bonuses.PurpleGemBonus; // eggplant item bonus
 
             if (PlayerManager.Instance.Achievments.CashMoney)
             {
@@ -742,7 +817,7 @@ public class GameManager : MonoBehaviour
 
         foreach (Gem gem in matches)
         {
-            if (PlayerManager.Instance.BonusWeedValueEnabled)
+            if (PlayerManager.Instance.Bonuses.BonusWeedValueEnabled)
             {
                 // Prospector satchel value!
                 if (gem.GemType == GemType.Weeds)
@@ -802,6 +877,12 @@ public class GameManager : MonoBehaviour
             GameUtils.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.FloatyText, this.Grid.gameObject, Color.yellow);
         }
         
+        if (PlayerManager.Instance.Bonuses.WorkBoots && matches.Count >= 3)
+        {
+            // Only time boost on actual matches
+            this.BoostTime(1);
+        }
+
         this.GenerateParticleStream(scoreValue, averageMatchX, averageMatchY);        
     }
 
@@ -877,10 +958,13 @@ public class WeedSettings
     public Weeds WeedsTemplate;
     public FreezeGem FreezeGemTemplate;
     public Weeds RedOreTemplate;
+    public PoisonRock PoisonRockTemplate;
+    public Weeds RedWeedsTemplate;
 
+    public ParticleSystem SmellParticles;
     public GameObject IceGraphic;
     public ParticleSystem IceClickParticles;
-    public ParticleSystem IceKillParticles;    
+    public ParticleSystem IceKillParticles;
 }
 
 [Serializable]
@@ -896,6 +980,8 @@ public class LevelGoal
     public float WeedsProbability = 0.10f;
     public float FreezeGemProbability = 0.05f;
     public float RedOreProbability = 0.01f;
+    public float PoisonOreProbability = 0.01f;
+    public float RedLeafProbability = 0.0f;
 
     public LevelGoal(int scoreGoal, int time)
     {

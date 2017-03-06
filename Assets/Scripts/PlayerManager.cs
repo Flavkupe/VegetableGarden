@@ -26,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     public float LevelCostRamp = 0.1f;
     public float SellValueRatio = 0.25f;
 
+    public bool LoggingEnabled = false;
+
     public int CurrentLevel = 0;
 
     public float MusicVol = 0.5f;
@@ -40,18 +42,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool DebugMode = false;
 
-    public int GoldGainBonus = 0;
-    public float FastDropMultiplierBonus = 1.0f;
-    public float IrrigationDurationBonus = 0.0f;
-    public float IrrigationTimingWindow = 0.0f;
-    public float SlowTimeMultiplierBonus = 1.0f;
-    public int IrrigationPointsBonus = 0;
-
-    public int HammerBonus = 0;
-
-    public int PurpleGemBonus = 0;
-
-    public bool BonusWeedValueEnabled = false;
+    public GameBonuses Bonuses = new GameBonuses();    
 
     private List<GameObject> itemsFromResources = null;
 
@@ -91,6 +82,8 @@ public class PlayerManager : MonoBehaviour
                 return this.Achievments.FlipFloppinProgress >= this.AchievmentGoals.FlipFloppin;
             case AchievmentType.TiredOfWaiting:
                 return this.Achievments.TiredOfWaitingProgress >= this.AchievmentGoals.TiredOfWaiting;
+            case AchievmentType.RockyBalboa:
+                return this.Achievments.RockyBalboaProgress >= this.AchievmentGoals.RockyBalboa;
             default:
                 return false;
         }
@@ -123,10 +116,14 @@ public class PlayerManager : MonoBehaviour
         this.CurrentLevel = 0;
         this.TotalScore = 0;
 
+        this.Bonuses = new GameBonuses();
+
+        this.Bonuses.PurplePower = false;
+
+
         if (Achievments.BigPockets)
         {
-            this.inventory.Add(GetAllAvailableShopItems().Select(a => a.GetComponent<Item>())
-                                                         .Where(a => !a.IsInstantUse).ToList().GetRandom());
+            this.inventory.Add(GetAllAvailableShopItems().Where(a => !a.IsInstantUse).ToList().GetRandom());
         }
     }
 	
@@ -160,9 +157,6 @@ public class PlayerManager : MonoBehaviour
         get { return instance; }
     }
 
-    public bool LoggingEnabled = false;
-    public bool LuckyCharmEnabled = false;
-
     public void SellItem(Item item)
     {
         this.Cash += (int)((float)item.Cost * SellValueRatio);        
@@ -187,11 +181,12 @@ public class PlayerManager : MonoBehaviour
     }
 
     // Items which are not in player inventory but are unlocked
-    public List<GameObject> GetAllAvailableShopItems()
+    public List<Item> GetAllAvailableShopItems()
     {
         return this.itemsFromResources.Where(a => !this.inventory.Any(b => b.name == a.name) &&
                                                   this.UnlockedItems.Any(c => c == a.name) && 
-                                                  !this.PermanentItemsPurchased.Contains(a.name)).ToList();                                     
+                                                  !this.PermanentItemsPurchased.Contains(a.name))
+                                      .Select(d => d.GetComponent<Item>()).ToList();                                     
     }
 
     // Items which are not yet unlocked
@@ -239,37 +234,42 @@ public class PlayerManager : MonoBehaviour
             switch (useItem.Effect)
             {
                 case EffectType.ExtraGold:
-                    this.GoldGainBonus++;
+                    this.Bonuses.GoldGainBonus++;
                     break;
                 case EffectType.FastDrop:
-                    this.FastDropMultiplierBonus++;
+                    this.Bonuses.FastDropMultiplierBonus++;
                     break;                
                 case EffectType.IrrigationPoints:
-                    this.IrrigationDurationBonus += 3.0f;
-                    this.IrrigationTimingWindow++;
+                    this.Bonuses.IrrigationDurationBonus += 3.0f;
+                    this.Bonuses.IrrigationTimingWindow++;
                     if (GameManager.Instance != null)
                     {
                         GameManager.Instance.UpdateGlowActivationWindow();
                     }
 
-                    this.IrrigationPointsBonus++;
+                    this.Bonuses.IrrigationPointsBonus++;
                     break;
                 case EffectType.SlowTime:
-                    this.SlowTimeMultiplierBonus *= 0.9f;
+                    this.Bonuses.SlowTimeMultiplierBonus *= 0.9f;
                     break;
                 case EffectType.PurpleGemColorBonus:
-                    this.PurpleGemBonus++;
+                    this.Bonuses.PurpleGemBonus++;
                     break;
                 case EffectType.LessRockHP:
-                    this.HammerBonus += 3;
+                    this.Bonuses.HammerBonus += 3;
                     break;
                 case EffectType.BonusWeedValue:
-                    this.BonusWeedValueEnabled = true;
+                    this.Bonuses.BonusWeedValueEnabled = true;
                     break;
                 case EffectType.LuckyCharm:
-                    this.LuckyCharmEnabled = true;
+                    this.Bonuses.LuckyCharmEnabled = true;
                     break;
-
+                case EffectType.PurplePower:
+                    this.Bonuses.PurplePower = true;
+                    break;
+                case EffectType.WorkBoots:
+                    this.Bonuses.WorkBoots = true;
+                    break;
             }
         }
     }
@@ -296,6 +296,25 @@ public class PlayerManager : MonoBehaviour
     }
 }
 
+[Serializable]
+public class GameBonuses
+{
+    public int GoldGainBonus = 0;
+    public float FastDropMultiplierBonus = 1.0f;
+    public float IrrigationDurationBonus = 0.0f;
+    public float IrrigationTimingWindow = 0.0f;
+    public float SlowTimeMultiplierBonus = 1.0f;
+    public int IrrigationPointsBonus = 0;
+    
+    public bool LuckyCharmEnabled = false;
+    public bool PurplePower = false;
+    public int HammerBonus = 0;
+    public int PurpleGemBonus = 0;
+
+    public bool WorkBoots = false;
+
+    public bool BonusWeedValueEnabled = false;
+}
 
 public enum GameMode
 {
@@ -374,4 +393,6 @@ public class Achievments
     /// Unlocked pickaxe, shovel, swap and time boost
     /// </summary>
     public bool Boutique = false;
+
+    public int RockyBalboaProgress = 0;
 }

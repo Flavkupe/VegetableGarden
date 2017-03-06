@@ -19,10 +19,10 @@ public class AchievmentManager : MonoBehaviour
     public AchievmentIcon FlipFloppinIcon;
     public AchievmentIcon TiredOfWaitingIcon;
     public AchievmentIcon Boutique;
+    public AchievmentIcon RockyBalboaIcon;
 
     private static AchievmentManager instance = null;
     
-
     public static AchievmentManager Instance
     {
         get { return instance; }

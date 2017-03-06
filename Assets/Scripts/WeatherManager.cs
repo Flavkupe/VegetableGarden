@@ -9,12 +9,15 @@ public class WeatherManager : Singleton<WeatherManager>
 
     public Sprite NormalBackdrop;
     public Sprite WinterBackdrop;
+    public Sprite DryBackdrop;    
 
     public SpriteRenderer WinterTint;
     public SpriteRenderer DryTint;
+    public SpriteRenderer RainTint;
 
     public GameObject SnowParticles;
     public GameObject DryParticles;
+    public GameObject RainParticles;
 
     // Use this for initialization
     void Start ()
@@ -33,6 +36,8 @@ public class WeatherManager : Singleton<WeatherManager>
         this.DryParticles.SetActive(false);
         this.WinterTint.gameObject.SetActive(false);
         this.DryTint.gameObject.SetActive(false);
+        this.RainParticles.gameObject.SetActive(false);
+        this.RainTint.gameObject.SetActive(false);
 
         switch (weather)
         {
@@ -46,6 +51,8 @@ public class WeatherManager : Singleton<WeatherManager>
                 this.SetupDryWeather();
                 break;
             case Weather.Rainy:
+                this.SetupRainWeather();
+                break;
             default:
                 break;
         }
@@ -64,9 +71,16 @@ public class WeatherManager : Singleton<WeatherManager>
         
     }
 
-    private void SetupDryWeather()
+    private void SetupRainWeather()
     {
         this.Backdrop.sprite = this.NormalBackdrop;
+        this.RainTint.gameObject.SetActive(true);
+        this.RainParticles.SetActive(true);
+    }
+
+    private void SetupDryWeather()
+    {
+        this.Backdrop.sprite = this.DryBackdrop;
         this.DryTint.gameObject.SetActive(true);
         this.DryParticles.SetActive(true);
     }

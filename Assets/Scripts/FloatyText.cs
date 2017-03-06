@@ -26,7 +26,7 @@ public class FloatyText : MonoBehaviour
         this.transform.localPosition = new Vector3(this.transform.localPosition.x, newY, this.transform.localPosition.z);
 	}
 
-    public void SetText(string score, Color? color = null)
+    public void SetText(string score, Color? color = null, TextAnchor? anchor = null, int? fontSize = null)
     {
         textObject = this.GetComponent<TextMesh>();
         shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
@@ -38,11 +38,31 @@ public class FloatyText : MonoBehaviour
             {
                 textObject.color = color.Value;
             }
+
+            if (anchor != null)
+            {
+                this.textObject.anchor = anchor.Value;                
+            }
+
+            if (fontSize != null)
+            {
+                this.textObject.fontSize = fontSize.Value;
+            }
         }
 
         if (shadowTextObject != null)
         {
             shadowTextObject.text = score;
-        }       
+
+            if (anchor != null)
+            {
+                this.shadowTextObject.anchor = anchor.Value;
+            }
+
+            if (fontSize != null)
+            {
+                this.shadowTextObject.fontSize = fontSize.Value;
+            }
+        }
     }
 }

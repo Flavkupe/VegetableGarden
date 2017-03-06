@@ -62,6 +62,9 @@ public class AchievmentIcon : MonoBehaviour {
             case AchievmentType.BigPockets:
                 amountReq = PlayerManager.Instance.AchievmentGoals.BigPockets;
                 break;
+            case AchievmentType.RockyBalboa:
+                amountReq = pm.AchievmentGoals.RockyBalboa - PlayerManager.Instance.Achievments.RockyBalboaProgress;
+                break;
             default:
                 break;
         }
@@ -107,7 +110,8 @@ public enum AchievmentType
     IrrigationStation,
     FlipFloppin,
     TiredOfWaiting,
-    Boutique
+    Boutique,
+    RockyBalboa
 }
 
 [Serializable]
@@ -122,4 +126,5 @@ public class AchievmentGoals
     public float TiredOfWaiting = 200000.0f;
     public int CashMoney = 2000;
     public int BigPockets = 10;
+    internal int RockyBalboa = 200;
 }

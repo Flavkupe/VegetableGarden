@@ -74,6 +74,11 @@ public class Item_Boost : Item
                 GameManager.Instance.ActivateMagicFlask();
                 return true;
             }
+            else if (Boost == BoostType.HarvestStaff)
+            {
+                GameManager.Instance.ActivateHarvestStaff(Magnitude, this);
+                return true;
+            }
         }
 
         return false;
@@ -115,4 +120,6 @@ public enum BoostType
     Shovel,
 
     Magic_Flask,
+
+    HarvestStaff,
 }

@@ -90,15 +90,15 @@ public static class ExtensionFunctions
 
 public static class GameUtils
 {
-    public static FloatyText GenerateFloatyTextAt(string text, float x, float y, FloatyText template, GameObject parent = null, Color? color = null)
+    public static FloatyText GenerateFloatyTextAt(string text, float x, float y, FloatyText template, GameObject parent = null, Color? color = null, TextAnchor? anchor = null, int? fontSize = null)
     {
         FloatyText newFloatyText = GameObject.Instantiate(template);
         if (parent != null)
         {
             newFloatyText.transform.parent = parent.transform;
-        }
+        }               
 
-        newFloatyText.SetText(text, color);
+        newFloatyText.SetText(text, color, anchor, fontSize);
         newFloatyText.transform.localPosition = new Vector3(x, y, 100);
         return newFloatyText;
     }

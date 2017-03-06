@@ -27,4 +27,6 @@ public enum EffectType
     LessRockHP,
     BonusWeedValue,
     LuckyCharm,
+    PurplePower,
+    WorkBoots,
 }

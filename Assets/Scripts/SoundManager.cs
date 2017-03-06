@@ -16,7 +16,14 @@ public class SoundManager : MonoBehaviour {
 
     public AudioClip MenuMusic;
     public AudioClip LevelMusic;
-    public AudioClip ShopMusic;    
+    public AudioClip ShopMusic;
+
+    public AudioClip RainyMusic;
+    public AudioClip SnowyMusic;
+    public AudioClip DryMusic;
+
+    public AudioClip Win;
+    public AudioClip Lose;
 
     public Slider MusicSlider;
     public Slider SfxSlider;
@@ -60,7 +67,12 @@ public class SoundManager : MonoBehaviour {
         if (this.MusicSource != null)
         {
             this.MusicSource.volume = PlayerManager.Instance.MusicVol;
-        }
+        }       
+    }
+
+    public void SetMusicTempo(float tempo = 1.0f)
+    {
+        this.MusicSource.pitch = tempo;
     }
 
     // Update is called once per frame
@@ -92,40 +104,58 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
-    public void PlaySound(AudioClip clip)
+    public void PlaySound(AudioClip clip, float volume = 1.0f)
     {
         if (this.SoundSource == null)
         {
             return;
         }
 
-        SoundSource.PlayOneShot(clip);
+        float effectiveVolume = PlayerManager.Instance.SfxVol * volume;        
+
+        SoundSource.PlayOneShot(clip, effectiveVolume);
     }
 
-    public void PlaySound(SoundEffects soundEffect)
+    public void PlaySound(SoundEffects soundEffect, float volume = 1.0f)
     {
-        if (this.SoundSource == null)
-        {
-            return;
-        }
-
         switch (soundEffect)
         {
             case SoundEffects.Pop:
-                SoundSource.PlayOneShot(this.PopSound);
+                this.PlaySound(this.PopSound, volume);
                 break;
             case SoundEffects.Error:
-                SoundSource.PlayOneShot(this.BuzzerSound);
+                this.PlaySound(this.BuzzerSound, volume);
                 break;
             case SoundEffects.Kachink:
-                SoundSource.PlayOneShot(this.KachinkSound);
+                this.PlaySound(this.KachinkSound, volume);
                 break;
-            case SoundEffects.Use:
-                SoundSource.PlayOneShot(this.UseSound);
+            case SoundEffects.GenericUse:
+                this.PlaySound(this.UseSound, volume);
                 break;              
             default:
                 break;
         }
+    }
+
+    public void PlayLevelMusic(Weather weather)
+    {
+        switch (weather)
+        {
+            case Weather.Normal:
+                MusicSource.clip = LevelMusic;
+                break;
+            case Weather.Dry:
+                MusicSource.clip = DryMusic;
+                break;
+            case Weather.Snowy:
+                MusicSource.clip = SnowyMusic;
+                break;
+            case Weather.Rainy:
+                MusicSource.clip = RainyMusic;
+                break;
+        }
+
+        MusicSource.Play();
     }
 
     public void PlayMusic(MusicChoice choice)
@@ -146,6 +176,14 @@ public class SoundManager : MonoBehaviour {
             case MusicChoice.Shop:
                 MusicSource.clip = ShopMusic;
                 break;
+            case MusicChoice.Win:
+                MusicSource.clip = Win;
+                MusicSource.loop = false;
+                break;
+            case MusicChoice.Lose:
+                MusicSource.clip = Lose;
+                MusicSource.loop = false;
+                break;
         }
 
         MusicSource.Play();
@@ -164,7 +202,7 @@ public enum SoundEffects
     Pop,
     Error,
     Kachink,
-    Use,
+    GenericUse,
 }
 
 public enum MusicChoice
@@ -172,4 +210,6 @@ public enum MusicChoice
     Menu,
     Level,
     Shop,
+    Win,
+    Lose,
 }

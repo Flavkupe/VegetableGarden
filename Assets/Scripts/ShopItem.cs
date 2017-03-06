@@ -13,6 +13,8 @@ public class ShopItem : MonoBehaviour
 
     public bool Owned = false;
 
+    public Tooltip Tooltip;
+
     // Use this for initialization
     void Start()
     {
@@ -47,7 +49,10 @@ public class ShopItem : MonoBehaviour
         this.Owned = owned;
         this.BackingItem = item;
         this.Button.image.sprite = item.GetComponent<SpriteRenderer>().sprite;
-        this.PriceTag.text = PlayerManager.Instance.GetTrueItemCost(item).ToString();
+        if (this.PriceTag != null)
+        {
+            this.PriceTag.text = PlayerManager.Instance.GetTrueItemCost(item).ToString();
+        }
     }
 
     public void OnHoverIn()
@@ -55,9 +60,9 @@ public class ShopItem : MonoBehaviour
         if (this.BackingItem != null)
         {
             string cost = this.GetTransactionPrice().ToString();
-            ShopManager.Instance.TooltipR.SetStats(cost, this.BackingItem.Description, 
+            this.Tooltip.SetStats(cost, this.BackingItem.Description, 
                 ((int)this.BackingItem.Cooldown).ToString());
-            ShopManager.Instance.TooltipR.SetVisible(true);
+            this.Tooltip.SetVisible(true);
         }
     }
 
@@ -65,7 +70,7 @@ public class ShopItem : MonoBehaviour
     {
         if (this.BackingItem != null)
         {
-            ShopManager.Instance.TooltipR.SetVisible(false);
+            this.Tooltip.SetVisible(false);
         }
     }
 }

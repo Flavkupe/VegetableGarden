@@ -4,28 +4,21 @@ using System;
 
 public enum GemType
 {
-    White,
-    Red, 
-    Orange,
-    Yellow,
-    Green,
-    Blue,
-    Purple,
-
     Tomato,
     Pumpkin,
     Carrot,
-    Onion,
+    Garlic,
     Eggplant,
-    Potato,
-    Beet,
+    Daikon,
+    Chili,
     Broccoli,
-    GreenPepper,
+    Peas,
     Cucumber,
 
     Weeds,
     FreezeGem,
     ValuableOre,
+    PoisonRock
 }
 
 public enum GemColor
@@ -36,14 +29,16 @@ public enum GemColor
     Red, // Beet, Tomato
     Purple, // Eggplant
 
-    Half, // Any gems (half of board)
+    Half, // Any gems (half of board)    
 
     None,
+
+    Undesirables, // Weeds and rocks (for bomb)
 }
 
 public class Gem : MonoBehaviour 
 {
-    public GemType GemType = GemType.White;
+    public GemType GemType = GemType.Broccoli;
     public GemColor GemColor = GemColor.Brown;
 
     public GameObject Sparkles;
@@ -85,6 +80,19 @@ public class Gem : MonoBehaviour
         this.freezeHp = 3;
     }
 
+    public void Rot()
+    {
+        if (this.IsRotten)
+        {
+            return;
+        }
+
+        this.IsRotten = true;
+        ParticleSystem rotParticles = Instantiate(GameManager.Instance.WeedSettings.SmellParticles);
+        this.gameObject.GetComponent<SpriteRenderer>().color = new Color(0.63f, 0.351f, 0.117f); // brown
+        rotParticles.transform.SetParent(this.transform, false);        
+    }
+
     public ParticleSystem MatchParticles;
 
     public int BasePointValue = 25;
@@ -93,8 +101,25 @@ public class Gem : MonoBehaviour
     private int freezeHp = 0;
     public bool IsFrozen { get { return this.freezeHp > 0; } }
 
-    public bool IsRock { get { return this.GemType == GemType.ValuableOre ||
-                                      this.GemType == GemType.FreezeGem; } }
+    public bool IsRotten = false;
+
+    public bool IsRock
+    {
+        get
+        {
+            return this.GemType == GemType.ValuableOre ||
+                   this.GemType == GemType.FreezeGem || 
+                   this.GemType == GemType.PoisonRock;
+        }
+    }
+
+    public bool IsAWeed
+    {
+        get
+        {
+            return this.GemType == GemType.Weeds;
+        }
+    }
 
     // Use this for initialization
     void Start () 
@@ -232,6 +257,12 @@ public class Gem : MonoBehaviour
             return;            
         }
 
+        if (GameManager.Instance.IsHarvestStaffEnabled && this.Grid.CanMakeMove())
+        {
+            this.Grid.DestroyOnClick(this);            
+            return;
+        }
+
         if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
         {
             this.Irrigate();
@@ -257,7 +288,7 @@ public class Gem : MonoBehaviour
     {
         this.freezeHp--;
 
-        this.freezeHp -= PlayerManager.Instance.HammerBonus;
+        this.freezeHp -= PlayerManager.Instance.Bonuses.HammerBonus;
 
         ParticleSystem particles = null;
         if (this.freezeHp > 0)

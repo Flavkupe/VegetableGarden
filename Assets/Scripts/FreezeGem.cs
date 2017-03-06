@@ -14,6 +14,7 @@ public class FreezeGem : Weeds
     // Use this for initialization
     void Start ()
     {
+        this.OnStart();
         this.freezeTimer = new CooldownTimer(this.FreezeTimerWait, false);
 	}
 	
@@ -40,7 +41,7 @@ public class FreezeGem : Weeds
         while (neighbors.Count > 0)
         {
             Gem neighbor = neighbors.GetRandom();
-            if (neighbor.IsFrozen || neighbor.GemType == GemType.FreezeGem)
+            if (neighbor.IsFrozen || neighbor.IsRock)
             {
                 neighbors.Remove(neighbor);
                 continue;

@@ -17,9 +17,12 @@ public class Item : MonoBehaviour, IClickableItem
     
     public GemGrid Grid = null;
 
+    public AudioClip UseSound;
+    public float SoundVolume = 1.0f;
+
     public bool IsEssentialItem = false;
 
-    private SpriteRenderer sprite = null;
+    private SpriteRenderer sprite = null;    
 
     private TextOverSprite cooldownText = null;
 
@@ -146,7 +149,15 @@ public class Item : MonoBehaviour, IClickableItem
         if (this.cooldownTimer.IsExpired && this.CanTriggerEffect() &&
             (!this.MustWaitForStaticBoard || this.Grid.CanMakeMove()))
         {
-            SoundManager.Instance.PlaySound(SoundEffects.Use);
+            if (this.UseSound == null)
+            {
+                SoundManager.Instance.PlaySound(SoundEffects.GenericUse, this.SoundVolume);
+            }
+            else
+            {
+                SoundManager.Instance.PlaySound(this.UseSound, this.SoundVolume);
+            }
+
             this.TriggerEffect();
             this.cooldownTimer.Reset();
             this.sprite.color = Color.black;
