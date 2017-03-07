@@ -6,10 +6,8 @@ using UnityEngine.UI;
 /// <summary>
 /// Display in menus for items which might or might not be unlocked
 /// </summary>
-public class UnlockableItem : MonoBehaviour {
-
-    private Item BackingItem;
-
+public class UnlockableItem : MonoBehaviour
+{
     public Image Background;
     public string Text;
 
@@ -23,7 +21,6 @@ public class UnlockableItem : MonoBehaviour {
 
     public void SetItem(Item item, bool unlocked)
     {        
-        this.BackingItem = item;
         int diff = Mathf.Max(0, item.PointsToUnlock - PlayerManager.Instance.UniversalScore);
         this.Text = unlocked ? item.Name : string.Format("{0} points to unlock!", diff);
         if (unlocked)

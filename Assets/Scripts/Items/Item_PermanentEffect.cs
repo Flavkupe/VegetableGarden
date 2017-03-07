@@ -29,4 +29,6 @@ public enum EffectType
     LuckyCharm,
     PurplePower,
     WorkBoots,
+    FertilityGuide,
+    SoupCauldron
 }

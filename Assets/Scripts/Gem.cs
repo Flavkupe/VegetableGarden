@@ -95,7 +95,7 @@ public class Gem : MonoBehaviour
 
     public ParticleSystem MatchParticles;
 
-    public int BasePointValue = 25;
+    public int BasePointValue = 30;
     public int BaseMoneyValue = 1;
 
     private int freezeHp = 0;
@@ -157,11 +157,11 @@ public class Gem : MonoBehaviour
 
         mouseReleased = Input.GetMouseButtonUp(0);
 
-        if (this.sparkles != null && this.GlowTimer.Tick(Time.deltaTime).IsExpired)
-        {
-            // If glow expires
-            this.sparkles.SetActive(false);
-        }
+        //if (this.sparkles != null && this.GlowTimer.Tick(Time.deltaTime).IsExpired)
+        //{
+        //    // If glow expires
+        //    this.sparkles.SetActive(false);
+        //}
 
         if (this.InTransition)
         {
@@ -263,14 +263,9 @@ public class Gem : MonoBehaviour
             return;
         }
 
-        if (!this.Grid.CanMakeMove() || this.Grid.SoonAfterMatch())
+        if (!this.Grid.CanMakeMove())
         {
-            this.Irrigate();
-
-            if (!this.Grid.CanMakeMove())
-            {
-                return;
-            }
+            return;
         }
 
         if (!this.Grid.TrySwapWith(this.Grid.Selected, this))

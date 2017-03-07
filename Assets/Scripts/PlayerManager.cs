@@ -39,6 +39,7 @@ public class PlayerManager : MonoBehaviour
     public int UniversalScore = 0; // total score accross all games
     public int TotalScore = 0;
     public List<Item> Inventory { get { return this.inventory; } }
+    public int MaxLevel = 0;
 
     public bool DebugMode = false;
 
@@ -270,6 +271,12 @@ public class PlayerManager : MonoBehaviour
                 case EffectType.WorkBoots:
                     this.Bonuses.WorkBoots = true;
                     break;
+                case EffectType.FertilityGuide:
+                    this.Bonuses.FertilityGuide = true;
+                    break;
+                case EffectType.SoupCauldron:
+                    this.Bonuses.SoupCauldron = true;
+                    break;
             }
         }
     }
@@ -314,6 +321,10 @@ public class GameBonuses
     public bool WorkBoots = false;
 
     public bool BonusWeedValueEnabled = false;
+
+    public bool FertilityGuide = false;
+
+    public bool SoupCauldron = false;
 }
 
 public enum GameMode

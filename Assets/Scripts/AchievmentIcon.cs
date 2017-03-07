@@ -121,7 +121,7 @@ public class AchievmentGoals
     public int Mato = 700;
     public int Coffers = 8000;
     public int TimeToWaste = 100;
-    public int IrrigationStation = 5000;
+    public int IrrigationStation = 25000;
     public int FlipFloppin = 100;
     public float TiredOfWaiting = 200000.0f;
     public int CashMoney = 2000;

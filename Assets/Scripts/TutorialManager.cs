@@ -1,12 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class TutorialManager : MonoBehaviour {
+public class TutorialManager : Singleton<TutorialManager>
+{
+    public Tutorial[] Pages;
 
-    public Tutorial[] Pages;    
+    public LevelTutorial[] LevelTutorials;
 
     public GameObject TutorialMenu;
+
+    public Image TutorialImage;
 
     public SetabbleText Textbox;
     public RectTransform Frame;
@@ -60,12 +67,38 @@ public class TutorialManager : MonoBehaviour {
     }
 
         // Use this for initialization
-        void Start () {
-		
+    void Start () {
+        instance = this;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void ShowCurrentLevelTutorial()
+    {
+        int currentLevel = PlayerManager.Instance.CurrentLevel;
+        if (currentLevel >= PlayerManager.Instance.MaxLevel)
+        {
+            LevelTutorial tutorial = this.LevelTutorials.ToList().FirstOrDefault(a => a.LevelOfTutorial == PlayerManager.Instance.CurrentLevel);
+            if (tutorial != null)
+            {
+                this.TutorialMenu.SetActive(true);
+                this.Textbox.SetText(tutorial.TitleText);
+                this.TutorialImage.sprite = tutorial.TutorialPicture;
+            }
+        }
+    }
+}
+
+[Serializable]
+public class LevelTutorial
+{
+    public Sprite TutorialPicture;
+
+    public string TitleText;
+
+    // Which level the tutorial appears in
+    public int LevelOfTutorial = 0;
 }

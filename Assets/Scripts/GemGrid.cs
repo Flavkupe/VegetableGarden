@@ -12,7 +12,7 @@ public enum GridGemType
 
 public class GemGrid : MonoBehaviour 
 {
-    private CooldownTimer timeAfterMatch;
+    //private CooldownTimer timeAfterMatch;
     private CooldownTimer hintTimer;
     public float HintTimeout = 5.0f;   
 
@@ -52,7 +52,7 @@ public class GemGrid : MonoBehaviour
 	void Start() 
     {
         this.hintTimer = new CooldownTimer(HintTimeout, false);
-        this.timeAfterMatch = new CooldownTimer(GameManager.Instance.GetTotalGlowActivationWindow(), true);
+        //this.timeAfterMatch = new CooldownTimer(GameManager.Instance.GetTotalGlowActivationWindow(), true);
     }
 
     public void PopulateGrid(int? gemLimit = null)
@@ -238,7 +238,7 @@ public class GemGrid : MonoBehaviour
             return;
         }
 
-        this.timeAfterMatch.Tick(Time.deltaTime);
+        //this.timeAfterMatch.Tick(Time.deltaTime);
 
         if (this.CanMakeMove() && !GameManager.Instance.IsPaused)
         {
@@ -256,7 +256,7 @@ public class GemGrid : MonoBehaviour
 
     public void SetGlowActicationWindow(float window)
     {
-        this.timeAfterMatch.SetBaseline(window);
+        //this.timeAfterMatch.SetBaseline(window);
     }
 
     public bool CanSwapWith(Gem gem1, Gem gem2)
@@ -307,8 +307,8 @@ public class GemGrid : MonoBehaviour
             if (matches != null && matches.Count > 0)
             {
                 this.StartCoroutine(this.ProcessMatches(matches));
-                this.timeAfterMatch.Reset();                
-                GameManager.Instance.AfterIrrigation(this.timeAfterMatch);
+                //this.timeAfterMatch.Reset();                
+                //GameManager.Instance.AfterIrrigation(this.timeAfterMatch);
                 this.hintTimer.Reset();
             }
             else
@@ -835,7 +835,8 @@ public class GemGrid : MonoBehaviour
 
     public bool SoonAfterMatch()
     {
-        return !this.timeAfterMatch.IsExpired;
+        //return !this.timeAfterMatch.IsExpired;
+        return false;
     }
 
     public bool CanMakeMove()

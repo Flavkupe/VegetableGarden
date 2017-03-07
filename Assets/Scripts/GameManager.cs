@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public ItemPane CooldownPane;
     public CooldownIcon CooldownIcon;
 
+    public GameObject TutorialDialog;
+
     public SetabbleText ScoreUI = null;
     public SetabbleText CashUI = null;
     public SetabbleText TimerUI = null;
@@ -36,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     public float SlideSpeed = 6.0f;
 
-    public float GlowDuration = 20.0f;
+    public float GlowDuration = 100.0f;
     public float GlowActivationWindow = 4.0f;
 
     public float HintCalloutDuration = 2.0f;  
@@ -75,6 +77,7 @@ public class GameManager : MonoBehaviour
     private CooldownTimer pickaxeTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer shovelTimer = new CooldownTimer(20.0f, true);
     private CooldownTimer harvestStaffTimer = new CooldownTimer(20.0f, true);
+    private CooldownTimer fertilityGuideTimer = new CooldownTimer(5.0f, true);
 
     private void ActivateItemWithTimer(float duration, Item_Boost item, CooldownTimer timer)
     {
@@ -249,7 +252,9 @@ public class GameManager : MonoBehaviour
 
     public bool IsPaused
     {
-        get { return this.GoalBillboard.Animating || this.isPaused; }
+        get { return this.GoalBillboard.Animating || 
+                this.TutorialDialog.gameObject.activeSelf || 
+                this.isPaused; }
     }
 
     // Use this for initialization
@@ -366,6 +371,8 @@ public class GameManager : MonoBehaviour
         this.GoalBillboard.SetGoal(new LevelGoal(goal.ScoreGoal, goal.Time));
         TooltipUI.SetVisible(false);                 
         this.StartCoroutine(this.GoalBillboard.Animate());
+
+        TutorialManager.Instance.ShowCurrentLevelTutorial();
     }
 
     public void AfterIrrigation(CooldownTimer timeAfterMatch)
@@ -410,6 +417,10 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator BeatLevel()
     {
+        PlayerManager.Instance.CurrentLevel++;
+
+        PlayerManager.Instance.MaxLevel = Math.Max(PlayerManager.Instance.CurrentLevel, PlayerManager.Instance.MaxLevel);
+
         this.CheckLevelBeatAchievments();
 
         this.ScreenTint.gameObject.SetActive(true);
@@ -546,9 +557,7 @@ public class GameManager : MonoBehaviour
         this.ScrollScore();
 
         if (this.trueScore <= 0 && this.Grid.CanMakeMove())
-        {         
-            PlayerManager.Instance.CurrentLevel++;
-            
+        {                                 
             this.StartCoroutine(this.BeatLevel());
             return;
         }
@@ -568,6 +577,11 @@ public class GameManager : MonoBehaviour
             this.ActivateWeatherEffect();
         }
 
+        if (PlayerManager.Instance.Bonuses.FertilityGuide)
+        {
+            this.ActivateFertilityGuide();
+        }
+
         float weatherTimeMultiplier = this.CurrentWeather == Weather.Rainy ? 1.05f : 1.0f;
         double secondsToPass = Time.deltaTime * PlayerManager.Instance.Bonuses.SlowTimeMultiplierBonus * weatherTimeMultiplier;
         this.gameTimer = this.gameTimer.Subtract(TimeSpan.FromSeconds(secondsToPass));
@@ -578,6 +592,20 @@ public class GameManager : MonoBehaviour
         }
 
         this.UpdateTimerText();
+    }
+
+    private void ActivateFertilityGuide()
+    {
+        if (this.fertilityGuideTimer.Tick(Time.deltaTime).IsExpired)
+        {
+            this.fertilityGuideTimer.Reset();
+            Gem randomGem = this.Grid.ActiveGems.Where(a => !a.IsAWeed && !a.IsRock && !a.IsGlowing)
+                                                .ToList().GetRandom();
+            if (randomGem != null)
+            {
+                randomGem.Irrigate();
+            }
+        }
     }
 
     private void ActivateWeatherEffect()
@@ -706,7 +734,7 @@ public class GameManager : MonoBehaviour
         if (matchCount > 3)
         {
             totalVal += (matchCount - 3) * 100;
-        }
+        }        
 
         foreach (Gem gem in matches)
         {
@@ -715,27 +743,35 @@ public class GameManager : MonoBehaviour
                 continue;
             }
 
+            if (PlayerManager.Instance.Bonuses.SoupCauldron && matches.Count >= 3)
+            {
+                // Soup cauldron earns extra points per vegetable for matches of 3 or more
+                totalVal += 5;
+            }
+
             if (gem.IsGlowing)
             {
-                glowValue += 25;
+                glowValue += 10;
 
-                glowValue += 25 * PlayerManager.Instance.Bonuses.IrrigationPointsBonus; // irrigation item bonus
+                glowValue += 10 * PlayerManager.Instance.Bonuses.IrrigationPointsBonus; // irrigation item bonus
 
                 if (PlayerManager.Instance.HasAchievment(AchievmentType.IrrigationStation))
                 {
-                    glowValue += 25;
+                    glowValue += 5;
                 }
 
                 if (this.CurrentWeather == Weather.Dry)
                 {
                     // Irrigation in dry weather worth a ton
-                    glowValue += 50;                    
+                    glowValue += 25;                    
                 }
+                
+                totalVal += glowValue;
             }
 
             if (gem.GemColor == GemColor.Purple)
             {
-                totalVal += 100 * PlayerManager.Instance.Bonuses.PurpleGemBonus; // eggplant bonus
+                totalVal += gem.BasePointValue * PlayerManager.Instance.Bonuses.PurpleGemBonus; // eggplant bonus
             }
 
             if (gem.GemType == GemType.Tomato && PlayerManager.Instance.HasAchievment(AchievmentType.Mato))
@@ -766,7 +802,7 @@ public class GameManager : MonoBehaviour
         {
             // DoubleScore item bonus
             totalVal *= 2;
-        }
+        }        
 
         if (PlayerManager.Instance.Achievments.BigScore)
         {
@@ -777,18 +813,9 @@ public class GameManager : MonoBehaviour
         {
             // BiggerScore bonus
             totalVal = (int)((float)totalVal * 1.05f);
-        }        
-
-        if (this.CurrentWeather == Weather.Dry)
-        {
-            // In dry weather, points are halved
-            totalVal = (int)((float) totalVal / 2.0f);
         }
-
-        // Apply glowValue after penalties
-        totalVal += glowValue;
-
-        GameUtils.LogCoordConcat(string.Format("Gained {0} from {1} matches", totalVal, matches.Count), matches);
+      
+        //GameUtils.LogCoordConcat(string.Format("Gained {0} from {1} matches", totalVal, matches.Count), matches);
 
         return totalVal;        
     }
