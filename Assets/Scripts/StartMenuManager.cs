@@ -24,6 +24,8 @@ public class StartMenuManager : MonoBehaviour
     public GameObject InnerMenu;
     public GameObject LeaderboardTab;
 
+    public Animator MenuAnimator;
+    
     public GameObject ExitSign;
     public GameObject HowToPlay;
 
@@ -140,7 +142,7 @@ public class StartMenuManager : MonoBehaviour
         formData.AddField("Score", 0);
         formData.AddField("Data", encData);
 
-        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", formData);
+        WWW www = new WWW("https://flaviovegetablegamesserver.azurewebsites.net/api/Player/PostScore/", formData);
 
         yield return www;
 
@@ -166,7 +168,7 @@ public class StartMenuManager : MonoBehaviour
     {
         this.LeaderboardLoadingText.gameObject.SetActive(true);
         this.LeaderboardLoadingText.SetText("Loading...");
-        WWW www = new WWW("http://flaviovegetablegamesserver.azurewebsites.net/api/Player/GetTopTen/");        
+        WWW www = new WWW("https://flaviovegetablegamesserver.azurewebsites.net/api/Player/GetTopTen/");        
 
         yield return www;        
         if (www.error != null)
@@ -312,6 +314,12 @@ public class StartMenuManager : MonoBehaviour
             return;
         }
 
+        if (tab == StartMenuTabs.Close)
+        {
+            this.MenuAnimator.Play("Close");
+            return;
+        }
+
         this.MenuInit();
 
         this.Menu.SetActive(true);
@@ -339,8 +347,7 @@ public class StartMenuManager : MonoBehaviour
                 this.LoadLeaderboard();
                 break;
             case StartMenuTabs.Close:
-            default:
-                this.Menu.SetActive(false);
+            default:                                
                 break;
         }
     }

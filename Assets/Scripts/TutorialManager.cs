@@ -18,6 +18,8 @@ public class TutorialManager : Singleton<TutorialManager>
     public SetabbleText Textbox;
     public RectTransform Frame;
 
+    public Animator TutorialAnimator;
+
     private int currentPage = 0;
 
     public void GoToPage(int page)
@@ -85,11 +87,17 @@ public class TutorialManager : Singleton<TutorialManager>
             if (tutorial != null)
             {
                 this.TutorialMenu.SetActive(true);
+                this.TutorialAnimator.Play("Open");
                 this.Textbox.SetText(tutorial.TitleText);
                 this.TutorialImage.sprite = tutorial.TutorialPicture;
             }
         }
     }
+
+    public void CloseTutorialWindow()
+    {
+        this.TutorialAnimator.Play("Close");
+    }    
 }
 
 [Serializable]

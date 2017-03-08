@@ -13,10 +13,20 @@ public class Weeds : Gem
     public override void Irrigate()
     {
         // Do nothing
-    }    
+    }
+
+    public override void Rot()
+    {
+        // Do nothing
+    }
+
+    public override void Freeze()
+    {
+        // Do nothing; cannot freeze weeds...?
+    }
 
     protected override void HandleMouseDown()
-    {
+    {    
         if (this.IsFrozen)
         {
             // If frozen, use default frozen behavior.
@@ -58,12 +68,17 @@ public class Weeds : Gem
             if (this.Grid.CanMakeMove())
             {
                 this.Grid.DestroyOnClick(this);
+                this.OnKill();
                 this.PlayKillSound();
                 return;
             }
         }
         
         this.PlayCarveSound();       
+    }
+
+    protected virtual void OnKill()
+    {
     }
 
     protected virtual void PlayCarveSound()

@@ -169,6 +169,7 @@ public class GemGrid : MonoBehaviour
         float redOreEvent = weedsEvent + level.RedOreProbability * goodLuckMultiplier;
         float poisonOreEvent = redOreEvent + level.PoisonOreProbability * badLuckMultiplier;
         float redLeafProb = poisonOreEvent + level.RedLeafProbability * badLuckMultiplier;
+        float timeStoneEvent = redLeafProb + level.TimeStoneProbability * goodLuckMultiplier;
 
         float rand = UnityEngine.Random.Range(0.0f, 1.0f);
         if (rand < freezeEvent)
@@ -190,6 +191,10 @@ public class GemGrid : MonoBehaviour
         else if (rand < redLeafProb)
         {
             gem = GameManager.Instance.WeedSettings.RedWeedsTemplate;
+        }
+        else if (rand < timeStoneEvent)
+        {
+            gem = GameManager.Instance.WeedSettings.TimeStoneTemplate;
         }
         else
         {

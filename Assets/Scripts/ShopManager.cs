@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShopManager : MonoBehaviour {
 
@@ -20,6 +21,8 @@ public class ShopManager : MonoBehaviour {
     public SetabbleText BuySellText;
 
     public SetabbleText MoneyText;
+
+    public TextMeshPro MoneyFont;
 
     public ItemPane ItemPane;    
 
@@ -205,8 +208,8 @@ public class ShopManager : MonoBehaviour {
         if (transacted)
         {
             string transactionStr = (item.Owned ? "+" : "-") + "$" + item.GetTransactionPrice();
-            FloatyText text = GameUtils.GenerateFloatyTextAt(transactionStr, item.transform.position.x, item.transform.position.y,
-                this.FloatyText, null, Color.yellow);
+            TextMeshPro text = GameUtils.GenerateSuperFloatyTextAt(transactionStr, item.transform.position.x, 
+                item.transform.position.y, this.MoneyFont);
             this.TooltipR.gameObject.SetActive(false);
             this.TooltipL.gameObject.SetActive(false);            
         }

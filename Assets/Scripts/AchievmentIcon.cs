@@ -126,5 +126,5 @@ public class AchievmentGoals
     public float TiredOfWaiting = 200000.0f;
     public int CashMoney = 2000;
     public int BigPockets = 10;
-    internal int RockyBalboa = 200;
+    public int RockyBalboa = 2000;
 }

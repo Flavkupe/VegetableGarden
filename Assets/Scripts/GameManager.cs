@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,7 +26,9 @@ public class GameManager : MonoBehaviour
     public SetabbleText ScoreUI = null;
     public SetabbleText CashUI = null;
     public SetabbleText TimerUI = null;
-    public Tooltip TooltipUI = null;    
+    public Tooltip TooltipUI = null;
+
+    public Text LevelText;
 
     public Camera MainCamera = null;
 
@@ -38,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     public float SlideSpeed = 6.0f;
 
-    public float GlowDuration = 100.0f;
+    public float GlowDuration = 10.0f;
     public float GlowActivationWindow = 4.0f;
 
     public float HintCalloutDuration = 2.0f;  
@@ -50,6 +54,8 @@ public class GameManager : MonoBehaviour
     public GameObject Menu;
 
     public ParticleSystem MatchParticles;
+
+    public GameTextSettings TextSettings;
 
     public WeedSettings WeedSettings;
 
@@ -64,6 +70,8 @@ public class GameManager : MonoBehaviour
     public int FirstMajorRampLevel = 15;
     public int MajorRampTimeDecrease = 3;
     public int MajorRampScoreIncrease = 1000;
+
+    private LevelGoal cachedLevelGoalInstance = null;
 
     public Weather CurrentWeather = Weather.Normal;
     public CooldownTimer weatherEffectTimer;
@@ -306,15 +314,20 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }
+    }    
 
     public LevelGoal GetLevelGoal()
     {
+        if (cachedLevelGoalInstance != null)
+        {
+            return cachedLevelGoalInstance;
+        }
+
         LevelGoal goal = null;
         if (PlayerManager.Instance.CurrentLevel >= this.LevelGoals.Length)
         {
-            goal = this.LevelGoals.Last();
-            goal.ScoreGoal += this.MaxLevelScoreIncrease;
+            // "Generate" a level
+            goal = this.LevelGoals.Last();            
 
             if (PlayerManager.Instance.CurrentLevel > FirstMajorRampLevel)
             {
@@ -322,19 +335,69 @@ public class GameManager : MonoBehaviour
                 goal.ScoreGoal += MajorRampScoreIncrease * ramp;
                 goal.Time -= MajorRampTimeDecrease;
             }
+            else
+            {
+                goal.ScoreGoal += this.MaxLevelScoreIncrease;
+            }
+
+            goal.Weather = (Weather)UnityEngine.Random.Range(0, 3);
+
+            goal.WeedsProbability = 0.0f;
+            goal.RedLeafProbability = 0.0f;
+            goal.PoisonOreProbability = 0.0f;
+            goal.FreezeGemProbability = 0.0f;
+            goal.RedOreProbability = 0.01f;
+            goal.TimeStoneProbability = 0.01f;
+
+            switch (UnityEngine.Random.Range(1, 4))
+            {
+                case 1:
+                    goal.WeedsProbability = 0.1f;
+                    break;
+                case 2:
+                    goal.FreezeGemProbability = 0.1f;
+                    break;
+                case 3:
+                    goal.PoisonOreProbability = 0.1f;
+                    break;
+                case 4:
+                    goal.RedLeafProbability = 0.1f;
+                    break;
+            }
+
+            switch (UnityEngine.Random.Range(1, 4))
+            {
+                case 1:
+                    goal.WeedsProbability += 0.05f;
+                    break;
+                case 2:
+                    goal.FreezeGemProbability = 0.05f;
+                    break;
+                case 3:
+                    goal.PoisonOreProbability = 0.05f;
+                    break;
+                case 4:
+                    goal.RedLeafProbability = 0.05f;
+                    break;
+            }
         }
         else
         {
             goal = this.LevelGoals[PlayerManager.Instance.CurrentLevel];
         }
 
+        cachedLevelGoalInstance = goal;
+
         return goal;
     }
 
     private void InitializeRound()
-    {        
+    {
+        this.cachedLevelGoalInstance = null;
         this.ClearHintCallouts();
         this.ScreenTint.gameObject.SetActive(true);
+
+        this.LevelText.text = "Level " + (PlayerManager.Instance.CurrentLevel + 1).ToString();
 
         SoundManager.Instance.SetMusicTempo(1.0f);
 
@@ -369,8 +432,17 @@ public class GameManager : MonoBehaviour
         this.SetGameTimeLimit(goal.Time);
         this.SetScore(goal.ScoreGoal);        
         this.GoalBillboard.SetGoal(new LevelGoal(goal.ScoreGoal, goal.Time));
-        TooltipUI.SetVisible(false);                 
-        this.StartCoroutine(this.GoalBillboard.Animate());
+        TooltipUI.SetVisible(false);
+        this.StartCoroutine(ShowLevelStartSigns());               
+    }
+
+    private IEnumerator ShowLevelStartSigns()
+    {
+        yield return this.GoalBillboard.Animate();
+        while (this.GoalBillboard.Animating)
+        {
+            yield return null;
+        }
 
         TutorialManager.Instance.ShowCurrentLevelTutorial();
     }
@@ -443,7 +515,7 @@ public class GameManager : MonoBehaviour
 
                 // Boutique achievement
                 if (!PlayerManager.Instance.Achievments.Boutique &&
-                PlayerManager.Instance.UnlockedItems.Contains("Pickaxe"))
+                PlayerManager.Instance.UnlockedItems.Contains("TimeBoost"))
                 {
                     PlayerManager.Instance.Achievments.Boutique = true;
                     AchievmentManager.Instance.AnnounceAchievment(AchievmentManager.Instance.Boutique);
@@ -631,10 +703,9 @@ public class GameManager : MonoBehaviour
         if (this.CurrentWeather == Weather.Dry)
         {
             Gem gem = this.Grid.ActiveGems.GetRandom();
-            if (gem != null && !gem.IsFrozen && !gem.IsRock)
+            if (gem != null && !gem.IsRock && !gem.IsAWeed)
             {
-                Gem weed = Instantiate(this.WeedSettings.WeedsTemplate);
-                this.Grid.TransformGem(gem, weed);
+                gem.Rot();
             }
         }
     }
@@ -758,13 +829,7 @@ public class GameManager : MonoBehaviour
                 if (PlayerManager.Instance.HasAchievment(AchievmentType.IrrigationStation))
                 {
                     glowValue += 5;
-                }
-
-                if (this.CurrentWeather == Weather.Dry)
-                {
-                    // Irrigation in dry weather worth a ton
-                    glowValue += 25;                    
-                }
+                }                
                 
                 totalVal += glowValue;
             }
@@ -895,13 +960,13 @@ public class GameManager : MonoBehaviour
         float randomOffset = UnityEngine.Random.Range(-0.5f, 0.5f);
         float offsetX = averageMatchX + randomOffset;
         this.UpdateScore(scoreValue);
-        GameUtils.GenerateFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.FloatyText, this.Grid.gameObject);
+        GameUtils.GenerateSuperFloatyTextAt(scoreValue.ToString(), offsetX, averageMatchY, this.TextSettings.ScoreTextTemplate, this.Grid.gameObject);
         this.UpdateCash(cashValue);
 
         if (cashValue > 0 && PlayerManager.Instance.GameMode == GameMode.Normal)
         {
             // No need to display cash in Casual mode
-            GameUtils.GenerateFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.FloatyText, this.Grid.gameObject, Color.yellow);
+            GameUtils.GenerateSuperFloatyTextAt("$" + cashValue.ToString(), offsetX, averageMatchY + 1.0f, this.TextSettings.MoneyTextTemplate, this.Grid.gameObject);
         }
         
         if (PlayerManager.Instance.Bonuses.WorkBoots && matches.Count >= 3)
@@ -980,6 +1045,13 @@ public class GameManager : MonoBehaviour
 }
 
 [Serializable]
+public class GameTextSettings
+{
+    public TextMeshPro ScoreTextTemplate;
+    public TextMeshPro MoneyTextTemplate;
+}
+
+[Serializable]
 public class WeedSettings
 {
     public Weeds WeedsTemplate;
@@ -987,6 +1059,7 @@ public class WeedSettings
     public Weeds RedOreTemplate;
     public PoisonRock PoisonRockTemplate;
     public Weeds RedWeedsTemplate;
+    public TimeStone TimeStoneTemplate;
 
     public ParticleSystem SmellParticles;
     public GameObject IceGraphic;
@@ -1007,8 +1080,9 @@ public class LevelGoal
     public float WeedsProbability = 0.10f;
     public float FreezeGemProbability = 0.05f;
     public float RedOreProbability = 0.01f;
-    public float PoisonOreProbability = 0.01f;
+    public float PoisonOreProbability = 0.0f;
     public float RedLeafProbability = 0.0f;
+    public float TimeStoneProbability = 0.01f;
 
     public LevelGoal(int scoreGoal, int time)
     {
@@ -1019,8 +1093,8 @@ public class LevelGoal
 
 public enum Weather
 {
-    Normal,
-    Dry,
-    Snowy,
-    Rainy
+    Normal = 0,
+    Dry = 1,
+    Snowy = 2,
+    Rainy = 3
 }

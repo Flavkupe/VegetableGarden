@@ -9,7 +9,8 @@ public class WeatherManager : Singleton<WeatherManager>
 
     public Sprite NormalBackdrop;
     public Sprite WinterBackdrop;
-    public Sprite DryBackdrop;    
+    public Sprite DryBackdrop;
+    public Sprite RainBackdrop;
 
     public SpriteRenderer WinterTint;
     public SpriteRenderer DryTint;
@@ -67,13 +68,12 @@ public class WeatherManager : Singleton<WeatherManager>
 
     private void SetupNormalWeather()
     {
-        this.Backdrop.sprite = this.NormalBackdrop;
-        
+        this.Backdrop.sprite = this.NormalBackdrop;        
     }
 
     private void SetupRainWeather()
     {
-        this.Backdrop.sprite = this.NormalBackdrop;
+        this.Backdrop.sprite = this.RainBackdrop;
         this.RainTint.gameObject.SetActive(true);
         this.RainParticles.SetActive(true);
     }

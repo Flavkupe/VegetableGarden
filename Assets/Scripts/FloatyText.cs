@@ -7,17 +7,36 @@ public class FloatyText : MonoBehaviour
     private TextMesh shadowTextObject;
     public float MoveSpeed = 1;
 
+    public float Lifetime = 1.0f;
+
+    public bool IsSpecialText = false;
+
     void InitComponents()
     {
     }
 
 	void Start () 
     {
-        textObject = this.GetComponent<TextMesh>();
-        shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
-        GameObject.Destroy(this.gameObject, 1.0f);
-        textObject.GetComponent<Renderer>().sortingLayerName = "TopText";
-        shadowTextObject.GetComponent<Renderer>().sortingLayerName = "TopTextShadow";
+        GameObject.Destroy(this.gameObject, Lifetime);
+
+        if (!IsSpecialText)
+        {
+            textObject = this.GetComponent<TextMesh>();
+
+            if (textObject != null)
+            {                
+                textObject.GetComponent<Renderer>().sortingLayerName = "TopText";
+            }
+
+            if (this.gameObject.transform.childCount > 0)
+            {
+                shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
+                if (shadowTextObject != null)
+                {
+                    shadowTextObject.GetComponent<Renderer>().sortingLayerName = "TopTextShadow";
+                }
+            }
+        }
     }
 		
 	void Update () 
@@ -28,8 +47,17 @@ public class FloatyText : MonoBehaviour
 
     public void SetText(string score, Color? color = null, TextAnchor? anchor = null, int? fontSize = null)
     {
+        if (IsSpecialText)
+        {
+            return;
+        }
+
         textObject = this.GetComponent<TextMesh>();
-        shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
+
+        if (this.gameObject.transform.childCount > 0)
+        {
+            shadowTextObject = this.gameObject.transform.GetChild(0).GetComponent<TextMesh>();
+        }         
 
         if (textObject != null)
         {

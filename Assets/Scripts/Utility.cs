@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using TMPro;
 using UnityEngine;
 
 public static class JsonHelper
@@ -90,6 +91,24 @@ public static class ExtensionFunctions
 
 public static class GameUtils
 {
+    public static TextMeshPro GenerateSuperFloatyTextAt(string text, float x, float y, TextMeshPro template, GameObject parent = null, int? fontSize = null)
+    {
+        TextMeshPro newFloatyText = GameObject.Instantiate(template);
+        if (parent != null)
+        {
+            newFloatyText.transform.parent = parent.transform;
+        }
+
+        newFloatyText.SetText(text);
+        if (fontSize != null)
+        {
+            newFloatyText.fontSize = fontSize.Value;
+        }
+
+        newFloatyText.transform.localPosition = new Vector3(x, y, 100);
+        return newFloatyText;
+    }
+
     public static FloatyText GenerateFloatyTextAt(string text, float x, float y, FloatyText template, GameObject parent = null, Color? color = null, TextAnchor? anchor = null, int? fontSize = null)
     {
         FloatyText newFloatyText = GameObject.Instantiate(template);

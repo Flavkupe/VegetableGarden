@@ -18,7 +18,8 @@ public enum GemType
     Weeds,
     FreezeGem,
     ValuableOre,
-    PoisonRock
+    PoisonRock,
+    TimeStone,
 }
 
 public enum GemColor
@@ -71,7 +72,7 @@ public class Gem : MonoBehaviour
 
     private Vector3? destination = null;
 
-    public void Freeze()
+    public virtual void Freeze()
     {
         GameObject ice = Instantiate(GameManager.Instance.WeedSettings.IceGraphic);
         this.Ice = ice;
@@ -80,7 +81,7 @@ public class Gem : MonoBehaviour
         this.freezeHp = 3;
     }
 
-    public void Rot()
+    public virtual void Rot()
     {
         if (this.IsRotten)
         {
@@ -109,6 +110,7 @@ public class Gem : MonoBehaviour
         {
             return this.GemType == GemType.ValuableOre ||
                    this.GemType == GemType.FreezeGem || 
+                   this.GemType == GemType.TimeStone || 
                    this.GemType == GemType.PoisonRock;
         }
     }
@@ -157,11 +159,11 @@ public class Gem : MonoBehaviour
 
         mouseReleased = Input.GetMouseButtonUp(0);
 
-        //if (this.sparkles != null && this.GlowTimer.Tick(Time.deltaTime).IsExpired)
-        //{
-        //    // If glow expires
-        //    this.sparkles.SetActive(false);
-        //}
+        if (this.sparkles != null && this.GlowTimer.Tick(Time.deltaTime).IsExpired)
+        {
+            // If glow expires
+            this.sparkles.SetActive(false);
+        }
 
         if (this.InTransition)
         {
@@ -285,6 +287,8 @@ public class Gem : MonoBehaviour
 
         this.freezeHp -= PlayerManager.Instance.Bonuses.HammerBonus;
 
+        this.freezeHp -= GameManager.Instance.IsQuickMiningEnabled ? 3 : 0;
+
         ParticleSystem particles = null;
         if (this.freezeHp > 0)
         {
@@ -340,7 +344,10 @@ public class Gem : MonoBehaviour
             return;
         }
 
-        this.Hover.gameObject.SetActive(true);
+        if (this.Hover != null)
+        {
+            this.Hover.gameObject.SetActive(true);
+        }
     }
 
     void OnMouseExit()
@@ -350,7 +357,10 @@ public class Gem : MonoBehaviour
             return;
         }
 
-        this.Hover.gameObject.SetActive(false);
+        if (this.Hover != null)
+        {
+            this.Hover.gameObject.SetActive(false);
+        }
     }
 
     protected virtual void ShowMatchParticles()

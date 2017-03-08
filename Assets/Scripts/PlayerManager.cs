@@ -52,6 +52,7 @@ public class PlayerManager : MonoBehaviour
         this.Achievments = new Achievments();
         this.UnlockedItems.Clear();
         this.UniversalScore = 0;
+        this.MaxLevel = 0;
         this.PlayerName = null;
     }
 
@@ -147,8 +148,9 @@ public class PlayerManager : MonoBehaviour
         string mode = string.Format("'mode':'{0}'", GameMode.ToString());
         string platform = string.Format("'platform':'{0}'", Application.platform.ToString());
         string version = string.Format("'version':'{0}'", Application.version);
-        string score = string.Format("'score':'{0}'", this.TotalScore.ToString()); 
-        return string.Format("{{ {0} {1} {2} {3} {4} {5} {6} }}", items, universalScore, level, mode, platform, version, score);
+        string score = string.Format("'score':'{0}'", this.TotalScore.ToString());
+        string date = string.Format("'date':'{0}'", DateTime.Now.ToShortDateString());
+        return string.Format("{{ {0} {1} {2} {3} {4} {5} {6} {7} }}", items, universalScore, level, mode, platform, version, score, date);
     }
 
     private static PlayerManager instance = null;
